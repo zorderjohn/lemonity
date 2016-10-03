@@ -5,9 +5,12 @@ using Leap;
 public class Leaptest : MonoBehaviour {
 
 	Controller c;
+
 	// Use this for initialization
 	void Start () {
 		c = new Controller();
+
+
 	}
 	
 	// Update is called once per frame
@@ -15,9 +18,12 @@ public class Leaptest : MonoBehaviour {
 		Frame frame = c.Frame();
 		Hand h;
 		if(frame.Hands.Count > 0) {
+			setVisible(true);
 			h = frame.Hands[0];
 			transform.rotation = lpToUnityRot(h.Rotation);
 			transform.localPosition = lpToUnityVec(h.PalmPosition);
+		} else {
+			setVisible(false);	
 		}
 	}
 
@@ -31,5 +37,11 @@ public class Leaptest : MonoBehaviour {
 	}
 	Quaternion lpToUnityRot(LeapQuaternion lq) {
 		return new Quaternion(-lq.x, -lq.y, lq.z, lq.w);
+	}
+
+	void setVisible(bool value) {
+		for(int i=0; i<transform.childCount; i++) {
+			transform.GetChild(i).gameObject.SetActive(value);
+		}
 	}
 }
