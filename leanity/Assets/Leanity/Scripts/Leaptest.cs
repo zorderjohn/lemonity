@@ -20,7 +20,7 @@ public class Leaptest : MonoBehaviour {
 		if(frame.Hands.Count > 0) {
 			setVisible(true);
 			h = frame.Hands[0];
-			transform.rotation = lpToUnityRot(h.Rotation);
+			transform.localRotation = lpToUnityRot(h.Rotation);
 			transform.localPosition = lpToUnityVec(h.PalmPosition);
 		} else {
 			setVisible(false);	

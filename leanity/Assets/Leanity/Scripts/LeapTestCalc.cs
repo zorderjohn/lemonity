@@ -3,7 +3,7 @@ using System.Collections;
 using Leap;
 
 public class LeapTestCalc : MonoBehaviour {
-
+	public KeyCode key = KeyCode.A;
 	Controller c;
 	bool isHolding = false;
 	Quaternion initialObjectRot;
@@ -13,6 +13,7 @@ public class LeapTestCalc : MonoBehaviour {
 
 	Quaternion curHandRotation;
 	Vector3 curHandPosition;
+	public float posScale = 1f;
 
 	void Start () {
 		c = new Controller();
@@ -53,7 +54,7 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 	void DoMove() {
-		//transform.position = initialObjectPos + (curHandPosition - initialHandPos);
+		transform.position = initialObjectPos + (curHandPosition - initialHandPos) * posScale;
 		Quaternion deltaRot = Quaternion.Inverse( initialHandRot ) * curHandRotation; 
 		transform.rotation = deltaRot * initialObjectRot;
 	}
@@ -63,10 +64,10 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 	void KeyController() {
-		if(!isHolding && Input.GetKeyDown(KeyCode.A) ) {
+		if(!isHolding && Input.GetKeyDown(key) ) {
 			isHolding = true;
 			StartMoving();
-		} else if(isHolding && Input.GetKeyUp(KeyCode.A)) {
+		} else if(isHolding && Input.GetKeyUp(key)) {
 			isHolding = false;
 			StopMoving();
 		}
