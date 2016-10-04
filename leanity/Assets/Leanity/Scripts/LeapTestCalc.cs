@@ -14,6 +14,8 @@ public class LeapTestCalc : MonoBehaviour {
 	Quaternion curHandRotation;
 	Vector3 curHandPosition;
 	public float posScale = 1f;
+	public int rotScale = 2;
+	public bool isCamera = false;
 
 	void Start () {
 		c = new Controller();
@@ -54,9 +56,28 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 	void DoMove() {
-		transform.position = initialObjectPos + (curHandPosition - initialHandPos) * posScale;
+		Vector3 deltaMovement = (curHandPosition - initialHandPos) * posScale;
+		if(isCamera) {
+			deltaMovement = transform.rotation * deltaMovement;
+		}
+		transform.position = initialObjectPos + deltaMovement;
 		Quaternion deltaRot = Quaternion.Inverse( initialHandRot ) * curHandRotation; 
-		transform.rotation = deltaRot * initialObjectRot;
+		for(int i=1; i<rotScale; i++) {
+			deltaRot *= deltaRot;
+		}
+
+
+
+		if(isCamera) {
+			transform.rotation = initialObjectRot * deltaRot;
+			Vector3 vRots = transform.rotation.eulerAngles;
+			vRots.z = 0f;
+			transform.rotation = Quaternion.Euler(vRots);
+		} else {
+			transform.rotation = deltaRot * initialObjectRot;
+		}
+
+
 	}
 
 	void StopMoving() {
