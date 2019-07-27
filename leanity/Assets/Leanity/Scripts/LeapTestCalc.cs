@@ -17,6 +17,13 @@ public class LeapTestCalc : MonoBehaviour {
 	public int rotScale = 2;
 	public bool isCamera = false;
 
+	public bool invertAxis = false;
+	[Range(0f, 1f)]
+	public float grabThreshold = .5f;
+	public bool grabEnabled = false;
+
+	private float _grabValue = 0f;
+
 	void Start () {
 		c = new Controller();
 	}
@@ -29,6 +36,7 @@ public class LeapTestCalc : MonoBehaviour {
 			h = frame.Hands[0];
 			curHandRotation = lpToUnityRot(h.Rotation);
 			curHandPosition = lpToUnityVec(h.PalmPosition);
+			_grabValue = h.GrabStrength;
 		}
 
 		KeyController();
@@ -36,18 +44,20 @@ public class LeapTestCalc : MonoBehaviour {
 
 
 	Vector3 lpToUnityVec(Vector lv) {
-		const float scaleFactorX = 0.001f;
-		const float scaleFactorY = 0.001f;
-		const float scaleFactorZ = -0.001f;
+		float invertValue = invertAxis ? -1f : 1f;
+		float scaleFactorX = 0.001f * invertValue;
+		float scaleFactorY = 0.001f * invertValue;
+		float scaleFactorZ = -0.001f * invertValue;
 		return new Vector3(lv.x * scaleFactorX, lv.y * scaleFactorY, lv.z * scaleFactorZ);
 
 	}
 	Quaternion lpToUnityRot(LeapQuaternion lq) {
-		return new Quaternion(-lq.x, -lq.y, lq.z, lq.w);
+		float invertValue = invertAxis ? -1f : 1f;
+		return new Quaternion(-lq.x * invertValue, -lq.y * invertValue, lq.z * invertValue, lq.w);
 	}
 
 	void StartMoving() {
-		Debug.Log("holding!");
+		//Debug.Log("holding!");
 		initialHandPos = curHandPosition;
 		initialObjectPos = transform.position;
 
@@ -81,14 +91,17 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 	void StopMoving() {
-		Debug.Log("unholding");
+		//Debug.Log("unholding");
 	}
 
 	void KeyController() {
-		if(!isHolding && Input.GetKeyDown(key) ) {
+		bool triggerOn = grabEnabled ? _grabValue >= grabThreshold : Input.GetKeyDown(key);
+		bool triggerOff = grabEnabled ? _grabValue < grabThreshold : Input.GetKeyUp(key); 
+
+		if(!isHolding && triggerOn ) {
 			isHolding = true;
 			StartMoving();
-		} else if(isHolding && Input.GetKeyUp(key)) {
+		} else if(isHolding && triggerOff) {
 			isHolding = false;
 			StopMoving();
 		}
