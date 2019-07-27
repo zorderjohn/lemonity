@@ -22,21 +22,31 @@ public class LeapTestCalc : MonoBehaviour {
 	public float grabThreshold = .5f;
 	public bool grabEnabled = false;
 
+	[Header("Filter")]
+	public bool stabilizePosition = true;
+	[Range(0f, 1f)]
+	public float positionFilterValue = 0.5f;
+	[Range(0f, 1f)]
+	public float rotationFilterValue = 0.5f;
+
 	private float _grabValue = 0f;
+
 
 	void Start () {
 		c = new Controller();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		Frame frame = c.Frame();
 		Hand h;
 		if(frame.Hands.Count > 0) {
 			h = frame.Hands[0];
+
 			curHandRotation = lpToUnityRot(h.Rotation);
 			curHandPosition = lpToUnityVec(h.PalmPosition);
 			_grabValue = h.GrabStrength;
+
 		}
 
 		KeyController();
@@ -70,8 +80,9 @@ public class LeapTestCalc : MonoBehaviour {
 		if(isCamera) {
 			deltaMovement = transform.rotation * deltaMovement;
 		}
-		transform.position = initialObjectPos + deltaMovement;
-		Quaternion deltaRot = Quaternion.Inverse( initialHandRot ) * curHandRotation; 
+		Vector3 targetPosition = initialObjectPos + deltaMovement;
+		transform.position = stabilizePosition ? Vector3.Lerp(transform.position, targetPosition, positionFilterValue) : targetPosition;
+		Quaternion deltaRot = Quaternion.Inverse( initialHandRot ) * curHandRotation;
 		for(int i=1; i<rotScale; i++) {
 			deltaRot *= deltaRot;
 		}
@@ -79,7 +90,8 @@ public class LeapTestCalc : MonoBehaviour {
 
 
 		if(isCamera) {
-			transform.rotation = initialObjectRot * deltaRot;
+			Quaternion targetRotation = initialObjectRot * deltaRot;
+			transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 0.5f);
 			Vector3 vRots = transform.rotation.eulerAngles;
 			vRots.z = 0f;
 			transform.rotation = Quaternion.Euler(vRots);
@@ -96,7 +108,7 @@ public class LeapTestCalc : MonoBehaviour {
 
 	void KeyController() {
 		bool triggerOn = grabEnabled ? _grabValue >= grabThreshold : Input.GetKeyDown(key);
-		bool triggerOff = grabEnabled ? _grabValue < grabThreshold : Input.GetKeyUp(key); 
+		bool triggerOff = grabEnabled ? _grabValue < grabThreshold : Input.GetKeyUp(key);
 
 		if(!isHolding && triggerOn ) {
 			isHolding = true;
