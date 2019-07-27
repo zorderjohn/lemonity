@@ -34,7 +34,7 @@ namespace SpaceNavigatorDriver {
 			get {
 				if (_instance == null) {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-					_instance = SpaceNavigatorWindows.SubInstance;
+					_instance = SpaceNavigatorLeap.SubInstance;
 #endif
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 				_instance = SpaceNavigatorMac.SubInstance;

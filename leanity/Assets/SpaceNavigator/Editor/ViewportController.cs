@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Leanity;
 
 namespace SpaceNavigatorDriver {
 
@@ -34,6 +35,7 @@ namespace SpaceNavigatorDriver {
 			Settings.Read();
 			InitCameraRig();
 			StoreSelectionTransforms();
+            
 		}
 
 		#region - Callbacks -
@@ -49,9 +51,10 @@ namespace SpaceNavigatorDriver {
 		}
 		#endregion - Callbacks -
 
-		static void Update() {
-			// Autosave settings.
-			if (!Application.isPlaying && DateTime.Now.Second - _lastSaveTime > _saveInterval) {
+		static void Update() {          
+
+            // Autosave settings.
+            if (!Application.isPlaying && DateTime.Now.Second - _lastSaveTime > _saveInterval) {
 				Settings.Write();
 				_lastSaveTime = DateTime.Now.Second;
 			}
@@ -65,7 +68,7 @@ namespace SpaceNavigatorDriver {
 			if (Settings.LockHorizon && !_wasHorizonLocked)
 				StraightenHorizon();
 			_wasHorizonLocked = Settings.LockHorizon;
-
+            
 			// Return if device is idle.
 			if (SpaceNavigator.Translation == Vector3.zero &&
 				SpaceNavigator.Rotation == Quaternion.identity) {
@@ -111,7 +114,7 @@ namespace SpaceNavigatorDriver {
 			// Apply inversion of axes for fly/grabmove mode.
 			Vector3 translation = Vector3.Scale(SpaceNavigator.Translation, translationInversion);
 			Vector3 rotation = Vector3.Scale(SpaceNavigator.Rotation.eulerAngles, rotationInversion);
-
+            
 			_camera.Translate(translation, Space.Self);
 			if (sceneView.orthographic)
 				sceneView.size -= translation.z;

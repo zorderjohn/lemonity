@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace SpaceNavigatorDriver {
 
+#if false //LEAP MOTION TESTING MODE
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-	using TDx.TDxInput;
+    using TDx.TDxInput;
 
 	class SpaceNavigatorWindows : SpaceNavigator {
 		private const float TransSensScale = 0.0001f, RotSensScale = 0.0008f;
@@ -38,7 +39,7 @@ namespace SpaceNavigatorDriver {
 		private Device _device;
 		//private Keyboard _keyboard;
 
-		#region - Singleton -
+#region - Singleton -
 		/// <summary>
 		/// Private constructor, prevents a default instance of the <see cref="SpaceNavigatorWindows" /> class from being created.
 		/// </summary>
@@ -61,9 +62,9 @@ namespace SpaceNavigatorDriver {
 			get { return _subInstance ?? (_subInstance = new SpaceNavigatorWindows()); }
 		}
 		private static SpaceNavigatorWindows _subInstance;
-		#endregion - Singleton -
+#endregion - Singleton -
 
-		#region - IDisposable -
+#region - IDisposable -
 		public override void Dispose() {
 			try {
 				if (_device != null && _device.IsConnected) {
@@ -76,7 +77,8 @@ namespace SpaceNavigatorDriver {
 				Debug.LogError(ex.ToString());
 			}
 		}
-		#endregion - IDisposable -
+#endregion - IDisposable -
 	}
 #endif    // UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+#endif    // DISABLED TO TEST LEAP
 }
