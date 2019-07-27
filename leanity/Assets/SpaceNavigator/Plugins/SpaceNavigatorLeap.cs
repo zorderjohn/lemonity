@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using Leanity;
+//using Leanity;
 
 namespace SpaceNavigatorDriver {
 
@@ -17,10 +17,10 @@ namespace SpaceNavigatorDriver {
 	
     class Sensor
     {
-        private LeapManager _lm;
+        //private LeapManager _lm;
         public Sensor()
         {
-            _lm = new LeapManager();
+           // _lm = new LeapManager();
         }
 
         public SVector3 Translation
@@ -28,10 +28,10 @@ namespace SpaceNavigatorDriver {
             get
             {
                 SVector3 sv = new SVector3();
-                Vector3 v3 = _lm.Position;
+                /*Vector3 v3 = _lm.Position;
                 sv.X = v3.x;
                 sv.Y = v3.y;
-                sv.Z = v3.z;
+                sv.Z = v3.z;*/
                 return sv;
             }
         }
