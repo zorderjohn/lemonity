@@ -219,21 +219,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 98
-  posScale: 10
-  rotScale: 1
+  posScale: 0.5
+  rotScale: 0.4
+  rotScaleX: 1
+  rotScaleY: 1
+  rotScaleZ: 1
   isCamera: 1
   invertAxis: 1
   grabThreshold: 0.722
   grabEnabled: 1
-  stabilizePosition: 1
+  absoluteMovement: 0
+  stabilizePosition: 0
   positionFilterValue: 0.334
   rotationFilterValue: 0.295
   rotFilterFrequency: 120
-  rotFilterMinCutoff: 0.5
+  rotFilterMinCutoff: 0
   rotFilterBeta: 5
   rotFilterDcutoff: 1
   posFilterFrequency: 120
-  posFilterMinCutoff: 0.5
+  posFilterMinCutoff: 0
   posFilterBeta: 10
   posFilterDcutoff: 1
 --- !u!1001 &54181567
@@ -420,10 +424,14 @@ MonoBehaviour:
   key: 97
   posScale: 1
   rotScale: 2
+  rotScaleX: 1
+  rotScaleY: 1
+  rotScaleZ: 1
   isCamera: 0
   invertAxis: 0
   grabThreshold: 0.5
   grabEnabled: 0
+  absoluteMovement: 1
   stabilizePosition: 1
   positionFilterValue: 0.5
   rotationFilterValue: 0.5

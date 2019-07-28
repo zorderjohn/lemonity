@@ -13,14 +13,30 @@ public class LeapTestCalc : MonoBehaviour {
 
 	Quaternion curHandRotation;
 	Vector3 curHandPosition;
+	[Range(0f, 1f)]
 	public float posScale = 1f;
-	public int rotScale = 2;
+
+	[Range(0f, 1f)]
+	public float rotScale = 1f;
+
+	[Range(0f, 1f)]
+	public float rotScaleX = 1f;
+
+	[Range(0f, 1f)]
+	public float rotScaleY = 1f;
+
+	[Range(0f, 1f)]
+	public float rotScaleZ = 1f;
+
+
 	public bool isCamera = false;
 
 	public bool invertAxis = false;
 	[Range(0f, 1f)]
 	public float grabThreshold = .5f;
 	public bool grabEnabled = false;
+
+	public bool absoluteMovement = true;
 
 	[Header("Filter")]
 	public bool stabilizePosition = true;
@@ -92,32 +108,52 @@ public class LeapTestCalc : MonoBehaviour {
 		initialObjectRot = transform.rotation;
 	}
 
+	private float NormalizeAngle(float angle)
+	{
+		if (angle > 180f)
+		{
+			return angle - 360f;
+		}
+		return angle;
+	}
+
 	void DoMove() {
 		Vector3 deltaMovement = (curHandPosition - initialHandPos) * posScale;
 		if(isCamera) {
 			deltaMovement = transform.rotation * deltaMovement;
 		}
-		Vector3 targetPosition = initialObjectPos + deltaMovement;
+		Vector3 targetPosition = absoluteMovement ? initialObjectPos + deltaMovement : transform.position + deltaMovement;
 		//Vector3 stablePosition = Vector3.Lerp(transform.position, targetPosition, positionFilterValue);
 		positionFilter.UpdateParams(posFilterFrequency, posFilterMinCutoff, posFilterBeta, posFilterDcutoff);
 		Vector3 stablePosition = positionFilter.Filter(targetPosition);
 
 		transform.position = stabilizePosition ? stablePosition : targetPosition;
 		Quaternion deltaRot = Quaternion.Inverse( initialHandRot ) * curHandRotation;
-		for(int i=1; i<rotScale; i++) {
+		/*for(int i=1; i<rotScale; i++) {
 			deltaRot *= deltaRot;
-		}
+		}*/
+		Vector3 vDeltaRot = deltaRot.eulerAngles;
+		vDeltaRot.x = NormalizeAngle(vDeltaRot.x) * rotScale * rotScaleX;
+		vDeltaRot.y = NormalizeAngle(vDeltaRot.y) * rotScale * rotScaleY;
+		vDeltaRot.z = NormalizeAngle(vDeltaRot.z) * rotScale * rotScaleZ;
 
+		// * rotScale;
+		deltaRot = Quaternion.Euler(vDeltaRot);
+		GraphDbg.Log("x", vDeltaRot.x);
+		GraphDbg.Log("y", vDeltaRot.y);
+		Debug.Log(vDeltaRot);
 
 
 		if(isCamera) {
-			Quaternion targetRotation = initialObjectRot * deltaRot;
+			Quaternion targetRotation = absoluteMovement? initialObjectRot * deltaRot : transform.rotation * deltaRot;
 
 			rotationFilter.UpdateParams(rotFilterFrequency, rotFilterMinCutoff, rotFilterBeta, rotFilterDcutoff);
 			transform.rotation = rotationFilter.Filter(targetRotation);
 			//transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationFilterValue);
 			Vector3 vRots = transform.rotation.eulerAngles;
+			//vRots.x = vRots.x * rotScale;
 			vRots.z = 0f;
+			//vRots.y = vRots.y * rotScale;
 			transform.rotation = Quaternion.Euler(vRots);
 		} else {
 			transform.rotation = deltaRot * initialObjectRot;
