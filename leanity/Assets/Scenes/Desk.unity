@@ -126,6 +126,8 @@ GameObject:
   - component: {fileID: 21007796}
   - component: {fileID: 21007795}
   - component: {fileID: 21007800}
+  - component: {fileID: 21007801}
+  - component: {fileID: 21007802}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -174,7 +176,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -219,25 +221,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 98
-  posScale: 0.5
-  rotScale: 0.4
-  rotScaleX: 1
-  rotScaleY: 1
-  rotScaleZ: 1
+  posScaleMultiplier: 3
+  posScale: 1
+  rotScaleMultiplier: 1
+  rotScale: 1
+  perAxisRotScaleAdjustment: {x: 1, y: 1, z: 1}
   isCamera: 1
   invertAxis: 1
   grabThreshold: 0.722
   grabEnabled: 1
-  absoluteMovement: 0
-  stabilizePosition: 0
-  rotFilterFrequency: 120
+  absoluteMovement: 1
+  twoHands: 0
+  enableInertia: 1
+  angularDrag: 0.95
+  linearDrag: 0.95
+  velocityFrames: 5
+  filterFrequency: 120
   rotFilterMinCutoff: 0.01
   rotFilterBeta: 5
   rotFilterDcutoff: 1
-  posFilterFrequency: 120
   posFilterMinCutoff: 0.01
   posFilterBeta: 10
   posFilterDcutoff: 1
+--- !u!114 &21007801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 21007794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b567ea2796625444ab52872fe364b6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graphName: vel
+--- !u!114 &21007802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 21007794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b567ea2796625444ab52872fe364b6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graphName: angularVel
 --- !u!1001 &54181567
 Prefab:
   m_ObjectHideFlags: 0
@@ -420,22 +449,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 97
+  posScaleMultiplier: 1
   posScale: 1
+  rotScaleMultiplier: 1
   rotScale: 2
-  rotScaleX: 1
-  rotScaleY: 1
-  rotScaleZ: 1
+  perAxisRotScaleAdjustment: {x: 1, y: 1, z: 1}
   isCamera: 0
   invertAxis: 0
   grabThreshold: 0.5
   grabEnabled: 0
   absoluteMovement: 1
-  stabilizePosition: 1
-  rotFilterFrequency: 120
+  twoHands: 0
+  enableInertia: 0
+  angularDrag: 1
+  linearDrag: 1
+  velocityFrames: 5
+  filterFrequency: 120
   rotFilterMinCutoff: 1
   rotFilterBeta: 0
   rotFilterDcutoff: 1
-  posFilterFrequency: 120
   posFilterMinCutoff: 1
   posFilterBeta: 0
   posFilterDcutoff: 1

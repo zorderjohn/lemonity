@@ -76,18 +76,27 @@ public class LeapTestCalc : MonoBehaviour {
 	Controller c;
 	bool isHolding = false;
 
+	Quaternion startupObjectRot;
+	Vector3 startupObjectPos;
+
 	Quaternion initialObjectRot;
 	Vector3 initialObjectPos;
 
 	[Header("Sensitivity")]
 
+	[Range(1, 10)]
+	public int posScaleMultiplier = 1;
+
 	[Range(0f, 1f)]
 	public float posScale = 1f;
+
+	[Range(1, 10)]
+	public int rotScaleMultiplier = 1;
 
 	[Range(0f, 1f)]
 	public float rotScale = 1f;
 
-	public Vector3 perAxisRotationScale = Vector3.one;
+	public Vector3 perAxisRotScaleAdjustment = Vector3.one;
 
 	[Header("Operation Mode")]
 
@@ -101,10 +110,13 @@ public class LeapTestCalc : MonoBehaviour {
 	public bool absoluteMovement = true;
 	public bool twoHands = false;
 
-	[Header("Filter")]
-	public bool stabilizePosition = true;
-	public bool stabilizeRotation = true;
+	[Header("Inertia")]
+	public bool enableInertia = false;
+	public float angularDrag = 1f;
+	public float linearDrag = 1f;
+	public int velocityFrames = 5;
 
+	[Header("Filter")]
 	public float filterFrequency = 120f;
 
 	[Header("RotationFilter")]
@@ -117,14 +129,21 @@ public class LeapTestCalc : MonoBehaviour {
 	public float posFilterBeta = 0.0f;
 	public float posFilterDcutoff = 1.0f;
 
+	InertialObject _inertialData;
 
 	void Start () {
+
+		startupObjectPos = transform.position;
+		startupObjectRot = transform.rotation;
+
 		// Initialize tracking
 		c = new Controller();
 
 		//Create Hands
 		mainHand = new HandData(filterFrequency);
 		auxHand = new HandData(filterFrequency);
+
+		_inertialData = new InertialObject(velocityFrames);
 
 		OnValidate();
 	}
@@ -162,8 +181,9 @@ public class LeapTestCalc : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		UpdateTracking();
-		KeyController();
+		EventController();
 	}
+
 
 	Vector3 lpToUnityVec(Vector lv) {
 		float invertValue = invertAxis ? -1f : 1f;
@@ -175,11 +195,6 @@ public class LeapTestCalc : MonoBehaviour {
 	Quaternion lpToUnityRot(LeapQuaternion lq) {
 		float invertValue = invertAxis ? -1f : 1f;
 		return new Quaternion(-lq.x * invertValue, -lq.y * invertValue, lq.z * invertValue, lq.w);
-	}
-
-	void StartMoving() {
-		mainHand.CaptureInitialPose();
-		auxHand.CaptureInitialPose();
 	}
 
 
@@ -212,7 +227,7 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 	void OneHandMove() {
-		Vector3 deltaMovement = mainHand.DeltaPosition * posScale;
+		Vector3 deltaMovement = mainHand.DeltaPosition * posScale * posScaleMultiplier;
 
 		if (isCamera)
 		{
@@ -225,8 +240,8 @@ public class LeapTestCalc : MonoBehaviour {
 		Quaternion deltaRot = mainHand.DeltaRotation;
 
 		Vector3 eulerDeltaRot = NormalizedEulerAngles(deltaRot);
-		eulerDeltaRot.Scale(perAxisRotationScale);
-		eulerDeltaRot *= rotScale;
+		eulerDeltaRot.Scale(perAxisRotScaleAdjustment);
+		eulerDeltaRot *= rotScale * rotScaleMultiplier;
 
 		deltaRot = Quaternion.Euler(eulerDeltaRot);
 
@@ -242,12 +257,57 @@ public class LeapTestCalc : MonoBehaviour {
 		} else {
 			transform.rotation = deltaRot * initialObjectRot;
 		}
+
+		// Capture inertial data
+		float t = Time.time;
+		_inertialData.SetPosition(transform.position, t);
+		_inertialData.SetRotation(transform.rotation, t);
 	}
+
+	void TwoHandsMove()
+	{
+
+	}
+
+	void InertialMove()
+	{
+		float deltaTime = Time.deltaTime;
+
+
+		var linearVelocity = _inertialData.GetLinearVelocity();
+		linearVelocity *= linearDrag;
+		transform.position += linearVelocity * deltaTime;
+		_inertialData.SetPosition(transform.position, Time.time);
+
+		var angularVelocity = _inertialData.GetAngularVelocity();
+		var eulerAngularVelocity = NormalizedEulerAngles(angularVelocity);
+		angularVelocity.eulerAngles = eulerAngularVelocity/* * angularDrag*/;
+		transform.rotation =  angularVelocity * transform.rotation;
+		_inertialData.SetRotation(transform.rotation, Time.time);
+	}
+
+	void StartMoving() {
+		mainHand.CaptureInitialPose();
+		auxHand.CaptureInitialPose();
+
+		initialObjectPos = transform.position;
+		initialObjectRot = transform.rotation;
+
+		_inertialData.Clear();
+	}
+
 
 	void StopMoving() {
 	}
 
-	void KeyController() {
+	void EventController() {
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			transform.position = startupObjectPos;
+			transform.rotation = startupObjectRot;
+		}
+
 		bool isGrabbing = false;
 		if (twoHands)
 		{
@@ -271,7 +331,25 @@ public class LeapTestCalc : MonoBehaviour {
 		}
 
 		if(isHolding) {
-			OneHandMove();
+			if (twoHands)
+			{
+				TwoHandsMove();
+			}
+			else
+			{
+				OneHandMove();
+			}
 		}
+		else if (enableInertia)
+		{
+			InertialMove();
+		}
+
+
+		var linearVelocity = _inertialData.GetLinearVelocity();
+		GraphDbg.Log("vel", linearVelocity.magnitude);
+
+		var angularVelocity = _inertialData.GetAngularVelocity();
+		GraphDbg.Log("angularVel", NormalizedEulerAngles(angularVelocity).magnitude);
 	}
 }
