@@ -115,6 +115,7 @@ public class LeapTestCalc : MonoBehaviour {
 	public float angularDrag = 1f;
 	public float linearDrag = 1f;
 	public int velocityFrames = 5;
+	public int discardFrames = 5;
 
 	[Header("Filter")]
 	public float filterFrequency = 120f;
@@ -279,11 +280,25 @@ public class LeapTestCalc : MonoBehaviour {
 		transform.position += linearVelocity * deltaTime;
 		_inertialData.SetPosition(transform.position, Time.time);
 
-		var angularVelocity = _inertialData.GetAngularVelocity();
-		var eulerAngularVelocity = NormalizedEulerAngles(angularVelocity);
-		angularVelocity.eulerAngles = eulerAngularVelocity/* * angularDrag*/;
-		transform.rotation =  angularVelocity * transform.rotation;
-		_inertialData.SetRotation(transform.rotation, Time.time);
+		Vector3 rotationAxis = _inertialData.AngularVelocityAxis;
+		float angleSpeed = _inertialData.AngularVelocityAngle;
+
+		angleSpeed = angleSpeed * angularDrag;
+		_inertialData.AngularVelocityAngle = angleSpeed;
+
+		float deltaAngle = angleSpeed * deltaTime;
+		var deltaRotation = Quaternion.AngleAxis(deltaAngle, rotationAxis);
+		Quaternion orientation = deltaRotation * transform.rotation;
+
+		//TODO: Limit roll angle (avoid looking directly up or down)
+
+		// Up vector always pointing up
+		Vector3 eulerOrientation = orientation.eulerAngles;
+		eulerOrientation.z = 0;
+		orientation.eulerAngles = eulerOrientation;
+
+		transform.rotation = orientation;
+		//_inertialData.SetRotation(orientation, Time.time);
 	}
 
 	void StartMoving() {
@@ -297,7 +312,11 @@ public class LeapTestCalc : MonoBehaviour {
 	}
 
 
-	void StopMoving() {
+	void StopMoving()
+	{
+		//TODO: calculate angular velocity every frame to detect discontinuities
+		//_inertialData.DiscardFrames(discardFrames);
+		//_inertialData.CalculateAngularVelocity();
 	}
 
 	void EventController() {
@@ -306,6 +325,7 @@ public class LeapTestCalc : MonoBehaviour {
 		{
 			transform.position = startupObjectPos;
 			transform.rotation = startupObjectRot;
+			_inertialData.Clear();
 		}
 
 		bool isGrabbing = false;
@@ -339,17 +359,15 @@ public class LeapTestCalc : MonoBehaviour {
 			{
 				OneHandMove();
 			}
+			_inertialData.CalculateAngularVelocity();
 		}
 		else if (enableInertia)
 		{
 			InertialMove();
 		}
 
+		GraphDbg.Log("vel", _inertialData.GetLinearVelocity().magnitude);
 
-		var linearVelocity = _inertialData.GetLinearVelocity();
-		GraphDbg.Log("vel", linearVelocity.magnitude);
-
-		var angularVelocity = _inertialData.GetAngularVelocity();
-		GraphDbg.Log("angularVel", NormalizedEulerAngles(angularVelocity).magnitude);
+		GraphDbg.Log("angularVel", _inertialData.AngularVelocityAngle, 1000);
 	}
 }

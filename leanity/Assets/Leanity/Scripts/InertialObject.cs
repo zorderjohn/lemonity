@@ -16,6 +16,9 @@ public class InertialObject {
 		public float Timestamp;
 	}
 
+	public Vector3 AngularVelocityAxis { get; set; }
+	public float AngularVelocityAngle { get; set; }
+
 	private CircularBuffer<PositionTime> _posBuffer;
 	private CircularBuffer<RotationTime> _rotBuffer;
 	private readonly int _bufferLength;
@@ -41,7 +44,20 @@ public class InertialObject {
 
 	public void Clear()
 	{
+		_posBuffer.Clear();
+		_rotBuffer.Clear();
+	}
 
+	public void DiscardFrames(int frames)
+	{
+		for (int i = 0; i < frames; i++)
+		{
+			if (!_rotBuffer.IsEmpty)
+				_rotBuffer.PopBack();
+
+			if (!_posBuffer.IsEmpty)
+				_posBuffer.PopBack();
+		}
 	}
 
 	public Vector3 GetLinearVelocity()
@@ -57,20 +73,28 @@ public class InertialObject {
 		return (lastPos.Position - oldPos.Position) / deltaTime;
 	}
 
-	public Quaternion GetAngularVelocity()
+	public void CalculateAngularVelocity()
 	{
 		if (_rotBuffer.IsEmpty || _rotBuffer.Size == 1)
 		{
-			return default(Quaternion);
+			AngularVelocityAxis = Vector3.one;
+			AngularVelocityAngle = 0f;
+			return;
 		}
 		var lastRot = _rotBuffer.Back();
 		var oldRot = _rotBuffer.Front();
 
-		float inverseDeltaTime = 1f/(lastRot.Timestamp - oldRot.Timestamp);
-		Quaternion deltaRotation = Quaternion.Inverse(oldRot.Rotation) * lastRot.Rotation;
-		Vector3 eulerAngularVelocity = NormalizedEulerAngles(deltaRotation) * inverseDeltaTime;
+		float deltaTime = lastRot.Timestamp - oldRot.Timestamp;
 
-		return Quaternion.Euler(eulerAngularVelocity);
+		Quaternion deltaRotation = Quaternion.Inverse(oldRot.Rotation) * lastRot.Rotation;
+
+		Vector3 axis;
+		float angle;
+		deltaRotation.ToAngleAxis(out angle, out axis);
+		angle = NormalizeAngle(angle) / deltaTime;
+
+		AngularVelocityAxis = axis;
+		AngularVelocityAngle = angle;
 	}
 
 	private Vector3 NormalizedEulerAngles(Quaternion q)
