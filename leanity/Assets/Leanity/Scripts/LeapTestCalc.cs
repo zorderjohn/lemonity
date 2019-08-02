@@ -280,22 +280,22 @@ public class LeapTestCalc : MonoBehaviour {
 		transform.position += linearVelocity * deltaTime;
 		_inertialData.SetPosition(transform.position, Time.time);
 
-		Vector3 rotationAxis = _inertialData.AngularVelocityAxis;
-		float angleSpeed = _inertialData.AngularVelocityAngle;
+		Vector3 eulerVelocity = _inertialData.AngularVelocityEuler * angularDrag;
 
-		angleSpeed = angleSpeed * angularDrag;
-		_inertialData.AngularVelocityAngle = angleSpeed;
+		// Up vector always pointing up
+		eulerVelocity.z = 0;
+		_inertialData.AngularVelocityEuler = eulerVelocity;
 
-		float deltaAngle = angleSpeed * deltaTime;
-		var deltaRotation = Quaternion.AngleAxis(deltaAngle, rotationAxis);
+		Quaternion deltaRotation = Quaternion.Euler( eulerVelocity * deltaTime );
+
 		Quaternion orientation = deltaRotation * transform.rotation;
-
-		//TODO: Limit roll angle (avoid looking directly up or down)
 
 		// Up vector always pointing up
 		Vector3 eulerOrientation = orientation.eulerAngles;
 		eulerOrientation.z = 0;
 		orientation.eulerAngles = eulerOrientation;
+
+		//TODO: Limit roll angle (avoid looking directly up or down)
 
 		transform.rotation = orientation;
 		//_inertialData.SetRotation(orientation, Time.time);
@@ -368,6 +368,6 @@ public class LeapTestCalc : MonoBehaviour {
 
 		GraphDbg.Log("vel", _inertialData.GetLinearVelocity().magnitude);
 
-		GraphDbg.Log("angularVel", _inertialData.AngularVelocityAngle, 1000);
+		GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1000);
 	}
 }
