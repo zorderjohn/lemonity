@@ -102,6 +102,8 @@ public class LeapTestCalc : MonoBehaviour {
 
 	public bool isCamera = false;
 	public bool invertAxis = false;
+	[Range (0f, 90f)]
+	public float pitchLimit = 75f;
 
 	[Range(0f, 1f)]
 	public float grabThreshold = .5f;
@@ -198,6 +200,12 @@ public class LeapTestCalc : MonoBehaviour {
 		return new Quaternion(-lq.x * invertValue, -lq.y * invertValue, lq.z * invertValue, lq.w);
 	}
 
+	private Vector3 ClampCameraLimits(Vector3 euler)
+	{
+		euler.x = Mathf.Clamp(NormalizeAngle(euler.x), -pitchLimit, pitchLimit);
+		euler.z = 0;
+		return euler;
+	}
 
 	private Vector3 NormalizedEulerAngles (Quaternion q)
 	{
@@ -250,10 +258,8 @@ public class LeapTestCalc : MonoBehaviour {
 		if(isCamera) {
 			Quaternion targetRotation = absoluteMovement? initialObjectRot * deltaRot : transform.rotation * deltaRot;
 
-			// Disable Z rotation
-			Vector3 vRots = targetRotation.eulerAngles;
-			vRots.z = 0f;
-			transform.rotation = Quaternion.Euler(vRots);
+			Vector3 clampedEulerRotation = ClampCameraLimits(targetRotation.eulerAngles);
+			transform.rotation = Quaternion.Euler(clampedEulerRotation);
 
 		} else {
 			transform.rotation = deltaRot * initialObjectRot;
@@ -290,12 +296,7 @@ public class LeapTestCalc : MonoBehaviour {
 
 		Quaternion orientation = deltaRotation * transform.rotation;
 
-		// Up vector always pointing up
-		Vector3 eulerOrientation = orientation.eulerAngles;
-		eulerOrientation.z = 0;
-		orientation.eulerAngles = eulerOrientation;
-
-		//TODO: Limit roll angle (avoid looking directly up or down)
+		orientation.eulerAngles = ClampCameraLimits(orientation.eulerAngles);
 
 		transform.rotation = orientation;
 		//_inertialData.SetRotation(orientation, Time.time);
@@ -314,8 +315,7 @@ public class LeapTestCalc : MonoBehaviour {
 
 	void StopMoving()
 	{
-		//TODO: calculate angular velocity every frame to detect discontinuities
-		//_inertialData.DiscardFrames(discardFrames);
+		_inertialData.DiscardFrames(discardFrames);
 		//_inertialData.CalculateAngularVelocity();
 	}
 
