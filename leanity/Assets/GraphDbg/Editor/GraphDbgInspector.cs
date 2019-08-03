@@ -62,6 +62,17 @@ public class GraphDbgInspector : Editor {
 				maxData.x = Mathf.Max(lines[i].x, maxData.x);
 				maxData.y = Mathf.Max(lines[i].y, maxData.y);
 			}
+
+			if (!targetPlayer.autoMinMax)
+			{
+				minData.y = targetPlayer.minValue;
+				maxData.y = targetPlayer.maxValue;
+			} else
+			{
+				targetPlayer.minValue = minData.y;
+				targetPlayer.maxValue = maxData.y;
+			}
+
 			float xDivider = 1;
 			float yDivider = 1;
 			if (maxData.x-minData.x>0)

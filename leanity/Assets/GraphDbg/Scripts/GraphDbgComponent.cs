@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class GraphDbgComponent : MonoBehaviour {
 	public string graphName;
-
-	// Use this for initialization
-	void Start () {
-
-	}
-
-	// Update is called once per frame
-	void Update () {
-
-	}
+	public bool autoMinMax = true;
+	public float maxValue;
+	public float minValue;
 }
 

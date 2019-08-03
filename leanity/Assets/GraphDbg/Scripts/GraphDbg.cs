@@ -59,7 +59,7 @@ public class GraphDbg : MonoBehaviour {
 			enumr.MoveNext();
 			graphList = enumr.Current;
 			if (graphList.samples==null)
-				return 0;			
+				return 0;
 		}
 		if (graphList.samples.Count==0)
 			return 0;
@@ -84,7 +84,7 @@ public class GraphDbg : MonoBehaviour {
 			enumr.MoveNext();
 			graphList = enumr.Current;
 			if (graphList.samples==null)
-				return 0;			
+				return 0;
 		}
 		return graphList.samples.Count;
 	}
@@ -107,7 +107,7 @@ public class GraphDbg : MonoBehaviour {
 			enumr.MoveNext();
 			graphList = enumr.Current;
 			if (graphList.samples==null)
-				return new Vector3[0];			
+				return new Vector3[0];
 		}
 		int n = graphList.samples.Count;
 		if (n==0)
