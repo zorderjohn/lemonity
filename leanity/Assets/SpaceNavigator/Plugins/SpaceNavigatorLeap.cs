@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Leap;
 //using Leanity;
 
-namespace SpaceNavigatorDriver {
 
+namespace SpaceNavigatorDriver {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-    struct SVector3
+	struct SVector3
     {
         public float X, Y, Z;
     }
@@ -14,7 +15,7 @@ namespace SpaceNavigatorDriver {
     {
         public float Angle, X, Y, Z;
     }
-	
+
     class Sensor
     {
         //private LeapManager _lm;
@@ -64,44 +65,47 @@ namespace SpaceNavigatorDriver {
 		// Public API
 		public override Vector3 GetTranslation() {
 			float sensitivity = Application.isPlaying ? Settings.PlayTransSens : Settings.TransSens[Settings.CurrentGear];
-			return (SubInstance._sensor == null ?
+			return Vector3.zero;
+			/*return (SubInstance._frame == null ?
 						Vector3.zero :
 						new Vector3(
-							Settings.GetLock(DoF.Translation, Axis.X) ? 0 : (float)SubInstance._sensor.Translation.X,
-							Settings.GetLock(DoF.Translation, Axis.Y) ? 0 : (float)SubInstance._sensor.Translation.Y,
-							Settings.GetLock(DoF.Translation, Axis.Z) ? 0 : -(float)SubInstance._sensor.Translation.Z) *
-						sensitivity * TransSensScale);
+							Settings.GetLock(DoF.Translation, Axis.X) ? 0 : (float)SubInstance._frame.Translation.X,
+							Settings.GetLock(DoF.Translation, Axis.Y) ? 0 : (float)SubInstance._frame.Translation.Y,
+							Settings.GetLock(DoF.Translation, Axis.Z) ? 0 : -(float)SubInstance._frame.Translation.Z) *
+						sensitivity * TransSensScale);*/
 		}
 		public override Quaternion GetRotation() {
 			float sensitivity = Application.isPlaying ? Settings.PlayRotSens : Settings.RotSens;
-			return (SubInstance._sensor == null ?
+			return Quaternion.identity;
+			/*return (SubInstance._frame == null ?
 						Quaternion.identity :
 						Quaternion.AngleAxis(
-							(float)SubInstance._sensor.Rotation.Angle * sensitivity * RotSensScale,
+							(float)SubInstance._frame.Rotation.Angle * sensitivity * RotSensScale,
 							new Vector3(
-								Settings.GetLock(DoF.Rotation, Axis.X) ? 0 : -(float)SubInstance._sensor.Rotation.X,
-								Settings.GetLock(DoF.Rotation, Axis.Y) ? 0 : -(float)SubInstance._sensor.Rotation.Y,
-								Settings.GetLock(DoF.Rotation, Axis.Z) ? 0 : (float)SubInstance._sensor.Rotation.Z)));
+								Settings.GetLock(DoF.Rotation, Axis.X) ? 0 : -(float)SubInstance._frame.Rotation.X,
+								Settings.GetLock(DoF.Rotation, Axis.Y) ? 0 : -(float)SubInstance._frame.Rotation.Y,
+								Settings.GetLock(DoF.Rotation, Axis.Z) ? 0 : (float)SubInstance._frame.Rotation.Z)));*/
 		}
 
 		// Device variables
-		private Sensor _sensor;
-		private Device _device;
+		private Frame _frame;
+		private Controller _controller;
         //private Keyboard _keyboard;
 
-        #region - Singleton -
+#region - Singleton -
         /// <summary>
         /// Private constructor, prevents a default instance of the <see cref="SpaceNavigatorLeap" /> class from being created.
         /// </summary>
         private SpaceNavigatorLeap() {
+			return;
 			try {
-				if (_device == null) {
-					_device = new Device();
-					_sensor = _device.Sensor;
+				if (_controller == null) {
+					_controller = new Controller();
+					_frame = _controller.Frame();
 					//_keyboard = _device.Keyboard;
 				}
-				if (!_device.IsConnected)
-					_device.Connect();
+				if (!_controller.IsConnected)
+					_controller.StartConnection();
 			}
 			catch (COMException ex) {
 				Debug.LogError(ex.ToString());
@@ -112,13 +116,14 @@ namespace SpaceNavigatorDriver {
 			get { return _subInstance ?? (_subInstance = new SpaceNavigatorLeap()); }
 		}
 		private static SpaceNavigatorLeap _subInstance;
-		#endregion - Singleton -
+#endregion - Singleton -
 
-		#region - IDisposable -
+#region - IDisposable -
 		public override void Dispose() {
+			return;
 			try {
-				if (_device != null && _device.IsConnected) {
-					_device.Disconnect();
+				if (_controller != null && _controller.IsConnected) {
+					_controller.StopConnection();
 					_subInstance = null;
 					GC.Collect();
 				}
@@ -127,7 +132,7 @@ namespace SpaceNavigatorDriver {
 				Debug.LogError(ex.ToString());
 			}
 		}
-		#endregion - IDisposable -
+#endregion - IDisposable -
 	}
 #endif    // UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 }
