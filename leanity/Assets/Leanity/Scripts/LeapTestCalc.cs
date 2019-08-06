@@ -94,16 +94,16 @@ namespace Leanity
 		{
 			customHand.Rotation = lpToUnityRot(leapHand.Rotation);
 			customHand.Position = lpToUnityVec(leapHand.PalmPosition);
-			customHand.grabValue = leapHand.GrabStrength;
-			customHand.detected = true;
+			customHand.GrabValue = leapHand.GrabStrength;
+			customHand.Detected = true;
 		}
 
 		void UpdateTracking()
 		{
 			Frame frame = c.Frame();
 			// Being pesimistic to avoid some conditionals
-			mainHand.detected = false;
-			auxHand.detected = false;
+			mainHand.Detected = false;
+			auxHand.Detected = false;
 
 			// TODO: Check coherence between left/right and hand ids
 			if (frame.Hands.Count > 0)
@@ -278,12 +278,12 @@ namespace Leanity
 			bool isGrabbing = false;
 			if (twoHands)
 			{
-				isGrabbing = mainHand.detected && mainHand.grabValue >= grabThreshold &&
-							 auxHand.detected && auxHand.grabValue >= grabThreshold;
+				isGrabbing = mainHand.Detected && mainHand.GrabValue >= grabThreshold &&
+							 auxHand.Detected && auxHand.GrabValue >= grabThreshold;
 			}
 			else
 			{
-				isGrabbing = mainHand.detected && mainHand.grabValue >= grabThreshold;
+				isGrabbing = mainHand.Detected && mainHand.GrabValue >= grabThreshold;
 			}
 
 

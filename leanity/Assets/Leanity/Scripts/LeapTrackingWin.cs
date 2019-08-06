@@ -44,8 +44,8 @@ namespace Leanity
 				_frame = _controller.Frame();
 
 				// Being pesimistic to avoid some conditionals
-				MainHandData.detected = false;
-				AuxHandData.detected = false;
+				MainHandData.Detected = false;
+				AuxHandData.Detected = false;
 
 				// TODO: Check coherence between left/right and hand ids
 				if (_frame.Hands.Count > 0)
@@ -99,12 +99,13 @@ namespace Leanity
 		#endregion
 
 
-		private void UpdateHandData(ref Leap.Hand leapHand, ref HandData customHand)
+		private void UpdateHandData(ref Leap.Hand leapHand, ref HandData hand)
 		{
-			customHand.Rotation = leapToUnityRotation(leapHand.Rotation);
-			customHand.Position = leapToUnityVector(leapHand.PalmPosition);
-			customHand.grabValue = leapHand.GrabStrength;
-			customHand.detected = true;
+			hand.Rotation = leapToUnityRotation(leapHand.Rotation);
+			hand.Position = leapToUnityVector(leapHand.PalmPosition);
+			hand.GrabValue = leapHand.GrabStrength;
+			hand.Detected = true;
+			hand.IsRight = leapHand.IsRight;
 		}
 
 		private Vector3 leapToUnityVector(Leap.Vector lv, bool invertAxis = false)
