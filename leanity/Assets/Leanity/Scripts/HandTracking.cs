@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Leanity
 {
 	public abstract class HandTracking : IDisposable
 	{
 		#region Public Interface
-		public static HandData MainHandData
+		public static HandData RightHandData
 		{
-			get { return Instance.GetMainHandData(); }
+			get { return Instance.GetRightHandData(); }
 		}
-		public static HandData AuxHandData
+		public static HandData LeftHandData
 		{
-			get { return Instance.GetAuxHandData(); }
+			get { return Instance.GetLeftHandData(); }
 		}
 
 		public static void Update()
@@ -23,8 +20,8 @@ namespace Leanity
 		}
 
 		protected abstract void UpdateTracking();
-		protected abstract HandData GetMainHandData();
-		protected abstract HandData GetAuxHandData();
+		protected abstract HandData GetRightHandData();
+		protected abstract HandData GetLeftHandData();
 
 		public abstract void Dispose();
 

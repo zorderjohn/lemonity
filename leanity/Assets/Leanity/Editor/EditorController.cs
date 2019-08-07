@@ -8,6 +8,7 @@ namespace Leanity
 	[Serializable]
 	class EditorController
 	{
+
 		static EditorController()
 		{
 			EditorApplication.update += Update;
@@ -15,7 +16,7 @@ namespace Leanity
 
 		static void Update()
 		{
-			HandTracking.Update();
+			
 		}
 	}
 }

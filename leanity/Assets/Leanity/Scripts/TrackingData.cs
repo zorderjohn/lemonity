@@ -5,8 +5,6 @@ namespace Leanity
 	public class HandData
 	{
 		public bool IsRight { get; set; }
-		public Vector3 InitialPosition { get; private set; }
-		public Quaternion InitialRotation { get; private set; }
 		public float GrabValue { get; set; }
 		public bool Detected { get; set; }
 
@@ -30,17 +28,6 @@ namespace Leanity
 			}
 		}
 
-		public Vector3 DeltaPosition
-		{
-			get { return Position - InitialPosition; }
-		}
-
-		public Quaternion DeltaRotation
-		{
-			get { return Quaternion.Inverse(InitialRotation) * Rotation; }
-		}
-
-
 		private OneEuroFilter<Quaternion> _rotationFilter;
 		private OneEuroFilter<Vector3> _positionFilter;
 
@@ -48,12 +35,6 @@ namespace Leanity
 		{
 			_rotationFilter = new OneEuroFilter<Quaternion>(filterFrequency);
 			_positionFilter = new OneEuroFilter<Vector3>(filterFrequency);
-		}
-
-		public void CaptureInitialPose()
-		{
-			InitialPosition = Position;
-			InitialRotation = Rotation;
 		}
 
 		public void SetRotationFilterParams(float frequency, float minCutOff, float beta, float dCutOff)

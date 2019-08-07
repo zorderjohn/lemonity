@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -12,29 +10,36 @@ namespace Leanity
 		// Private members
 		private Leap.Controller _controller;
 		private Leap.Frame _frame;
-		private HandData _mainHandData;
-		private HandData _auxHandData;
+		private HandData _rightHandData;
+		private HandData _leftHandData;
 
 		#region Singleton
 		private LeapTrackingWin()
 		{
-			_mainHandData = new HandData(120);
-			_auxHandData = new HandData(120);
+			_rightHandData = new HandData(120);
+			_leftHandData = new HandData(120);
+			Options.OnOptionsChange += FilterParameterUpdate;
 
 			try
 			{
 				if (_controller == null)
 				{
 					_controller = new Leap.Controller();
-					//_sensor = _device.Sensor;
 				}
-				/*if (!_device.IsConnected)
-					_device.Connect();*/
 			}
 			catch (Exception ex)
 			{
 				Debug.LogError(ex.ToString());
 			}
+		}
+
+		private void FilterParameterUpdate()
+		{
+			_rightHandData.SetRotationFilterParams(Options.FilterFrequency, Options.RotFilterMinCutoff, Options.RotFilterBeta, Options.RotFilterDcutoff);
+			_rightHandData.SetPositionFilterParams(Options.FilterFrequency, Options.PosFilterMinCutoff, Options.PosFilterBeta, Options.PosFilterDcutoff);
+
+			_leftHandData.SetRotationFilterParams(Options.FilterFrequency, Options.RotFilterMinCutoff, Options.RotFilterBeta, Options.RotFilterDcutoff);
+			_leftHandData.SetPositionFilterParams(Options.FilterFrequency, Options.PosFilterMinCutoff, Options.PosFilterBeta, Options.PosFilterDcutoff);
 		}
 
 		protected override void UpdateTracking()
@@ -44,32 +49,31 @@ namespace Leanity
 				_frame = _controller.Frame();
 
 				// Being pesimistic to avoid some conditionals
-				MainHandData.Detected = false;
-				AuxHandData.Detected = false;
+				RightHandData.Detected = false;
+				LeftHandData.Detected = false;
 
-				// TODO: Check coherence between left/right and hand ids
-				if (_frame.Hands.Count > 0)
+				foreach (var hand in _frame.Hands)
 				{
-					Leap.Hand h = _frame.Hands[0];
-					UpdateHandData(ref h, ref _mainHandData);
-				}
-
-				if (_frame.Hands.Count > 1)
-				{
-					Leap.Hand h = _frame.Hands[1];
-					UpdateHandData(ref h, ref _auxHandData);
+					if (hand.IsRight)
+					{
+						UpdateHandData(hand, ref _rightHandData);
+					}
+					else
+					{
+						UpdateHandData(hand, ref _leftHandData);
+					}
 				}
 			}
 		}
 
-		protected override HandData GetMainHandData()
+		protected override HandData GetRightHandData()
 		{
-			return _mainHandData;
+			return _rightHandData;
 		}
 
-		protected override HandData GetAuxHandData()
+		protected override HandData GetLeftHandData()
 		{
-			return _auxHandData;
+			return _leftHandData;
 		}
 
 		public static LeapTrackingWin SubInstance
@@ -99,7 +103,7 @@ namespace Leanity
 		#endregion
 
 
-		private void UpdateHandData(ref Leap.Hand leapHand, ref HandData hand)
+		private void UpdateHandData(Leap.Hand leapHand, ref HandData hand)
 		{
 			hand.Rotation = leapToUnityRotation(leapHand.Rotation);
 			hand.Position = leapToUnityVector(leapHand.PalmPosition);

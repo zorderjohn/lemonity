@@ -216,7 +216,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 21007794}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dcb472a8316f1c48a8ca81c5febd171, type: 3}
   m_Name: 
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphName: vel
   autoMinMax: 1
-  maxValue: 0.85128057
+  maxValue: 1.4969876
   minValue: 0
 --- !u!114 &21007802
 MonoBehaviour:
@@ -274,8 +274,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphName: angularVel
   autoMinMax: 1
-  maxValue: 8.391149e-19
-  minValue: 0
+  maxValue: 207.31583
+  minValue: 0.010639794
 --- !u!114 &21007803
 MonoBehaviour:
   m_ObjectHideFlags: 0
