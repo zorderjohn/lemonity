@@ -10,6 +10,8 @@ namespace Leanity
 		private static Vector2 _scrollPosition;
 		private static Texture _rightHandTexture;
 		private static Texture _leftHandTexture;
+		private static Texture _rightHandGrabTexture;
+		private static Texture _leftHandGrabTexture;
 		private readonly float _workspaceWidth = 0.5f;
 		private readonly float _workspaceDepth = 0.5f;
 
@@ -53,6 +55,7 @@ namespace Leanity
 			GUILayout.EndHorizontal();
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 100, 20, 20);
 			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
+			GUI.enabled = true;
 		}
 
 		private void DrawHandPosition(HandData hand, Rect r)
@@ -60,17 +63,44 @@ namespace Leanity
 			if (hand.Detected)
 			{
 				Rect rImage = new Rect(r);
-				var handTexture = hand.IsRight ? _rightHandTexture : _leftHandTexture;
+				Texture handTexture;
+				GrabController grabController;
+				if (hand.IsRight)
+				{
+					grabController = MotionController.LatestInstance.RightGrab;
+					handTexture = grabController.IsHolding ? _rightHandGrabTexture : _rightHandTexture;
+				}
+				else
+				{
+					grabController = MotionController.LatestInstance.LeftGrab;
+					handTexture = grabController.IsHolding ? _leftHandGrabTexture : _leftHandTexture;
+				}
 				rImage.width = handTexture.width;
 				rImage.height = handTexture.height;
 
+				var handRectCoords = GetRectCoords(hand.Position, r);
+				var handInitialRectCoords = GetRectCoords(grabController.HandInitialPosition, r);
 
-				rImage.x += (int)((hand.Position.x / _workspaceWidth) * r.width - rImage.width / 2 + r.width / 2);
-				rImage.y -= (int)((hand.Position.z / _workspaceDepth) * r.height + rImage.height / 2 - r.height / 2);
+				rImage.x = (int)(handRectCoords.x - rImage.width / 2);
+				rImage.y = (int)(handRectCoords.y - rImage.height / 2);
+
+				if (grabController.IsHolding)
+				{
+					Handles.color = Color.red;
+					Handles.DrawLine(handInitialRectCoords, handRectCoords);
+				}
 
 				//rotatearoundpivot
 				GUI.DrawTexture(rImage, handTexture, ScaleMode.ScaleToFit);
 			}
+		}
+
+		private Vector2 GetRectCoords(Vector3 worldCoords, Rect r)
+		{
+			Vector2 coords = new Vector2(r.x, r.y);
+			coords.x += (worldCoords.x / _workspaceWidth) * r.width + r.width * 0.5f;
+			coords.y += -(worldCoords.z / _workspaceDepth) * r.height + r.height * 0.5f;
+			return coords;
 		}
 
 		[MenuItem("Window/Leanity &l")]
@@ -96,6 +126,8 @@ namespace Leanity
 			{
 				_rightHandTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/RightHand.png");
 				_leftHandTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHand.png");
+				_rightHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/RightHandGrab.png");
+				_leftHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHandGrab.png");
 			}
 		}
 		public void Awake()

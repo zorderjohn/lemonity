@@ -28,8 +28,10 @@ namespace Leanity
 			set { _motionStyle.ObjectRotation = value; }
 		}
 
-		private GrabController _leftGrab = new GrabController();
-		private GrabController _rightGrab = new GrabController();
+		public static MotionController LatestInstance { get; private set; }
+
+		public GrabController LeftGrab { get; private set; }
+		public GrabController RightGrab { get; private set; }
 
 		private bool _isHolding = false;
 		private InertialObject _inertialData;
@@ -37,9 +39,12 @@ namespace Leanity
 		public MotionController()
 		{
 			Options.Load();
-			_inertialData = new InertialObject(Options.VelocityFrames);
-			MotionStyle = new AbsoluteMotion();
 			Options.OnOptionsChange += OnOptionsChanged;
+			_inertialData = new InertialObject(Options.VelocityFrames);
+			LeftGrab = new GrabController();
+			RightGrab = new GrabController();
+			MotionStyle = new AbsoluteMotion();
+			LatestInstance = this;
 		}
 
 		public void OnOptionsChanged()
@@ -58,8 +63,8 @@ namespace Leanity
 			_inertialData.SetPosition(ObjectPosition, t);
 			_inertialData.SetRotation(ObjectRotation, t);
 
-			_leftGrab.Update(HandTracking.LeftHandData, ObjectPosition, ObjectRotation);
-			_rightGrab.Update(HandTracking.RightHandData, ObjectPosition, ObjectRotation);
+			LeftGrab.Update(HandTracking.LeftHandData, ObjectPosition, ObjectRotation);
+			RightGrab.Update(HandTracking.RightHandData, ObjectPosition, ObjectRotation);
 
 			EventController();
 
@@ -69,13 +74,13 @@ namespace Leanity
 
 		private void InitMotionStyle()
 		{
-			_motionStyle.LeftGrab = _leftGrab;
-			_motionStyle.RightGrab = _rightGrab;
+			_motionStyle.LeftGrab = LeftGrab;
+			_motionStyle.RightGrab = RightGrab;
 		}
 
 		private void EventController()
 		{
-			bool anyHandHolding = _leftGrab.IsHolding || _rightGrab.IsHolding;
+			bool anyHandHolding = LeftGrab.IsHolding || RightGrab.IsHolding;
 
 			if (anyHandHolding)
 			{
