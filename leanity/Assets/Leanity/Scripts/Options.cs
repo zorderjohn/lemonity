@@ -11,10 +11,16 @@ namespace Leanity
 	[Serializable]
 	public static class Options
 	{
+		public static event Action OnOptionsLoad;
 		public static event Action OnOptionsChange;
 
 		[SerializeField]
-		public static WorkingMode Mode;
+		private static WorkingMode _mode;
+		public static WorkingMode Mode
+		{
+			get { return _mode; }
+			set { _mode = value; SetDirty(); }
+		}
 
 		#region Sensitivity
 		private static float _posScale;
@@ -61,6 +67,13 @@ namespace Leanity
 		{
 			get { return _grabEnabled; }
 			set { _grabEnabled = value; SetDirty(); }
+		}
+
+		private static bool _invertAxis;
+		public static bool InvertAxis
+		{
+			get { return _invertAxis; }
+			set { _invertAxis = value; SetDirty(); }
 		}
 		#endregion
 
@@ -158,7 +171,7 @@ namespace Leanity
 		private static void SetDirty()
 		{
 			_dirty = true;
-			if (OnOptionsChange != null)
+			if (OnOptionsChange != null && _init)
 			{
 				OnOptionsChange.Invoke();
 			}
@@ -181,6 +194,11 @@ namespace Leanity
 
 				// Camera
 				PlayerPrefs.SetFloat("PitchLimit", PitchLimit);
+
+				// Interaction
+				PlayerPrefs.SetInt("GrabEnabled", GrabEnabled ? 1 : 0);
+				PlayerPrefs.SetFloat("GrabThreshold", GrabThreshold);
+				PlayerPrefs.SetInt("InvertAxis", InvertAxis ? 1 : 0);
 
 				// Inertia
 				PlayerPrefs.SetInt("EnableInertia", EnableInertia ? 1 : 0);
@@ -215,7 +233,12 @@ namespace Leanity
 				_axisRotScale.z = PlayerPrefs.GetFloat("AxisRotScaleZ", 1f);
 
 				// Camera
-				PitchLimit = PlayerPrefs.GetFloat("PitchLimit", PitchLimit);
+				PitchLimit = PlayerPrefs.GetFloat("PitchLimit", 75f);
+
+				// Interaction
+				GrabEnabled = PlayerPrefs.GetInt("GrabEnabled", 1) == 1;
+				GrabThreshold = PlayerPrefs.GetFloat("GrabThreshold", 0.5f);
+				InvertAxis = PlayerPrefs.GetInt("InvertAxis", 1) == 1;
 
 				// Inertia
 				EnableInertia = PlayerPrefs.GetInt("EnableInertia", 1) == 1;
@@ -236,6 +259,10 @@ namespace Leanity
 				_init = true;
 				_dirty = false;
 
+				if (OnOptionsLoad != null)
+				{
+					OnOptionsLoad.Invoke();
+				}
 				if (OnOptionsChange != null)
 				{
 					OnOptionsChange.Invoke();

@@ -12,13 +12,14 @@ namespace Leanity
 		private Leap.Frame _frame;
 		private HandData _rightHandData;
 		private HandData _leftHandData;
+		private long _frameId = 0;
 
 		#region Singleton
 		private LeapTrackingWin()
 		{
 			_rightHandData = new HandData(120);
 			_leftHandData = new HandData(120);
-			Options.OnOptionsChange += FilterParameterUpdate;
+			Options.OnOptionsLoad += FilterParameterUpdate;
 
 			try
 			{
@@ -47,20 +48,23 @@ namespace Leanity
 			if (_controller != null && _controller.IsConnected)
 			{
 				_frame = _controller.Frame();
-
-				// Being pesimistic to avoid some conditionals
-				RightHandData.Detected = false;
-				LeftHandData.Detected = false;
-
-				foreach (var hand in _frame.Hands)
+				if (_frame.Id != _frameId)
 				{
-					if (hand.IsRight)
+					_frameId = _frame.Id;
+					// Being pesimistic to avoid some conditionals
+					RightHandData.Detected = false;
+					LeftHandData.Detected = false;
+
+					foreach (var hand in _frame.Hands)
 					{
-						UpdateHandData(hand, ref _rightHandData);
-					}
-					else
-					{
-						UpdateHandData(hand, ref _leftHandData);
+						if (hand.IsRight)
+						{
+							UpdateHandData(hand, ref _rightHandData);
+						}
+						else
+						{
+							UpdateHandData(hand, ref _leftHandData);
+						}
 					}
 				}
 			}

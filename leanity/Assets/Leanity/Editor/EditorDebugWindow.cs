@@ -10,27 +10,29 @@ namespace Leanity
 		private static Vector2 _scrollPosition;
 		private static Texture _rightHandTexture;
 		private static Texture _leftHandTexture;
+		private readonly float _workspaceWidth = 0.5f;
+		private readonly float _workspaceDepth = 0.5f;
 
 		public void OnGUI()
 		{
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
-			var mainHandData = HandTracking.RightHandData;
-			var auxHandData = HandTracking.LeftHandData;
+			var rightHandData = HandTracking.RightHandData;
+			var leftHandData = HandTracking.LeftHandData;
 
 			GUILayout.BeginVertical();
 
-			GUILayout.Label("Main Hand Data");
-			DrawHandData(mainHandData);
+			GUILayout.Label("Right Hand Data");
+			DrawHandData(rightHandData);
 
-			GUILayout.Label("Aux Hand Data");
-			DrawHandData(auxHandData);
+			GUILayout.Label("Left Hand Data");
+			DrawHandData(leftHandData);
 
 			Rect r = GUILayoutUtility.GetRect(50, 100, 50, 100);
 			r.height = r.width;
 			EditorGUI.IndentedRect(r);
 
-			DrawHandPosition(mainHandData, r);
-			DrawHandPosition(auxHandData, r);
+			DrawHandPosition(rightHandData, r);
+			DrawHandPosition(leftHandData, r);
 
 			GUILayout.EndVertical();
 			GUILayout.EndScrollView();
@@ -47,10 +49,10 @@ namespace Leanity
 			{
 				GUILayout.Box(handTexture);
 			}
-			GUILayout.Label(hand.Position.ToString());
+			GUILayout.Label(hand.Detected ? (hand.Position * 1000f).ToString() : "(--, --, --)");
 			GUILayout.EndHorizontal();
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 100, 20, 20);
-			EditorGUI.ProgressBar(rProgressBar, hand.GrabValue, "Grab");
+			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
 		}
 
 		private void DrawHandPosition(HandData hand, Rect r)
@@ -62,10 +64,9 @@ namespace Leanity
 				rImage.width = handTexture.width;
 				rImage.height = handTexture.height;
 
-				float workspaceWidth = 0.4f;
-				float workspaceDepth = 0.3f;
-				rImage.x += (int)((hand.Position.x / workspaceWidth) * r.width - rImage.width / 2 + r.width / 2);
-				rImage.y -= (int)((hand.Position.z / workspaceDepth) * r.height + rImage.height / 2 - r.height / 2);
+
+				rImage.x += (int)((hand.Position.x / _workspaceWidth) * r.width - rImage.width / 2 + r.width / 2);
+				rImage.y -= (int)((hand.Position.z / _workspaceDepth) * r.height + rImage.height / 2 - r.height / 2);
 
 				//rotatearoundpivot
 				GUI.DrawTexture(rImage, handTexture, ScaleMode.ScaleToFit);

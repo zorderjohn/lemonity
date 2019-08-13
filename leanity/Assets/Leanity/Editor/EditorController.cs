@@ -8,15 +8,17 @@ namespace Leanity
 	[Serializable]
 	class EditorController
 	{
+		static MotionController _motion;
 
 		static EditorController()
 		{
+			_motion = new MotionController();
 			EditorApplication.update += Update;
 		}
 
 		static void Update()
 		{
-			
+			HandTracking.Update();
 		}
 	}
 }

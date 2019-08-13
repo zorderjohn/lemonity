@@ -10,6 +10,7 @@ namespace Leanity
 		GrabController LeftGrab { get; set; }
 		GrabController RightGrab { get; set; }
 		InertialObject InertialData { get; set; }
+		bool InvertAxis { get; set; }
 	}
 
 	public abstract class MotionStyleBase : IMotionStyle
@@ -19,6 +20,7 @@ namespace Leanity
 		public GrabController LeftGrab { get; set; }
 		public GrabController RightGrab { get; set; }
 		public InertialObject InertialData { get; set; }
+		public bool InvertAxis { get; set; }
 
 		public abstract void Update();
 
@@ -57,6 +59,10 @@ namespace Leanity
 			bool absoluteMovement = true;
 			GrabController grabInfo = GetDominantGrabController();
 			Vector3 deltaMovement = grabInfo.DeltaPosition * Options.PosScale;
+			if (InvertAxis)
+			{
+				deltaMovement *= -1f;
+			}
 
 			// Only for cameras
 			deltaMovement = ObjectRotation * deltaMovement;
@@ -65,6 +71,10 @@ namespace Leanity
 
 
 			Quaternion deltaRot = grabInfo.DeltaRotation;
+			if (InvertAxis)
+			{
+				deltaRot = Quaternion.Inverse(deltaRot);
+			}
 
 			// Scale rotation
 			Vector3 eulerDeltaRot = MathHelper.NormalizedEulerAngles(deltaRot);

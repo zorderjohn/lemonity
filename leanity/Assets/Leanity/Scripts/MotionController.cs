@@ -17,8 +17,16 @@ namespace Leanity
 		}
 		public bool IsCamera { get; set; }
 
-		public Vector3 ObjectPosition { get; set; }
-		public Quaternion ObjectRotation { get; set; }
+		public Vector3 ObjectPosition
+		{
+			get { return _motionStyle.ObjectPosition; }
+			set { _motionStyle.ObjectPosition = value; }
+		}
+		public Quaternion ObjectRotation
+		{
+			get { return _motionStyle.ObjectRotation; }
+			set { _motionStyle.ObjectRotation = value; }
+		}
 
 		private GrabController _leftGrab = new GrabController();
 		private GrabController _rightGrab = new GrabController();
@@ -31,6 +39,12 @@ namespace Leanity
 			Options.Load();
 			_inertialData = new InertialObject(Options.VelocityFrames);
 			MotionStyle = new AbsoluteMotion();
+			Options.OnOptionsChange += OnOptionsChanged;
+		}
+
+		public void OnOptionsChanged()
+		{
+			MotionStyle.InvertAxis = Options.InvertAxis;
 		}
 
 		public void Update(Vector3 position, Quaternion rotation)

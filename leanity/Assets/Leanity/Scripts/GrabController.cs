@@ -13,6 +13,11 @@ namespace Leanity
 
 		private HandData _hand;
 
+		public GrabController()
+		{
+			IsHolding = false;
+		}
+
 		public void Update(HandData hand, Vector3 objectPosition, Quaternion objectRotation)
 		{
 			_hand = hand;

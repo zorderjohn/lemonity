@@ -30,7 +30,6 @@ namespace Leanity
 			GUILayout.Label("Sensitivity", EditorStyles.largeLabel);
 			GUILayout.Space(4);
 
-
 			GUILayout.Label("Translation");
 			GUILayout.BeginHorizontal();
 			Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
@@ -41,6 +40,22 @@ namespace Leanity
 			GUILayout.BeginHorizontal();
 			Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
 			Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 10f);
+			GUILayout.EndHorizontal();
+
+			Options.InvertAxis = EditorGUILayout.ToggleLeft("Invert axis", Options.InvertAxis);
+			GUILayout.Space(8);
+			GUILayout.Label("Grab Gesture", EditorStyles.largeLabel);
+			GUILayout.Space(4);
+			Options.GrabEnabled = EditorGUILayout.ToggleLeft("Enable", Options.GrabEnabled);
+			GUILayout.BeginHorizontal();
+			Options.GrabThreshold = EditorGUILayout.FloatField(Options.GrabThreshold, GUILayout.Width(50));
+			Options.GrabThreshold = GUILayout.HorizontalSlider(Options.GrabThreshold, 0f, 1f);
+			GUILayout.EndHorizontal();
+
+			GUILayout.Label("Pitch Limit");
+			GUILayout.BeginHorizontal();
+			Options.PitchLimit = EditorGUILayout.FloatField(Options.PitchLimit, GUILayout.Width(50));
+			Options.PitchLimit = GUILayout.HorizontalSlider(Options.PitchLimit, 0f, 90f);
 			GUILayout.EndHorizontal();
 
 			GUILayout.EndVertical();

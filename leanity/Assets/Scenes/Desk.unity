@@ -203,13 +203,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 21007794}
-  m_LocalRotation: {x: 0.6142164, y: 0, z: 0, w: 0.7891377}
+  m_LocalRotation: {x: 0.10374729, y: 0, z: 0, w: 0.9946037}
   m_LocalPosition: {x: -0.024840675, y: 1.3329827, z: -2.1563125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 75.79, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 11.91, y: 0, z: 0}
 --- !u!114 &21007800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,30 +222,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 98
-  posScaleMultiplier: 3
-  posScale: 1
-  rotScaleMultiplier: 1
-  rotScale: 1
-  perAxisRotScaleAdjustment: {x: 1, y: 1, z: 1}
   isCamera: 1
   invertAxis: 1
-  pitchLimit: 75
-  grabThreshold: 0.722
-  grabEnabled: 1
+  PitchLimit: 75
   absoluteMovement: 1
   twoHands: 0
-  enableInertia: 1
-  angularDrag: 0.95
-  linearDrag: 0.95
-  velocityFrames: 20
-  discardFrames: 10
-  filterFrequency: 120
-  rotFilterMinCutoff: 0.01
-  rotFilterBeta: 5
-  rotFilterDcutoff: 1
-  posFilterMinCutoff: 0.01
-  posFilterBeta: 10
-  posFilterDcutoff: 1
 --- !u!114 &21007801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,30 +454,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 97
-  posScaleMultiplier: 1
-  posScale: 1
-  rotScaleMultiplier: 1
-  rotScale: 2
-  perAxisRotScaleAdjustment: {x: 1, y: 1, z: 1}
   isCamera: 0
   invertAxis: 0
-  pitchLimit: 75
-  grabThreshold: 0.5
-  grabEnabled: 0
+  PitchLimit: 75
   absoluteMovement: 1
   twoHands: 0
-  enableInertia: 0
-  angularDrag: 1
-  linearDrag: 1
-  velocityFrames: 5
-  discardFrames: 5
-  filterFrequency: 120
-  rotFilterMinCutoff: 1
-  rotFilterBeta: 0
-  rotFilterDcutoff: 1
-  posFilterMinCutoff: 1
-  posFilterBeta: 0
-  posFilterDcutoff: 1
 --- !u!1 &657513729
 GameObject:
   m_ObjectHideFlags: 0
