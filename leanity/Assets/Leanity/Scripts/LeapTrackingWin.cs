@@ -19,7 +19,7 @@ namespace Leanity
 		{
 			_rightHandData = new HandData(120);
 			_leftHandData = new HandData(120);
-			Options.OnOptionsLoad += FilterParameterUpdate;
+			Options.OnOptionsChange += FilterParameterUpdate;
 
 			try
 			{

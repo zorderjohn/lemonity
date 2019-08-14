@@ -19,7 +19,7 @@ namespace Leanity
 		public static WorkingMode Mode
 		{
 			get { return _mode; }
-			set { _mode = value; SetDirty(); }
+			set { SetFieldValue(ref _mode, value);}
 		}
 
 		#region Sensitivity
@@ -27,21 +27,21 @@ namespace Leanity
 		public static float PosScale
 		{
 			get { return _posScale; }
-			set { _posScale = value; SetDirty(); }
+			set { SetFieldValue(ref _posScale, value); }
 		}
 
 		private static float _rotScale;
 		public static float RotScale
 		{
 			get { return _rotScale; }
-			set { _rotScale = value; SetDirty(); }
+			set { SetFieldValue(ref _rotScale, value); }
 		}
 
 		private static Vector3 _axisRotScale;
 		public static Vector3 AxisRotScale
 		{
 			get { return _axisRotScale; }
-			set { _axisRotScale = value; SetDirty(); }
+			set { SetComplexFieldValue(ref _axisRotScale, value); }
 		}
 		#endregion
 
@@ -50,7 +50,7 @@ namespace Leanity
 		public static float PitchLimit
 		{
 			get { return _pitchLimit; }
-			set { _pitchLimit = value; SetDirty(); }
+			set { SetFieldValue(ref _pitchLimit, value); }
 		}
 		#endregion
 
@@ -59,21 +59,21 @@ namespace Leanity
 		public static float GrabThreshold
 		{
 			get { return _grabThreshold; }
-			set { _grabThreshold = value; SetDirty(); }
+			set { SetFieldValue(ref _grabThreshold, value); }
 		}
 
 		private static bool _grabEnabled;
 		public static bool GrabEnabled
 		{
 			get { return _grabEnabled; }
-			set { _grabEnabled = value; SetDirty(); }
+			set { SetFieldValue(ref _grabEnabled, value); }
 		}
 
 		private static bool _invertAxis;
 		public static bool InvertAxis
 		{
 			get { return _invertAxis; }
-			set { _invertAxis = value; SetDirty(); }
+			set { SetFieldValue(ref _invertAxis, value); }
 		}
 		#endregion
 
@@ -82,35 +82,35 @@ namespace Leanity
 		public static bool EnableInertia
 		{
 			get { return _enableInertia; }
-			set { _enableInertia = value; SetDirty(); }
+			set { SetFieldValue(ref _enableInertia, value); }
 		}
 
 		private static float _angularDrag;
 		public static float AngularDrag
 		{
 			get { return _angularDrag; }
-			set { _angularDrag = value; SetDirty(); }
+			set { SetFieldValue(ref _angularDrag, value); }
 		}
 
 		private static float _linearDrag;
 		public static float LinearDrag
 		{
 			get { return _linearDrag; }
-			set { _linearDrag = value; SetDirty(); }
+			set { SetFieldValue(ref _linearDrag, value); }
 		}
 
 		private static int _velocityFrames;
 		public static int VelocityFrames
 		{
 			get { return _velocityFrames; }
-			set { _velocityFrames = value; SetDirty(); }
+			set { SetFieldValue(ref _velocityFrames, value); }
 		}
 
 		private static int _discardFrames;
 		public static int DiscardFrames
 		{
 			get { return _discardFrames; }
-			set { _discardFrames = value; SetDirty(); }
+			set { SetFieldValue(ref _discardFrames, value); }
 		}
 		#endregion
 
@@ -119,69 +119,81 @@ namespace Leanity
 		public static float FilterFrequency
 		{
 			get { return _filterFrequency; }
-			set { _filterFrequency = value; SetDirty(); }
+			set { SetFieldValue(ref _filterFrequency, value); }
 		}
 
 		private static float _rotFilterMinCutoff;
 		public static float RotFilterMinCutoff
 		{
 			get { return _rotFilterMinCutoff; }
-			set { _rotFilterMinCutoff = value; SetDirty(); }
+			set { SetFieldValue(ref _rotFilterMinCutoff, value); }
 		}
 
 		private static float _rotFilterBeta;
 		public static float RotFilterBeta
 		{
 			get { return _rotFilterBeta; }
-			set { _rotFilterBeta = value; SetDirty(); }
+			set { SetFieldValue(ref _rotFilterBeta, value); }
 		}
 
 		private static float _rotFilterDcutoff;
 		public static float RotFilterDcutoff
 		{
 			get { return _rotFilterDcutoff; }
-			set { _rotFilterDcutoff = value; SetDirty(); }
+			set { SetFieldValue(ref _rotFilterDcutoff, value); }
 		}
 
 		private static float _posFilterMinCutoff;
 		public static float PosFilterMinCutoff
 		{
 			get { return _posFilterMinCutoff; }
-			set { _posFilterMinCutoff = value; SetDirty(); }
+			set { SetFieldValue(ref _posFilterMinCutoff, value); }
 		}
 
 		private static float _posFilterBeta;
 		public static float PosFilterBeta
 		{
 			get { return _posFilterBeta; }
-			set { _posFilterBeta = value; SetDirty(); }
+			set { SetFieldValue(ref _posFilterBeta, value); }
 		}
 
 		private static float _posFilterDcutoff;
 		public static float PosFilterDcutoff
 		{
 			get { return _posFilterDcutoff; }
-			set { _posFilterDcutoff = value; SetDirty(); }
+			set { SetFieldValue(ref _posFilterDcutoff, value); }
 		}
+
+		public static bool Dirty { get; private set; } = false;
 		#endregion
 
-		private static bool _dirty = false;
 		private static bool _init = false;
 
-		private static void SetDirty()
+		private static void SetFieldValue<T>(ref T field, T newValue) where T : IComparable
 		{
-			_dirty = true;
-			if (OnOptionsChange != null && _init)
+			if (!field.Equals(newValue))
 			{
-				OnOptionsChange.Invoke();
+				field = newValue;
+				Dirty = true;
+				OnOptionsChange?.Invoke();
+			}
+		}
+
+		private static void SetComplexFieldValue<T>(ref T field, T newValue) where T : IEquatable<T>
+		{
+			if (!field.Equals(newValue))
+			{
+				field = newValue;
+				Dirty = true;
+				OnOptionsChange?.Invoke();
 			}
 		}
 
 		public static void Save()
 		{
-			if (_dirty)
+			if (Dirty)
 			{
-				_dirty = false;
+				Dirty = false;
 				// Working mode
 				PlayerPrefs.SetInt("Mode", (int)Mode);
 
@@ -257,7 +269,7 @@ namespace Leanity
 				PosFilterDcutoff = PlayerPrefs.GetFloat("PosFilterDcutoff", 1f);
 
 				_init = true;
-				_dirty = false;
+				Dirty = false;
 
 				if (OnOptionsLoad != null)
 				{

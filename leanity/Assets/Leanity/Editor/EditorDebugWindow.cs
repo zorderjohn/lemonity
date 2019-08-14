@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
+using UnityEditor.IMGUI.Controls;
 
 namespace Leanity
 {
@@ -40,6 +41,7 @@ namespace Leanity
 			GUILayout.EndScrollView();
 		}
 
+
 		private void DrawHandData(HandData hand)
 		{
 			GUILayout.BeginHorizontal();
@@ -55,6 +57,7 @@ namespace Leanity
 			GUILayout.EndHorizontal();
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 100, 20, 20);
 			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
+
 			GUI.enabled = true;
 		}
 

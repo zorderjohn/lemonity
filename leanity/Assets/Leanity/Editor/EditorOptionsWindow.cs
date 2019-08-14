@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using System;
 
 namespace Leanity
@@ -11,55 +12,128 @@ namespace Leanity
 		private static Texture _rightHandTexture;
 		private static Texture _leftHandTexture;
 
+		AnimBool _showFilters = new AnimBool();
+
 
 		public void OnGUI()
 		{
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
-			GUILayout.BeginVertical();
-
-			GUILayout.Label("Working mode", EditorStyles.largeLabel);
-			GUIContent[] modes = new[]
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				new GUIContent("Direct", "Movement of the hand changes position/rotation of the camera"),
-				new GUIContent("Speed", "Movement of the hand changes rotational and linear speed of the camera")
-			};
-			Options.Mode = (WorkingMode)GUILayout.SelectionGrid((int)Options.Mode, modes, 2);
+				GUILayout.Label("Working mode", EditorStyles.boldLabel);
+				GUIContent[] modes = new[]
+				{
+					new GUIContent("Direct", "Movement of the hand changes position/rotation of the camera"),
+					new GUIContent("Speed", "Movement of the hand changes rotational and linear speed of the camera")
+				};
+				//Options.Mode = (WorkingMode)GUILayout.SelectionGrid((int)Options.Mode, modes, 2);
+				Options.Mode = (WorkingMode)GUILayout.Toolbar((int)Options.Mode, modes);
+				GUILayout.Space(8);
+			}
 
-			GUILayout.Space(8);
-			GUILayout.Label("Sensitivity", EditorStyles.largeLabel);
-			GUILayout.Space(4);
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
 
-			GUILayout.Label("Translation");
-			GUILayout.BeginHorizontal();
-			Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
-			Options.PosScale = GUILayout.HorizontalSlider(Options.PosScale, 0f, 10f);
-			GUILayout.EndHorizontal();
+				GUILayout.Label("Sensitivity", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
 
-			GUILayout.Label("Rotation");
-			GUILayout.BeginHorizontal();
-			Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
-			Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 10f);
-			GUILayout.EndHorizontal();
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Translation");
+					Options.PosScale = GUILayout.HorizontalSlider(Options.PosScale, 0f, 10f);
+					Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
+				}
 
-			Options.InvertAxis = EditorGUILayout.ToggleLeft("Invert axis", Options.InvertAxis);
-			GUILayout.Space(8);
-			GUILayout.Label("Grab Gesture", EditorStyles.largeLabel);
-			GUILayout.Space(4);
-			Options.GrabEnabled = EditorGUILayout.ToggleLeft("Enable", Options.GrabEnabled);
-			GUILayout.BeginHorizontal();
-			Options.GrabThreshold = EditorGUILayout.FloatField(Options.GrabThreshold, GUILayout.Width(50));
-			Options.GrabThreshold = GUILayout.HorizontalSlider(Options.GrabThreshold, 0f, 1f);
-			GUILayout.EndHorizontal();
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Rotation");
+					Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 10f);
+					Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
+				}
 
-			GUILayout.Label("Pitch Limit");
-			GUILayout.BeginHorizontal();
-			Options.PitchLimit = EditorGUILayout.FloatField(Options.PitchLimit, GUILayout.Width(50));
-			Options.PitchLimit = GUILayout.HorizontalSlider(Options.PitchLimit, 0f, 90f);
-			GUILayout.EndHorizontal();
+				Options.InvertAxis = EditorGUILayout.ToggleLeft("Invert axis", Options.InvertAxis);
+				EditorGUI.indentLevel--;
 
-			GUILayout.EndVertical();
+				GUILayout.Space(8);
+			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				GUILayout.Label("Grab Gesture", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
+				Options.GrabEnabled = EditorGUILayout.ToggleLeft("Enable", Options.GrabEnabled);
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Threshold");
+					Options.GrabThreshold = GUILayout.HorizontalSlider(Options.GrabThreshold, 0f, 1f);
+					Options.GrabThreshold = EditorGUILayout.FloatField(Options.GrabThreshold, GUILayout.Width(50));
+				}
+
+				EditorGUI.indentLevel--;
+				GUILayout.Space(8);
+				GUILayout.Label("Camera", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Pitch limit");
+					Options.PitchLimit = GUILayout.HorizontalSlider(Options.PitchLimit, 0f, 90f);
+					Options.PitchLimit = EditorGUILayout.FloatField(Options.PitchLimit, GUILayout.Width(50));
+				}
+				EditorGUI.indentLevel--;
+
+				EditorGUI.indentLevel--;
+				GUILayout.Space(8);
+				GUILayout.Label("Advanced Options", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
+
+				_showFilters.target = EditorGUILayout.Toggle("Configure filters", _showFilters.target);
+				GUIContent[] filterOptions = new[]
+				{
+					new GUIContent("Frecuency", "Expected data frequency"),
+					new GUIContent("Min Cutoff", "Lower values reduce jitter"),
+					new GUIContent("Beta", "Higher values reduce high speed lag"),
+					new GUIContent("D Cutoff", "Cutoff for derivative")
+				};
+
+				using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showFilters.faded))
+				{
+					if (_showFilters.value)
+					{
+						EditorGUI.indentLevel++;
+						Options.FilterFrequency = EditorGUILayout.FloatField(filterOptions[0], Options.FilterFrequency);
+						EditorGUILayout.PrefixLabel("Rotation");
+						EditorGUI.indentLevel++;
+						Options.RotFilterMinCutoff = EditorGUILayout.FloatField(filterOptions[1], Options.RotFilterMinCutoff);
+						Options.RotFilterBeta = EditorGUILayout.FloatField(filterOptions[2], Options.RotFilterBeta);
+						Options.RotFilterDcutoff = EditorGUILayout.FloatField(filterOptions[3], Options.RotFilterDcutoff);
+						EditorGUI.indentLevel--;
+
+						EditorGUILayout.PrefixLabel("Translation");
+						EditorGUI.indentLevel++;
+						Options.PosFilterMinCutoff = EditorGUILayout.FloatField(filterOptions[1], Options.PosFilterMinCutoff);
+						Options.PosFilterBeta = EditorGUILayout.FloatField(filterOptions[2], Options.PosFilterBeta);
+						Options.PosFilterDcutoff = EditorGUILayout.FloatField(filterOptions[3], Options.PosFilterDcutoff);
+						EditorGUI.indentLevel--;
+
+						EditorGUI.indentLevel--;
+					}
+				}
+
+			}
 			GUILayout.EndScrollView();
+			GUI.enabled = Options.Dirty;
+			if (GUILayout.Button("Save"))
+			{
+				Options.Save();
+			}
+
+			GUI.enabled = true;
+
 		}
 
 
