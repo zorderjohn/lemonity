@@ -40,16 +40,24 @@ namespace Leanity
 		{
 			Options.Load();
 			Options.OnOptionsChange += OnOptionsChanged;
-			_inertialData = new InertialObject(Options.VelocityFrames);
+
 			LeftGrab = new GrabController();
 			RightGrab = new GrabController();
-			MotionStyle = new AbsoluteMotion();
+
+			// Always instantiate after Left and Right grabs
+			//MotionStyle = new AbsoluteMotion();
+			MotionStyle = new HandlebarMotion();
+
+			_inertialData = new InertialObject(Options.VelocityFrames);
 			LatestInstance = this;
 		}
 
 		public void OnOptionsChanged()
 		{
-			MotionStyle.InvertAxis = Options.InvertAxis;
+			if (_motionStyle != null)
+			{
+				_motionStyle.InvertAxis = Options.InvertAxis;
+			}
 		}
 
 		public bool Update(Vector3 position, Quaternion rotation)
@@ -72,11 +80,12 @@ namespace Leanity
 		{
 			_motionStyle.LeftGrab = LeftGrab;
 			_motionStyle.RightGrab = RightGrab;
+			_motionStyle.InvertAxis = Options.InvertAxis;
 		}
 
 		private bool EventController()
 		{
-			bool anyHandHolding = LeftGrab.IsHolding || RightGrab.IsHolding;
+			bool anyHandHolding = LeftGrab.IsHolding && RightGrab.IsHolding;
 
 			if (anyHandHolding)
 			{

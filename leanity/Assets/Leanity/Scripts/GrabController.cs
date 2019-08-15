@@ -8,8 +8,26 @@ namespace Leanity
 		public bool IsHolding;
 		public Vector3 HandInitialPosition;
 		public Quaternion HandInitialRotation;
+		public Vector3 HandCurrentPosition
+		{
+			get { return _hand.Position; }
+		}
+		public Quaternion HandCurrentRotation
+		{
+			get { return _hand.Rotation; }
+		}
 		public Vector3 ObjectInitialPosition;
 		public Quaternion ObjectInitialRotation;
+
+		public Vector3 DeltaPosition
+		{
+			get { return _hand.Position - HandInitialPosition; }
+		}
+
+		public Quaternion DeltaRotation
+		{
+			get { return Quaternion.Inverse(HandInitialRotation) * _hand.Rotation; }
+		}
 
 		private HandData _hand;
 
@@ -42,14 +60,5 @@ namespace Leanity
 			}
 		}
 
-		public Vector3 DeltaPosition
-		{
-			get { return _hand.Position - HandInitialPosition; }
-		}
-
-		public Quaternion DeltaRotation
-		{
-			get { return Quaternion.Inverse(HandInitialRotation) * _hand.Rotation; }
-		}
 	}
 }
