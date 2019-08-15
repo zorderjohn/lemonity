@@ -27,4 +27,14 @@ public static class MathHelper
 		euler.z = Mathf.Clamp(NormalizeAngle(euler.z), zMin, zMax);
 		return euler;
 	}
+
+	public static Vector3 CameraPosition(Vector3 pivot, Quaternion rotation, float distance)
+	{
+		return pivot - (rotation * (Vector3.forward * distance));
+	}
+
+	public static Vector3 CameraPivot(Vector3 position, Quaternion rotation, float distance)
+	{
+		return rotation * (Vector3.forward * distance) + position;
+	}
 }

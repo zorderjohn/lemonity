@@ -52,24 +52,20 @@ namespace Leanity
 			MotionStyle.InvertAxis = Options.InvertAxis;
 		}
 
-		public void Update(Vector3 position, Quaternion rotation)
+		public bool Update(Vector3 position, Quaternion rotation)
 		{
 			ObjectPosition = position;
 			ObjectRotation = rotation;
 
 			HandTracking.Update();
 
-			float t = Time.time;
-			_inertialData.SetPosition(ObjectPosition, t);
-			_inertialData.SetRotation(ObjectRotation, t);
-
 			LeftGrab.Update(HandTracking.LeftHandData, ObjectPosition, ObjectRotation);
 			RightGrab.Update(HandTracking.RightHandData, ObjectPosition, ObjectRotation);
 
-			EventController();
-
-			GraphDbg.Log("vel", _inertialData.GetLinearVelocity().magnitude);
+			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1000);
+
+			return EventController();
 		}
 
 		private void InitMotionStyle()
@@ -78,7 +74,7 @@ namespace Leanity
 			_motionStyle.RightGrab = RightGrab;
 		}
 
-		private void EventController()
+		private bool EventController()
 		{
 			bool anyHandHolding = LeftGrab.IsHolding || RightGrab.IsHolding;
 
@@ -89,10 +85,15 @@ namespace Leanity
 					_isHolding = true;
 					StartMoving();
 				}
+				float t = Time.time;
+				_inertialData.SetPosition(ObjectPosition, t);
+				_inertialData.SetRotation(ObjectRotation, t);
+
 				MotionStyle.Update();
 
 				// Only for debugging purposes
 				_inertialData.CalculateAngularVelocity();
+				return true;
 			}
 			else
 			{
@@ -103,18 +104,23 @@ namespace Leanity
 				}
 				if (Options.EnableInertia)
 				{
-					InertialMove();
+					return InertialMove();
 				}
 			}
+
+			return false;
 		}
 
 
-		private void InertialMove()
+		private bool InertialMove()
 		{
 			float deltaTime = Time.deltaTime;
 
-			var linearVelocity = _inertialData.GetLinearVelocity();
+			var linearVelocity = _inertialData.LinearVelocity;
 			linearVelocity *= Options.LinearDrag;
+			_inertialData.LinearVelocity = linearVelocity;
+
+
 			ObjectPosition += linearVelocity * deltaTime;
 			_inertialData.SetPosition(ObjectPosition, Time.time);
 
@@ -134,9 +140,10 @@ namespace Leanity
 			}
 
 			ObjectRotation = orientation;
+
+			return linearVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt ||
+			       eulerVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt;
 		}
-
-
 
 		private void StartMoving()
 		{
@@ -147,6 +154,7 @@ namespace Leanity
 		{
 			_inertialData.DiscardFrames(Options.DiscardFrames);
 			_inertialData.CalculateAngularVelocity();
+			_inertialData.CalculateLinearVelocity();
 		}
 	}
 }
