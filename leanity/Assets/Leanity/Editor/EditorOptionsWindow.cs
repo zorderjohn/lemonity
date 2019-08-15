@@ -100,6 +100,7 @@ namespace Leanity
 					new GUIContent("D Cutoff", "Cutoff for derivative")
 				};
 
+				#region Filters
 				using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showFilters.faded))
 				{
 					if (_showFilters.value)
@@ -123,8 +124,43 @@ namespace Leanity
 						EditorGUI.indentLevel--;
 					}
 				}
-
+				#endregion
+				GUILayout.Space(8);
 			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				GUILayout.Label("Inertia", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				Options.EnableInertia = EditorGUILayout.Toggle("Enable Inertia", Options.EnableInertia);
+				if (Options.EnableInertia)
+				{
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Linear Drag");
+						Options.LinearDrag = GUILayout.HorizontalSlider(Options.LinearDrag, 0f, 1f);
+						Options.LinearDrag = EditorGUILayout.FloatField(Options.LinearDrag, GUILayout.Width(50));
+					}
+
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Angular Drag");
+						Options.AngularDrag = GUILayout.HorizontalSlider(Options.AngularDrag, 0f, 1f);
+						Options.AngularDrag = EditorGUILayout.FloatField(Options.AngularDrag, GUILayout.Width(50));
+					}
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Velocity Frames");
+						Options.VelocityFrames = EditorGUILayout.IntField(Options.VelocityFrames, GUILayout.Width(50));
+					}
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Discard Frames");
+						Options.DiscardFrames = EditorGUILayout.IntField(Options.DiscardFrames, GUILayout.Width(50));
+					}
+				}
+			}
+
 			GUILayout.EndScrollView();
 			GUI.enabled = Options.Dirty;
 			if (GUILayout.Button("Save"))
