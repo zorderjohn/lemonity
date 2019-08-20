@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 namespace Leanity
 {
 	[Serializable]
-	public class EditorTabWindow : EditorWindow, IDisposable
+	public class EditorDebugWindow : EditorWindow, IDisposable
 	{
 		private static Vector2 _scrollPosition;
 		private static Texture _rightHandTexture;
@@ -15,6 +15,25 @@ namespace Leanity
 		private static Texture _leftHandGrabTexture;
 		private readonly float _workspaceWidth = 0.5f;
 		private readonly float _workspaceDepth = 0.5f;
+
+		public EditorDebugWindow()
+		{
+		}
+
+		~EditorDebugWindow()
+		{
+		}
+
+		void OnEnable()
+		{
+			LoadResources();
+			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
+		}
+
+		void OnDisable()
+		{
+			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+		}
 
 		public void OnGUI()
 		{
@@ -30,10 +49,11 @@ namespace Leanity
 			GUILayout.Label("Left Hand Data");
 			DrawHandData(leftHandData);
 
-			Rect r = GUILayoutUtility.GetRect(50, 100, 50, 100);
-			r.height = r.width;
+			Rect r = GUILayoutUtility.GetAspectRect(1f);
+
 			EditorGUI.IndentedRect(r);
 
+			EditorGUI.DrawRect(r, Color.white);
 			DrawHandPosition(rightHandData, r);
 			DrawHandPosition(leftHandData, r);
 
@@ -109,7 +129,7 @@ namespace Leanity
 		[MenuItem("Window/Leanity &l")]
 		public static void Init()
 		{
-			GetWindow(typeof(EditorTabWindow), false, "Leanity", true);
+			GetWindow(typeof(EditorDebugWindow), false, "Leanity", true);
 		}
 
 		public void OnInspectorUpdate()
@@ -137,10 +157,37 @@ namespace Leanity
 		{
 			LoadResources();
 		}
-		private void OnEnable()
+
+		private void OnSceneGUI(SceneView sceneView)
 		{
-			LoadResources();
+			Handles.color = Color.yellow;
+
+			var camRot = sceneView.rotation;
+			var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
+
+
+			if (HandTracking.LeftHandData.Detected)
+			{
+				Handles.color = Color.red;
+				PaintHand(HandTracking.LeftHandData, camPos, camRot);
+			}
+			if (HandTracking.RightHandData.Detected)
+			{
+				Handles.color = Color.blue;
+				PaintHand(HandTracking.RightHandData, camPos, camRot);
+			}
+
+			SceneView.RepaintAll();
 		}
 
+		private void PaintHand(HandData hand, Vector3 camPos, Quaternion camRot)
+		{
+			var handPos = camRot * (hand.Position + Vector3.forward) + camPos;
+			var handRot = camRot * hand.Rotation;
+			Handles.ArrowHandleCap(1, handPos, handRot, 1f, EventType.Repaint);
+			Handles.DrawLine(camPos, handPos);
+			//Handles.DrawSolidDisc(handPos, Vector3.up, 0.05f);
+			Handles.CylinderHandleCap(0, handPos, handRot, HandleUtility.GetHandleSize(handPos), EventType.Repaint);
+		}
 	}
 }
