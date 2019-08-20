@@ -29,6 +29,9 @@ namespace Leanity
 				};
 				//Options.Mode = (WorkingMode)GUILayout.SelectionGrid((int)Options.Mode, modes, 2);
 				Options.Mode = (WorkingMode)GUILayout.Toolbar((int)Options.Mode, modes);
+				var invertAxisText = new[] { "Move world", "Move camera" };
+				GUILayout.Space(4);
+				Options.InvertAxis = 1 == GUILayout.SelectionGrid(Options.InvertAxis ? 1 : 0, invertAxisText, 2, EditorStyles.radioButton);
 				GUILayout.Space(8);
 			}
 
@@ -53,7 +56,6 @@ namespace Leanity
 					Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
 				}
 
-				Options.InvertAxis = EditorGUILayout.ToggleLeft("Invert axis", Options.InvertAxis);
 				EditorGUI.indentLevel--;
 
 				GUILayout.Space(8);
