@@ -22,6 +22,9 @@ namespace Leanity
 			_leftHandData = new HandData(120);
 			Options.OnOptionsChange += FilterParameterUpdate;
 
+			Options.Load();
+			FilterParameterUpdate();
+
 			try
 			{
 				if (_controller == null)
