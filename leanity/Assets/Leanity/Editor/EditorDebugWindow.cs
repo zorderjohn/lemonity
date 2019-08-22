@@ -192,22 +192,28 @@ namespace Leanity
 		{
 			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
-			Handles.ArrowHandleCap(1, handPos, handRot, 1f, EventType.Repaint);
-			Handles.CylinderHandleCap(0, handPos, handRot, .2f* HandleUtility.GetHandleSize(handPos), EventType.Repaint);
+			Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .3f, EventType.Repaint);
+			//Handles.ConeHandleCap
+			//Handles.CylinderHandleCap(0, handPos, handRot, .2f* HandleUtility.GetHandleSize(handPos), EventType.Repaint);
 
 
 			float x = HandTracking.Workspace.x / 2f;
-			var v1 = HandTracking.ToWorldCoordinates(new Vector3(-x, hand.Position.y, hand.Position.z));
-			var v2 = HandTracking.ToWorldCoordinates(new Vector3(x, hand.Position.y, hand.Position.z));
+			Vector3 v0, v1;
+			v0 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, hand.Position.z));
+
+			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.IsRight ? x : -x, hand.Position.y, hand.Position.z));
 			Handles.DrawWireDisc(v1, Vector3.right, HandleUtility.GetHandleSize(v1) * 0.1f);
-			Handles.DrawWireDisc(v2, Vector3.left, HandleUtility.GetHandleSize(v2) * 0.1f);
-			Handles.DrawDottedLine(v1, v2, 5);
+			Handles.DrawDottedLine(v1, v0, 5);
 
 			float z = HandTracking.Workspace.z / 2f;
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, z));
-			v2 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, hand.Position.z));
 			Handles.DrawWireDisc(v1, Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
-			Handles.DrawDottedLine(v1, v2, 5);
+			Handles.DrawDottedLine(v1, v0, 5);
+
+			float y = HandTracking.Workspace.y / 2f;
+			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, -y, hand.Position.z));
+			Handles.DrawWireDisc(v1, Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawDottedLine(v1, v0, 5);
 		}
 
 		private void PaintWorkspace()
