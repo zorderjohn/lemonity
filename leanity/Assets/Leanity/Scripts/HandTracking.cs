@@ -28,6 +28,16 @@ namespace Leanity
 		public static Quaternion TransformRotation { get; set; }
 		public static float TransformScale { get; set; }
 
+		public static Vector3 CamToHandOffset()
+		{
+			return Vector3.forward * Options.PosScale * Workspace.z * 1.2f;
+		}
+
+		public static Vector3 HandToCamCoordinates(Vector3 position)
+		{
+			return position * Options.PosScale + Vector3.forward * Options.PosScale * Workspace.z * 1.2f;
+		}
+
 		public static Vector3 ToWorldCoordinates(Vector3 position)
 		{
 			return TransformPosition + TransformRotation * (position * TransformScale);

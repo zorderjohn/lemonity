@@ -48,8 +48,8 @@ namespace Leanity
 
 			// Always instantiate after Left and Right grabs
 			//MotionStyle = new AbsoluteMotion();
-			MotionStyle = new HandlebarMotion();
-			//MotionStyle = new TwoHandsMotion();
+			//MotionStyle = new HandlebarMotion();
+			MotionStyle = new TwoHandsMotion();
 
 			_inertialData = new InertialObject(Options.VelocityFrames);
 			LatestInstance = this;
@@ -68,7 +68,7 @@ namespace Leanity
 			ObjectPosition = position;
 			ObjectRotation = rotation;
 
-			HandTracking.TransformPosition = position + rotation * (Vector3.forward * Options.PosScale * HandTracking.Workspace.z * 1.2f);
+			HandTracking.TransformPosition = position + rotation * HandTracking.CamToHandOffset();
 			HandTracking.TransformRotation = rotation;
 			HandTracking.TransformScale = Options.PosScale;
 			HandTracking.Update();
