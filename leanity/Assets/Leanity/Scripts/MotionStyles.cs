@@ -167,7 +167,7 @@ namespace Leanity
 			Vector3 wcCamPivot =  wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
 			Vector3 wcPivotToCam = wcCamInitialPos - wcCamPivot;
 
-			Debug.DrawRay(wcCamPivot, Vector3.down, Color.red, 1f);
+			//Debug.DrawRay(wcCamPivot, Vector3.down, Color.red, 1f);
 
 			Vector3 ccDeltaMovement = (hcCenterInitialPos - hcCenterFinalPos) * Options.PosScale;
 			if (InvertAxis)
