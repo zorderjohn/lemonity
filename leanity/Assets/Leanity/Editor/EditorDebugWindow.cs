@@ -192,10 +192,14 @@ namespace Leanity
 		{
 			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
-			Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .3f, EventType.Repaint);
-			//Handles.ConeHandleCap
-			//Handles.CylinderHandleCap(0, handPos, handRot, .2f* HandleUtility.GetHandleSize(handPos), EventType.Repaint);
-
+			if (hand.GrabValue > Options.GrabThreshold)
+			{
+				Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .3f, EventType.Repaint);
+			}
+			else
+			{
+				Handles.SphereHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .2f, EventType.Repaint);
+			}
 
 			float x = HandTracking.Workspace.x / 2f;
 			Vector3 v0, v1;
