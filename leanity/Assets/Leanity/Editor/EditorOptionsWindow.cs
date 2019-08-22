@@ -45,14 +45,14 @@ namespace Leanity
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
 					EditorGUILayout.PrefixLabel("Translation");
-					Options.PosScale = GUILayout.HorizontalSlider(Options.PosScale, 0f, 10f);
+					Options.PosScale = GUILayout.HorizontalSlider(Options.PosScale, 0f, 50f);
 					Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
 				}
 
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
 					EditorGUILayout.PrefixLabel("Rotation");
-					Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 10f);
+					Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 5f);
 					Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
 				}
 
@@ -85,6 +85,7 @@ namespace Leanity
 					Options.PitchLimit = GUILayout.HorizontalSlider(Options.PitchLimit, 0f, 90f);
 					Options.PitchLimit = EditorGUILayout.FloatField(Options.PitchLimit, GUILayout.Width(50));
 				}
+
 				EditorGUI.indentLevel--;
 
 				EditorGUI.indentLevel--;
@@ -93,6 +94,7 @@ namespace Leanity
 				GUILayout.Space(4);
 				EditorGUI.indentLevel++;
 
+				#region Filters
 				_showFilters.target = EditorGUILayout.Toggle("Configure filters", _showFilters.target);
 				GUIContent[] filterOptions = new[]
 				{
@@ -102,25 +104,24 @@ namespace Leanity
 					new GUIContent("D Cutoff", "Cutoff for derivative")
 				};
 
-				#region Filters
 				using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showFilters.faded))
 				{
 					if (_showFilters.value)
 					{
 						EditorGUI.indentLevel++;
-						Options.FilterFrequency = EditorGUILayout.FloatField(filterOptions[0], Options.FilterFrequency);
+						Options.FilterFrequency = EditorGUILayout.DelayedFloatField(filterOptions[0], Options.FilterFrequency);
 						EditorGUILayout.PrefixLabel("Rotation");
 						EditorGUI.indentLevel++;
-						Options.RotFilterMinCutoff = EditorGUILayout.FloatField(filterOptions[1], Options.RotFilterMinCutoff);
-						Options.RotFilterBeta = EditorGUILayout.FloatField(filterOptions[2], Options.RotFilterBeta);
-						Options.RotFilterDcutoff = EditorGUILayout.FloatField(filterOptions[3], Options.RotFilterDcutoff);
+						Options.RotFilterMinCutoff = EditorGUILayout.DelayedFloatField(filterOptions[1], Options.RotFilterMinCutoff);
+						Options.RotFilterBeta = EditorGUILayout.DelayedFloatField(filterOptions[2], Options.RotFilterBeta);
+						Options.RotFilterDcutoff = EditorGUILayout.DelayedFloatField(filterOptions[3], Options.RotFilterDcutoff);
 						EditorGUI.indentLevel--;
 
 						EditorGUILayout.PrefixLabel("Translation");
 						EditorGUI.indentLevel++;
-						Options.PosFilterMinCutoff = EditorGUILayout.FloatField(filterOptions[1], Options.PosFilterMinCutoff);
-						Options.PosFilterBeta = EditorGUILayout.FloatField(filterOptions[2], Options.PosFilterBeta);
-						Options.PosFilterDcutoff = EditorGUILayout.FloatField(filterOptions[3], Options.PosFilterDcutoff);
+						Options.PosFilterMinCutoff = EditorGUILayout.DelayedFloatField(filterOptions[1], Options.PosFilterMinCutoff);
+						Options.PosFilterBeta = EditorGUILayout.DelayedFloatField(filterOptions[2], Options.PosFilterBeta);
+						Options.PosFilterDcutoff = EditorGUILayout.DelayedFloatField(filterOptions[3], Options.PosFilterDcutoff);
 						EditorGUI.indentLevel--;
 
 						EditorGUI.indentLevel--;
