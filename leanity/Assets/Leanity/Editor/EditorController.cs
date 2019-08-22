@@ -14,13 +14,11 @@ namespace Leanity
 		{
 			_motion = new MotionController();
 			EditorApplication.update += Update;
-
 		}
 
 		static void Update()
 		{
 			// Calculate cam position and rotation
-			HandTracking.Update();
 			var scene = SceneView.lastActiveSceneView;
 
 			if (scene != null)

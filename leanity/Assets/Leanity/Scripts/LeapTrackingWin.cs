@@ -13,8 +13,9 @@ namespace Leanity
 		private HandData _rightHandData;
 		private HandData _leftHandData;
 		private long _frameId = 0;
+		private static readonly Vector3 LEAP_WORKSPACE = new Vector3(0.6f, 0.5f, 0.4f);
+		private static readonly float LEAP_MM_TO_M = 0.001f;
 
-		#region Singleton
 		private LeapTrackingWin()
 		{
 			_rightHandData = new HandData(120);
@@ -80,6 +81,12 @@ namespace Leanity
 			return _leftHandData;
 		}
 
+		protected override Vector3 GetWorkspace()
+		{
+			return LEAP_WORKSPACE;
+		}
+
+		#region Singleton
 		public static LeapTrackingWin SubInstance
 		{
 			get { return _subInstance ?? (_subInstance = new LeapTrackingWin()); }
@@ -110,25 +117,20 @@ namespace Leanity
 		private void UpdateHandData(Leap.Hand leapHand, ref HandData hand)
 		{
 			hand.Rotation = leapToUnityRotation(leapHand.Rotation);
-			hand.Position = leapToUnityVector(leapHand.PalmPosition);
+			hand.Position = leapToUnityVector(leapHand.PalmPosition) - new Vector3(0f, LEAP_WORKSPACE.y * 0.5f + 0.1f, 0f);
 			hand.GrabValue = leapHand.GrabStrength;
 			hand.Detected = true;
 			hand.IsRight = leapHand.IsRight;
 		}
 
-		private Vector3 leapToUnityVector(Leap.Vector lv, bool invertAxis = false)
+		private Vector3 leapToUnityVector(Leap.Vector lv)
 		{
-			float invertValue = invertAxis ? -1f : 1f;
-			float scaleFactorX = 0.001f * invertValue;
-			float scaleFactorY = 0.001f * invertValue;
-			float scaleFactorZ = -0.001f * invertValue;
-			return new Vector3(lv.x * scaleFactorX, lv.y * scaleFactorY, lv.z * scaleFactorZ);
+			return new Vector3(lv.x, lv.y, -lv.z) * LEAP_MM_TO_M;
 		}
 
-		private Quaternion leapToUnityRotation(Leap.LeapQuaternion lq, bool invertAxis = false)
+		private Quaternion leapToUnityRotation(Leap.LeapQuaternion lq)
 		{
-			float invertValue = invertAxis ? -1f : 1f;
-			return new Quaternion(-lq.x * invertValue, -lq.y * invertValue, lq.z * invertValue, lq.w);
+			return new Quaternion(-lq.x, -lq.y, lq.z, lq.w);
 		}
 	}
 #endif

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Leanity
 {
@@ -13,18 +14,34 @@ namespace Leanity
 		{
 			get { return Instance.GetLeftHandData(); }
 		}
+		public static Vector3 Workspace
+		{
+			get { return Instance.GetWorkspace(); }
+		}
 
 		public static void Update()
 		{
 			Instance.UpdateTracking();
 		}
 
-		protected abstract void UpdateTracking();
-		protected abstract HandData GetRightHandData();
-		protected abstract HandData GetLeftHandData();
+		public static Vector3 TransformPosition { get; set; }
+		public static Quaternion TransformRotation { get; set; }
+		public static float TransformScale { get; set; }
+
+		public static Vector3 ToWorldCoordinates(Vector3 position)
+		{
+			return TransformPosition + TransformRotation * (position * TransformScale);
+		}
+
+		public static Quaternion ToWorldCoordinates(Quaternion rotation)
+		{
+			return Quaternion.Normalize(TransformRotation * rotation);
+		}
 
 		public abstract void Dispose();
+		#endregion
 
+		#region Singleton
 		public static HandTracking _instance;
 		public static HandTracking Instance
 		{
@@ -38,5 +55,11 @@ namespace Leanity
 			}
 		}
 		#endregion
+
+		protected abstract void UpdateTracking();
+		protected abstract HandData GetRightHandData();
+		protected abstract HandData GetLeftHandData();
+		protected abstract Vector3 GetWorkspace();
+
 	}
 }

@@ -16,13 +16,17 @@ namespace Leanity
 		private readonly float _workspaceWidth = 0.5f;
 		private readonly float _workspaceDepth = 0.5f;
 
-		public EditorDebugWindow()
+		private readonly Vector3[] _cubeVertices =
 		{
-		}
-
-		~EditorDebugWindow()
-		{
-		}
+			new Vector3( 1f,  1f,  1f), // 0
+			new Vector3( 1f,  1f, -1f), // 1
+			new Vector3( 1f, -1f,  1f), // 2
+			new Vector3( 1f, -1f, -1f), // 3
+			new Vector3(-1f,  1f,  1f), // 4
+			new Vector3(-1f,  1f, -1f), // 5
+			new Vector3(-1f, -1f,  1f), // 6
+			new Vector3(-1f, -1f, -1f) // 7
+		};
 
 		void OnEnable()
 		{
@@ -162,32 +166,101 @@ namespace Leanity
 		{
 			Handles.color = Color.yellow;
 
-			var camRot = sceneView.rotation;
-			var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
+			if (sceneView == null)
+			{
+				return;
+			}
 
+			Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
+			PaintWorkspace();
 
 			if (HandTracking.LeftHandData.Detected)
 			{
 				Handles.color = Color.red;
-				PaintHand(HandTracking.LeftHandData, camPos, camRot);
+				PaintHand(HandTracking.LeftHandData);
 			}
 			if (HandTracking.RightHandData.Detected)
 			{
 				Handles.color = Color.blue;
-				PaintHand(HandTracking.RightHandData, camPos, camRot);
+				PaintHand(HandTracking.RightHandData);
 			}
 
 			SceneView.RepaintAll();
 		}
 
-		private void PaintHand(HandData hand, Vector3 camPos, Quaternion camRot)
+		private void PaintHand(HandData hand)
 		{
-			var handPos = camRot * (hand.Position + Vector3.forward) + camPos;
-			var handRot = camRot * hand.Rotation;
+			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
+			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
 			Handles.ArrowHandleCap(1, handPos, handRot, 1f, EventType.Repaint);
-			Handles.DrawLine(camPos, handPos);
-			//Handles.DrawSolidDisc(handPos, Vector3.up, 0.05f);
-			Handles.CylinderHandleCap(0, handPos, handRot, HandleUtility.GetHandleSize(handPos), EventType.Repaint);
+			Handles.CylinderHandleCap(0, handPos, handRot, .2f* HandleUtility.GetHandleSize(handPos), EventType.Repaint);
+
+
+			float x = HandTracking.Workspace.x / 2f;
+			var v1 = HandTracking.ToWorldCoordinates(new Vector3(-x, hand.Position.y, hand.Position.z));
+			var v2 = HandTracking.ToWorldCoordinates(new Vector3(x, hand.Position.y, hand.Position.z));
+			Handles.DrawWireDisc(v1, Vector3.right, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawWireDisc(v2, Vector3.left, HandleUtility.GetHandleSize(v2) * 0.1f);
+			Handles.DrawDottedLine(v1, v2, 5);
+
+			float z = HandTracking.Workspace.z / 2f;
+			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, z));
+			v2 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, hand.Position.z));
+			Handles.DrawWireDisc(v1, Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawDottedLine(v1, v2, 5);
 		}
+
+		private void PaintWorkspace()
+		{
+			Handles.color = Color.white;
+
+			// Top
+			PaintGrid(0, 1, 5, 4);
+
+			// Bottom
+			PaintGrid(2, 3, 7, 6);
+
+			// Front
+			PaintGrid(0, 2, 6, 4);
+
+			// Left
+			PaintGrid(4, 5, 7, 6);
+
+			// Right
+			PaintGrid(0, 1, 3, 2);
+		}
+
+		// Clockwise vertices
+		private void PaintGrid(uint i0, uint i1, uint i2, uint i3)
+		{
+			var v0 = GetCubeCoord(i0);
+			var v1 = GetCubeCoord(i1);
+			var v2 = GetCubeCoord(i2);
+			var v3 = GetCubeCoord(i3);
+
+			int div = Options.NumGridLines + 1;
+			for (int i = 0; i <= div; i++)
+			{
+				float f = i / (float)div;
+				var vert0 = Vector3.Lerp(v0, v1, f);
+				var vert1 = Vector3.Lerp(v3, v2, f);
+				Handles.DrawLine(vert0, vert1);
+
+				vert0 = Vector3.Lerp(v0, v3, f);
+				vert1 = Vector3.Lerp(v1, v2, f);
+				Handles.DrawLine(vert0, vert1);
+			}
+		}
+
+		private Vector3 GetCubeCoord(uint id)
+		{
+			if (id < 8)
+			{
+				var localPosition = Vector3.Scale(HandTracking.Workspace, _cubeVertices[id]) * 0.5f;
+				return HandTracking.ToWorldCoordinates(localPosition);
+			}
+			return Vector3.zero;
+		}
+
 	}
 }

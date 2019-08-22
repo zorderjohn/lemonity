@@ -7,10 +7,12 @@ namespace Leanity
 	public class MotionController
 	{
 		private IMotionStyle _motionStyle;
+
 		public IMotionStyle MotionStyle
 		{
 			get { return _motionStyle; }
-			set {
+			set
+			{
 				_motionStyle = value;
 				InitMotionStyle();
 			}
@@ -47,6 +49,7 @@ namespace Leanity
 			// Always instantiate after Left and Right grabs
 			//MotionStyle = new AbsoluteMotion();
 			MotionStyle = new HandlebarMotion();
+			//MotionStyle = new TwoHandsMotion();
 
 			_inertialData = new InertialObject(Options.VelocityFrames);
 			LatestInstance = this;
@@ -65,6 +68,9 @@ namespace Leanity
 			ObjectPosition = position;
 			ObjectRotation = rotation;
 
+			HandTracking.TransformPosition = position + rotation * (Vector3.forward * Options.PosScale * HandTracking.Workspace.z * 1.2f);
+			HandTracking.TransformRotation = rotation;
+			HandTracking.TransformScale = Options.PosScale;
 			HandTracking.Update();
 
 			LeftGrab.Update(HandTracking.LeftHandData, ObjectPosition, ObjectRotation);
@@ -151,7 +157,7 @@ namespace Leanity
 			ObjectRotation = orientation;
 
 			return linearVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt ||
-			       eulerVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt;
+				   eulerVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt;
 		}
 
 		private void StartMoving()

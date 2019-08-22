@@ -52,6 +52,7 @@ namespace Leanity
 			get { return _pitchLimit; }
 			set { SetFieldValue(ref _pitchLimit, value); }
 		}
+
 		#endregion
 
 		#region Interaction
@@ -164,8 +165,16 @@ namespace Leanity
 			set { SetFieldValue(ref _posFilterDcutoff, value); }
 		}
 
+		private static int _numGridLines;
+		public static int NumGridLines
+		{
+			get { return _numGridLines; }
+			set { SetFieldValue(ref _numGridLines, value); }
+		}
+
 		public static bool Dirty { get; private set; } = false;
 		#endregion
+
 
 		private static bool _init = false;
 
@@ -267,6 +276,8 @@ namespace Leanity
 				PosFilterMinCutoff = PlayerPrefs.GetFloat("PosFilterMinCutoff", 1f);
 				PosFilterBeta = PlayerPrefs.GetFloat("PosFilterBeta", 0f);
 				PosFilterDcutoff = PlayerPrefs.GetFloat("PosFilterDcutoff", 1f);
+
+				NumGridLines = PlayerPrefs.GetInt("NumGridLines", 6);
 
 				_init = true;
 				Dirty = false;
