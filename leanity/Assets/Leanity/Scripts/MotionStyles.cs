@@ -164,7 +164,10 @@ namespace Leanity
 			Vector3 hcCenterInitialPos = (hcLeftInitialPos + hcRightInitialPos) * 0.5f;
 			Vector3 hcCenterFinalPos = (hcLeftFinalPos + hcRightFinalPos) * 0.5f;
 
+			//wcCamPivot Y coordinate must be set to zero
 			Vector3 wcCamPivot =  wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
+			wcCamPivot.y = wcCamInitialPos.y;
+
 			Vector3 wcPivotToCam = wcCamInitialPos - wcCamPivot;
 
 			//Debug.DrawRay(wcCamPivot, Vector3.down, Color.red, 1f);
@@ -196,12 +199,12 @@ namespace Leanity
 			eulerDeltaRot *= Options.RotScale;
 			ccDeltaRot = Quaternion.Euler(eulerDeltaRot);
 
-			Quaternion targetRotation = wcCamInitialRot * ccDeltaRot;
+			Quaternion targetRotation =  ccDeltaRot * wcCamInitialRot;
 
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
 
-			ObjectPosition = wcCamPivot + ccDeltaRot * wcPivotToCam + wcCamInitialRot * ccDeltaRot * ccDeltaMovement;
+			ObjectPosition = wcCamPivot + ccDeltaRot * wcPivotToCam + ObjectRotation * ccDeltaMovement;
 		}
 	}
 }
