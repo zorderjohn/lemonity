@@ -163,6 +163,10 @@ namespace Leanity
 		private void StartMoving()
 		{
 			_inertialData.Clear();
+
+			//TODO: Only on two hand gestures
+			LeftGrab.Reset();
+			RightGrab.Reset();
 		}
 
 		private void StopMoving()

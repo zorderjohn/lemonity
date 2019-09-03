@@ -30,6 +30,8 @@ namespace Leanity
 		}
 
 		private HandData _hand;
+		private Vector3 _latestObjectPosition;
+		private Quaternion _latestObjectRotation;
 
 		public GrabController()
 		{
@@ -38,12 +40,18 @@ namespace Leanity
 
 		public void Reset()
 		{
-			IsHolding = false;
+			if (IsHolding)
+			{
+				StartHolding();
+			}
 		}
 
 		public void Update(HandData hand, Vector3 objectPosition, Quaternion objectRotation)
 		{
 			_hand = hand;
+			_latestObjectPosition = objectPosition;
+			_latestObjectRotation = objectRotation;
+
 			if (IsHolding)
 			{
 				if (!hand.Detected || hand.GrabValue < Options.GrabThreshold)
@@ -56,14 +64,19 @@ namespace Leanity
 				if (hand.Detected && hand.GrabValue >= Options.GrabThreshold)
 				{
 					IsHolding = true;
-					StartTime = Time.time;
-					HandInitialPosition = hand.Position;
-					HandInitialRotation = hand.Rotation;
-					ObjectInitialPosition = objectPosition;
-					ObjectInitialRotation = objectRotation;
+					StartHolding();
 				}
 			}
 		}
 
+		private void StartHolding()
+		{
+			StartTime = Time.time;
+			HandInitialPosition = _hand.Position;
+			HandInitialRotation = _hand.Rotation;
+			ObjectInitialPosition = _latestObjectPosition;
+			ObjectInitialRotation = _latestObjectRotation;
+		}
 	}
+
 }
