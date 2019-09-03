@@ -10,6 +10,11 @@ namespace Leanity
 	{
 		static MotionController _motion;
 
+		public static MotionController EditorMotionController
+		{
+			get { return _motion; }
+		}
+
 		static EditorController()
 		{
 			_motion = new MotionController();
@@ -36,5 +41,6 @@ namespace Leanity
 				}
 			}
 		}
+
 	}
 }

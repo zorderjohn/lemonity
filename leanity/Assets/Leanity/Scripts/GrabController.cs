@@ -36,6 +36,11 @@ namespace Leanity
 			IsHolding = false;
 		}
 
+		public void Reset()
+		{
+			IsHolding = false;
+		}
+
 		public void Update(HandData hand, Vector3 objectPosition, Quaternion objectRotation)
 		{
 			_hand = hand;

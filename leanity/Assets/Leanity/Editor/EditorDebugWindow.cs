@@ -238,6 +238,8 @@ namespace Leanity
 
 			// Right
 			PaintGrid(0, 1, 3, 2);
+
+			EditorController.EditorMotionController.MotionStyle.DebugDraw();
 		}
 
 		// Clockwise vertices
