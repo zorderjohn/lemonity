@@ -185,7 +185,10 @@ namespace Leanity
 				PaintHand(HandTracking.RightHandData);
 			}
 
-			SceneView.RepaintAll();
+			if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected)
+			{
+				SceneView.RepaintAll();
+			}
 		}
 
 		private void PaintHand(HandData hand)
