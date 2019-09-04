@@ -204,7 +204,6 @@ namespace Leanity
 			var ccDeltaRot = Quaternion.FromToRotation(ccCurrentRotation, ccInitialRotation);
 
 			var normEuler = MathHelper.NormalizedEulerAngles(ccDeltaRot);
-			Debug.Log("cc: " + normEuler);
 
 			#region Pitch Rotation
 			// Pitch Rotation
@@ -215,7 +214,6 @@ namespace Leanity
 			Vector3 eulerLeftPitchRot = MathHelper.NormalizedEulerAngles(hcLeftDeltaRot);
 			eulerLeftPitchRot.y = 0f;
 			eulerLeftPitchRot.z = 0f;
-			//Debug.Log("delta pitch: " + eulerLeftPitchRot.x);
 			hcLeftDeltaRot.eulerAngles = eulerLeftPitchRot;
 			#endregion
 
@@ -233,8 +231,8 @@ namespace Leanity
 			eulerDeltaRot *= Options.RotScale;
 			ccDeltaRot = Quaternion.Euler(eulerDeltaRot);
 
-			Quaternion targetRotation = wcCamInitialRot * ccDeltaRot;
-			targetRotation = targetRotation * Quaternion.Inverse(hcLeftDeltaRot);
+			Quaternion targetRotation = ccDeltaRot * wcCamInitialRot * Quaternion.Inverse(hcLeftDeltaRot);
+
 
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
