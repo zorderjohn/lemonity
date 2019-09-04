@@ -37,6 +37,7 @@ namespace Leanity
 
 		private bool _isHolding = false;
 		private InertialObject _inertialData;
+		private WorkingGesture _currentGesture;
 
 		public MotionController()
 		{
@@ -47,16 +48,35 @@ namespace Leanity
 			RightGrab = new GrabController();
 
 			// Always instantiate after Left and Right grabs
-			//MotionStyle = new AbsoluteMotion();
-			//MotionStyle = new HandlebarMotion();
-			MotionStyle = new TwoHandsMotion();
+			_currentGesture = Options.Gesture;
+			LoadMotionStyle();
 
 			_inertialData = new InertialObject(Options.VelocityFrames);
 			LatestInstance = this;
 		}
 
+		private void LoadMotionStyle()
+		{
+			switch(_currentGesture)
+			{
+				case WorkingGesture.OneHand:
+					MotionStyle = new OneHandMotion();
+					break;
+
+				case WorkingGesture.TwoHands:
+					MotionStyle = new TwoHandsMotion();
+					break;
+			}
+		}
+
 		public void OnOptionsChanged()
 		{
+			if (_currentGesture != Options.Gesture)
+			{
+				_currentGesture = Options.Gesture;
+				LoadMotionStyle();
+			}
+
 			if (_motionStyle != null)
 			{
 				_motionStyle.InvertAxis = Options.InvertAxis;
@@ -91,9 +111,18 @@ namespace Leanity
 
 		private bool EventController()
 		{
-			bool anyHandHolding = LeftGrab.IsHolding && RightGrab.IsHolding;
+			bool holding = false;
 
-			if (anyHandHolding)
+			if (_motionStyle != null && _motionStyle.RequiresTwoHands)
+			{
+				holding = LeftGrab.IsHolding && RightGrab.IsHolding;
+			}
+			else
+			{
+				holding = LeftGrab.IsHolding || RightGrab.IsHolding;
+			}
+
+			if (holding)
 			{
 				if (!_isHolding)
 				{
@@ -164,9 +193,12 @@ namespace Leanity
 		{
 			_inertialData.Clear();
 
-			//TODO: Only on two hand gestures
-			LeftGrab.Reset();
-			RightGrab.Reset();
+			if (MotionStyle != null && MotionStyle.RequiresTwoHands)
+			{
+				//TODO: Only on two hand gestures
+				LeftGrab.Reset();
+				RightGrab.Reset();
+			}
 		}
 
 		private void StopMoving()

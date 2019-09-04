@@ -10,6 +10,7 @@ namespace Leanity
 		GrabController LeftGrab { get; set; }
 		GrabController RightGrab { get; set; }
 		InertialObject InertialData { get; set; }
+		bool RequiresTwoHands { get; }
 		bool InvertAxis { get; set; }
 		void DebugDraw();
 	}
@@ -21,6 +22,7 @@ namespace Leanity
 		public GrabController LeftGrab { get; set; }
 		public GrabController RightGrab { get; set; }
 		public InertialObject InertialData { get; set; }
+		public virtual bool RequiresTwoHands { get { return false; } }
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
 

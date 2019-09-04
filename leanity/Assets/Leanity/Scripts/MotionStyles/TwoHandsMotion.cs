@@ -4,32 +4,26 @@ namespace Leanity
 {
 	public class TwoHandsMotion : MotionStyleBase
 	{
-		Vector3 wcPivotToCam;
 		Vector3 wcCamPivot;
 		Vector3 wcLeftInitialPos;
 		Vector3 wcRightInitialPos;
+		Vector3 wcPivotToCam;
+		public override bool RequiresTwoHands { get { return true; } }
 
 		public override void Update()
 		{
-			//hc = Hand Coordinates
-			//cc = Camera Coordinates
-			//wc = World Coordinates
+			// hc = Hand Coordinates
+			// cc = Camera Coordinates
+			// wc = World Coordinates
 
 			GrabController grabInfo = GetDominantGrabController(latestHold: false);
 			Vector3 wcCamInitialPos = grabInfo.ObjectInitialPosition;
 			Quaternion wcCamInitialRot = grabInfo.ObjectInitialRotation;
 
-
 			Vector3 hcLeftInitialPos = LeftGrab.HandInitialPosition;
 			Vector3 hcRightInitialPos = RightGrab.HandInitialPosition;
 			Vector3 hcLeftFinalPos = LeftGrab.HandCurrentPosition;
 			Vector3 hcRightFinalPos = RightGrab.HandCurrentPosition;
-
-
-			Quaternion ObjectInitialRotation = grabInfo.ObjectInitialRotation;
-			Vector3 ObjectInitialPosition = grabInfo.ObjectInitialPosition;
-			wcLeftInitialPos = ObjectInitialPosition + ObjectInitialRotation * HandTracking.HandToCamCoordinates(hcLeftInitialPos);
-			wcRightInitialPos = ObjectInitialPosition + ObjectInitialRotation * HandTracking.HandToCamCoordinates(hcRightInitialPos);
 
 			Vector3 hcCenterInitialPos = (hcLeftInitialPos + hcRightInitialPos) * 0.5f;
 			Vector3 hcCenterFinalPos = (hcLeftFinalPos + hcRightFinalPos) * 0.5f;
@@ -105,11 +99,16 @@ namespace Leanity
 			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
 
 			ObjectPosition = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
+
 			#endregion
 		}
 
+
 		public override void DebugDraw()
 		{
+			wcLeftInitialPos = LeftGrab.ObjectInitialPosition + LeftGrab.ObjectInitialRotation * HandTracking.HandToCamCoordinates(LeftGrab.HandInitialPosition);
+			wcRightInitialPos = LeftGrab.ObjectInitialPosition + LeftGrab.ObjectInitialRotation * HandTracking.HandToCamCoordinates(RightGrab.HandInitialPosition);
+
 			Vector3 wcCamPivotFloor = wcCamPivot;
 			wcCamPivotFloor.y = 0f;
 			UnityEditor.Handles.color = Color.red;

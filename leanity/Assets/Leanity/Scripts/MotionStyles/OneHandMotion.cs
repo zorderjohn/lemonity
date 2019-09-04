@@ -9,7 +9,7 @@ namespace Leanity
 			bool absoluteMovement = true;
 			GrabController grabInfo = GetDominantGrabController();
 			Vector3 deltaMovement = grabInfo.DeltaPosition * Options.PosScale;
-			if (InvertAxis)
+			if (!InvertAxis)
 			{
 				deltaMovement *= -1f;
 			}
@@ -21,7 +21,7 @@ namespace Leanity
 
 
 			Quaternion deltaRot = grabInfo.DeltaRotation;
-			if (InvertAxis)
+			if (!InvertAxis)
 			{
 				deltaRot = Quaternion.Inverse(deltaRot);
 			}

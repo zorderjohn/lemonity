@@ -134,7 +134,7 @@ namespace Leanity
 		[MenuItem("Window/Leanity &l")]
 		public static void Init()
 		{
-			GetWindow(typeof(EditorDebugWindow), false, "Leanity", true);
+			GetWindow(typeof(EditorDebugWindow), false, "Leanity Debug", true);
 		}
 
 		public void OnInspectorUpdate()

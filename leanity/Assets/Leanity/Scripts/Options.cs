@@ -6,6 +6,7 @@ using System;
 
 namespace Leanity
 {
+	public enum WorkingGesture { OneHand, TwoHands}
 	public enum WorkingMode { Absolute, Relative}
 
 	[Serializable]
@@ -20,6 +21,14 @@ namespace Leanity
 		{
 			get { return _mode; }
 			set { SetFieldValue(ref _mode, value);}
+		}
+
+		[SerializeField]
+		private static WorkingGesture _gesture;
+		public static WorkingGesture Gesture
+		{
+			get { return _gesture; }
+			set { SetFieldValue(ref _gesture, value); }
 		}
 
 		#region Sensitivity
@@ -203,6 +212,9 @@ namespace Leanity
 			if (Dirty)
 			{
 				Dirty = false;
+				// Working gesture
+				PlayerPrefs.SetInt("Gesture", (int)Gesture);
+
 				// Working mode
 				PlayerPrefs.SetInt("Mode", (int)Mode);
 
@@ -243,6 +255,9 @@ namespace Leanity
 		{
 			if (!_init)
 			{
+				// Working gesture
+				Gesture = (WorkingGesture)PlayerPrefs.GetInt("Gesture", (int)WorkingGesture.OneHand);
+
 				// Working mode
 				Mode = (WorkingMode)PlayerPrefs.GetInt("Mode", (int)WorkingMode.Absolute);
 
