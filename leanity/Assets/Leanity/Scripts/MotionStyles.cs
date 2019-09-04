@@ -175,76 +175,81 @@ namespace Leanity
 			wcLeftInitialPos = ObjectInitialPosition + ObjectInitialRotation * HandTracking.HandToCamCoordinates(hcLeftInitialPos);
 			wcRightInitialPos = ObjectInitialPosition + ObjectInitialRotation * HandTracking.HandToCamCoordinates(hcRightInitialPos);
 
-
 			Vector3 hcCenterInitialPos = (hcLeftInitialPos + hcRightInitialPos) * 0.5f;
 			Vector3 hcCenterFinalPos = (hcLeftFinalPos + hcRightFinalPos) * 0.5f;
 
-			//wcCamPivot Y coordinate must be set to zero
-			wcCamPivot =  wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
-			//wcCamPivot.y = wcCamInitialPos.y;
 
-			wcPivotToCam = wcCamInitialPos - wcCamPivot;
-
-			//Debug.DrawRay(wcCamPivot, Vector3.down, Color.red, 1f);
-
-			Vector3 ccDeltaMovement = (hcCenterInitialPos - hcCenterFinalPos) * Options.PosScale;
-			if (InvertAxis)
-			{
-				ccDeltaMovement *= -1f;
-			}
-
-			// Initial Rotation
-			Vector3 ccInitialRotation = hcLeftInitialPos - hcRightInitialPos;
-			Vector3 ccCurrentRotation = hcLeftFinalPos - hcRightFinalPos;
+			#region Yaw Rotation
+			// Gesture rotation
+			Vector3 hcGestureInitialRotation = hcLeftInitialPos - hcRightInitialPos;
+			Vector3 hcGestureCurrentRotation = hcLeftFinalPos - hcRightFinalPos;
 
 			// Projecting to XZ plane to preserve only yaw rotation
-			ccInitialRotation.y = 0;
-			ccCurrentRotation.y = 0;
+			hcGestureInitialRotation.y = 0;
+			hcGestureCurrentRotation.y = 0;
 
-			var ccDeltaRot = Quaternion.FromToRotation(ccCurrentRotation, ccInitialRotation);
-
-			var normEuler = MathHelper.NormalizedEulerAngles(ccDeltaRot);
+			var hcYawDeltaRot = Quaternion.FromToRotation(hcGestureCurrentRotation, hcGestureInitialRotation);
+			#endregion
 
 			#region Pitch Rotation
 			Quaternion hcLeftDeltaRot = LeftGrab.DeltaRotation;
 			Quaternion hcRightDeltaRot = RightGrab.DeltaRotation;
 
-			Vector3 eulerRightPitchRot = MathHelper.NormalizedEulerAngles(hcRightDeltaRot);
-			eulerRightPitchRot.y = 0f;
-			eulerRightPitchRot.z = 0f;
-			hcRightDeltaRot.eulerAngles = eulerRightPitchRot;
+			// Remove yaw and roll rotations to get hands pitch rotation
+			hcRightDeltaRot.eulerAngles = new Vector3(hcRightDeltaRot.eulerAngles.x, 0f, 0f);
+			hcLeftDeltaRot.eulerAngles = new Vector3(hcLeftDeltaRot.eulerAngles.x, 0f, 0f);
 
-			Vector3 eulerLeftPitchRot = MathHelper.NormalizedEulerAngles(hcLeftDeltaRot);
-			eulerLeftPitchRot.y = 0f;
-			eulerLeftPitchRot.z = 0f;
-			hcLeftDeltaRot.eulerAngles = eulerLeftPitchRot;
-
+			// Promediate pitch rotations
 			Quaternion hcPitchDeltaRot = Quaternion.Lerp(hcLeftDeltaRot, hcRightDeltaRot, .5f);
 			#endregion
 
 
 			if (InvertAxis)
 			{
-				ccDeltaRot = Quaternion.Inverse(ccDeltaRot);
-			} else
+				hcYawDeltaRot = Quaternion.Inverse(hcYawDeltaRot);
+			}
+			else
 			{
 				hcPitchDeltaRot = Quaternion.Inverse(hcPitchDeltaRot);
 			}
 
+			// Scale yaw rotation
+			Vector3 eulerYawDeltaRot = MathHelper.NormalizedEulerAngles(hcYawDeltaRot);
+			eulerYawDeltaRot.Scale(Options.AxisRotScale);
+			eulerYawDeltaRot *= Options.RotScale;
+			hcYawDeltaRot = Quaternion.Euler(eulerYawDeltaRot);
 
-			// Scale rotation
-			Vector3 eulerDeltaRot = MathHelper.NormalizedEulerAngles(ccDeltaRot);
-			eulerDeltaRot.Scale(Options.AxisRotScale);
-			eulerDeltaRot *= Options.RotScale;
-			ccDeltaRot = Quaternion.Euler(eulerDeltaRot);
+			// Combine pitch and yaw rotations
+			Quaternion targetRotation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
 
-			Quaternion targetRotation = ccDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
-
-
+			// Remove any roll rotation
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
 
-			ObjectPosition = wcCamPivot + ccDeltaRot * (wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot)) * wcPivotToCam + ObjectRotation * ccDeltaMovement;
+
+			#region Position calculation
+			// Calculate camera rotation pivot
+			wcCamPivot = wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
+
+			// Vector from pivot to camera which will be rotated by the gesture
+			wcPivotToCam = wcCamInitialPos - wcCamPivot;
+
+			// Calculate translation as the relative translation of the hands
+			Vector3 ccDeltaTranslation = (hcCenterInitialPos - hcCenterFinalPos) * Options.PosScale;
+
+			if (InvertAxis)
+			{
+				ccDeltaTranslation *= -1f;
+			}
+
+			// Gesture translation in world coordinates
+			Vector3 wcDeltaTranslation = ObjectRotation * ccDeltaTranslation;
+
+			// Effect of rotation around the pivot
+			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
+
+			ObjectPosition = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
+			#endregion
 		}
 
 		public override void DebugDraw()
