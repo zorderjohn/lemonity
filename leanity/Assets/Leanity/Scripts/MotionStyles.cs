@@ -206,22 +206,29 @@ namespace Leanity
 			var normEuler = MathHelper.NormalizedEulerAngles(ccDeltaRot);
 
 			#region Pitch Rotation
-			// Pitch Rotation
-
 			Quaternion hcLeftDeltaRot = LeftGrab.DeltaRotation;
 			Quaternion hcRightDeltaRot = RightGrab.DeltaRotation;
+
+			Vector3 eulerRightPitchRot = MathHelper.NormalizedEulerAngles(hcRightDeltaRot);
+			eulerRightPitchRot.y = 0f;
+			eulerRightPitchRot.z = 0f;
+			hcRightDeltaRot.eulerAngles = eulerRightPitchRot;
 
 			Vector3 eulerLeftPitchRot = MathHelper.NormalizedEulerAngles(hcLeftDeltaRot);
 			eulerLeftPitchRot.y = 0f;
 			eulerLeftPitchRot.z = 0f;
 			hcLeftDeltaRot.eulerAngles = eulerLeftPitchRot;
+
+			Quaternion hcPitchDeltaRot = Quaternion.Lerp(hcLeftDeltaRot, hcRightDeltaRot, .5f);
 			#endregion
 
 
 			if (InvertAxis)
 			{
 				ccDeltaRot = Quaternion.Inverse(ccDeltaRot);
-				hcLeftDeltaRot = Quaternion.Inverse(hcLeftDeltaRot);
+			} else
+			{
+				hcPitchDeltaRot = Quaternion.Inverse(hcPitchDeltaRot);
 			}
 
 
@@ -231,13 +238,13 @@ namespace Leanity
 			eulerDeltaRot *= Options.RotScale;
 			ccDeltaRot = Quaternion.Euler(eulerDeltaRot);
 
-			Quaternion targetRotation = ccDeltaRot * wcCamInitialRot * Quaternion.Inverse(hcLeftDeltaRot);
+			Quaternion targetRotation = ccDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
 
 
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
 
-			ObjectPosition = wcCamPivot + ccDeltaRot * (wcCamInitialRot * Quaternion.Inverse(hcLeftDeltaRot) * Quaternion.Inverse(wcCamInitialRot)) * wcPivotToCam + ObjectRotation * ccDeltaMovement;
+			ObjectPosition = wcCamPivot + ccDeltaRot * (wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot)) * wcPivotToCam + ObjectRotation * ccDeltaMovement;
 		}
 
 		public override void DebugDraw()
