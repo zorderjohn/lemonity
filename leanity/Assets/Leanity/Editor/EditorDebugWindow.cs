@@ -15,6 +15,7 @@ namespace Leanity
 		private static Texture _leftHandGrabTexture;
 		private readonly float _workspaceWidth = 0.5f;
 		private readonly float _workspaceDepth = 0.5f;
+		private static bool _handsVisible = false;
 
 		private readonly Vector3[] _cubeVertices =
 		{
@@ -139,7 +140,11 @@ namespace Leanity
 		public void OnInspectorUpdate()
 		{
 			// This will only get called 10 times per second.
-			Repaint();
+			if (_handsVisible)
+			{
+				Repaint();
+			}
+			_handsVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
 		}
 
 		public void Dispose()
