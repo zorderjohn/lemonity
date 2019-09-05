@@ -54,14 +54,14 @@ namespace Leanity
 
 			if (IsHolding)
 			{
-				if (!hand.Detected || hand.GrabValue < Options.GrabThreshold)
+				if (!hand.Detected || hand.GrabValue < Options.GrabMinThreshold)
 				{
 					IsHolding = false;
 				}
 			}
 			else
 			{
-				if (hand.Detected && hand.GrabValue >= Options.GrabThreshold)
+				if (hand.Detected && hand.GrabValue >= Options.GrabMaxThreshold)
 				{
 					IsHolding = true;
 					StartHolding();

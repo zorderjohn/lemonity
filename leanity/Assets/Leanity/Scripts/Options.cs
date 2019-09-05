@@ -65,11 +65,18 @@ namespace Leanity
 		#endregion
 
 		#region Interaction
-		private static float _grabThreshold;
-		public static float GrabThreshold
+		private static float _grabMinThreshold;
+		public static float GrabMinThreshold
 		{
-			get { return _grabThreshold; }
-			set { SetFieldValue(ref _grabThreshold, value); }
+			get { return _grabMinThreshold; }
+			set { SetFieldValue(ref _grabMinThreshold, value); }
+		}
+
+		private static float _grabMaxThreshold;
+		public static float GrabMaxThreshold
+		{
+			get { return _grabMaxThreshold; }
+			set { SetFieldValue(ref _grabMaxThreshold, value); }
 		}
 
 		private static bool _grabEnabled;
@@ -230,7 +237,8 @@ namespace Leanity
 
 				// Interaction
 				PlayerPrefs.SetInt("GrabEnabled", GrabEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat("GrabThreshold", GrabThreshold);
+				PlayerPrefs.SetFloat("GrabMinThreshold", GrabMinThreshold);
+				PlayerPrefs.SetFloat("GrabMaxThreshold", GrabMaxThreshold);
 				PlayerPrefs.SetInt("InvertAxis", InvertAxis ? 1 : 0);
 
 				// Inertia
@@ -273,7 +281,8 @@ namespace Leanity
 
 				// Interaction
 				GrabEnabled = PlayerPrefs.GetInt("GrabEnabled", 1) == 1;
-				GrabThreshold = PlayerPrefs.GetFloat("GrabThreshold", 0.5f);
+				GrabMinThreshold = PlayerPrefs.GetFloat("GrabMinThreshold", 0.5f);
+				GrabMaxThreshold = PlayerPrefs.GetFloat("GrabMaxThreshold", 0.6f);
 				InvertAxis = PlayerPrefs.GetInt("InvertAxis", 1) == 1;
 
 				// Inertia
