@@ -33,6 +33,7 @@ namespace Leanity
 		{
 			LoadResources();
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
+			EditorController.EditorMotionController.OnHandsVisible += OnHandsVisible;
 		}
 
 		void OnDisable()
@@ -86,6 +87,11 @@ namespace Leanity
 			GUI.enabled = true;
 		}
 
+		private void OnHandsVisible()
+		{
+			SceneView.RepaintAll();
+		}
+
 		private void DrawHandPosition(HandData hand, Rect r)
 		{
 			if (hand.Detected)
@@ -93,14 +99,15 @@ namespace Leanity
 				Rect rImage = new Rect(r);
 				Texture handTexture;
 				GrabController grabController;
+				var motionController = EditorController.EditorMotionController;
 				if (hand.IsRight)
 				{
-					grabController = MotionController.LatestInstance.RightGrab;
+					grabController = motionController.RightGrab;
 					handTexture = grabController.IsHolding ? _rightHandGrabTexture : _rightHandTexture;
 				}
 				else
 				{
-					grabController = MotionController.LatestInstance.LeftGrab;
+					grabController = motionController.LeftGrab;
 					handTexture = grabController.IsHolding ? _leftHandGrabTexture : _leftHandTexture;
 				}
 				rImage.width = handTexture.width;
@@ -176,22 +183,22 @@ namespace Leanity
 				return;
 			}
 
-			Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
-			PaintWorkspace();
-
-			if (HandTracking.LeftHandData.Detected)
-			{
-				Handles.color = Color.red;
-				PaintHand(HandTracking.LeftHandData);
-			}
-			if (HandTracking.RightHandData.Detected)
-			{
-				Handles.color = Color.blue;
-				PaintHand(HandTracking.RightHandData);
-			}
-
 			if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected)
 			{
+				Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
+
+				if (HandTracking.LeftHandData.Detected)
+				{
+					Handles.color = Color.red;
+					PaintHand(HandTracking.LeftHandData);
+				}
+				if (HandTracking.RightHandData.Detected)
+				{
+					Handles.color = Color.blue;
+					PaintHand(HandTracking.RightHandData);
+				}
+
+				PaintWorkspace();
 				SceneView.RepaintAll();
 			}
 		}

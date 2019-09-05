@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Leanity
 {
@@ -30,16 +31,18 @@ namespace Leanity
 			set { _motionStyle.Rotation = value; }
 		}
 
-		public static MotionController LatestInstance { get; private set; }
+		public event Action OnHandsVisible;
 
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
 
 		public bool IsHolding { get; private set; } = false;
 
+		private bool _handsVisible = false;
 		private InertialObject _inertialData;
 		private WorkingGesture _currentGesture;
 		private float _lastFrameTime = 0f;
+		private readonly float TERMINAL_VELOCITY = 0.001f;
 
 		public MotionController()
 		{
@@ -54,7 +57,6 @@ namespace Leanity
 			LoadMotionStyle();
 
 			_inertialData = new InertialObject(Options.VelocityFrames);
-			LatestInstance = this;
 		}
 
 		private void LoadMotionStyle()
@@ -100,6 +102,8 @@ namespace Leanity
 				LeftGrab.Update(HandTracking.LeftHandData, Position, Rotation);
 				RightGrab.Update(HandTracking.RightHandData, Position, Rotation);
 
+				HandDetectedEvent();
+
 				GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 				GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 
@@ -116,6 +120,16 @@ namespace Leanity
 			_motionStyle.LeftGrab = LeftGrab;
 			_motionStyle.RightGrab = RightGrab;
 			_motionStyle.InvertAxis = Options.InvertAxis;
+		}
+
+		private void HandDetectedEvent()
+		{
+			bool handsDetected = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
+			if (!_handsVisible && handsDetected && OnHandsVisible != null)
+			{
+				OnHandsVisible.Invoke();
+			}
+			_handsVisible = handsDetected;
 		}
 
 		private bool EventController()
@@ -194,8 +208,8 @@ namespace Leanity
 
 			Rotation = orientation;
 
-			return linearVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt ||
-				   eulerVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt;
+			return linearVelocity.sqrMagnitude >= TERMINAL_VELOCITY ||
+				   eulerVelocity.sqrMagnitude >= TERMINAL_VELOCITY;
 		}
 
 		private void StartMoving()

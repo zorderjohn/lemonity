@@ -13,7 +13,7 @@ namespace Leanity
 		private static Texture _leftHandTexture;
 
 		AnimBool _showFilters = new AnimBool();
-
+		protected static bool _showGrabGesture = false;
 
 		public void OnGUI()
 		{
@@ -70,36 +70,45 @@ namespace Leanity
 				GUILayout.Space(8);
 			}
 
+
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				GUILayout.Label("Grab Gesture", EditorStyles.boldLabel);
+				//GUILayout.Label("Grab Gesture", EditorStyles.boldLabel);
+				_showGrabGesture = EditorGUILayout.Foldout(_showGrabGesture, "Grab Gesture", EditorStyles.foldout);
 				GUILayout.Space(4);
 				EditorGUI.indentLevel++;
-				//Options.GrabEnabled = EditorGUILayout.ToggleLeft("Enable", Options.GrabEnabled);
-				using (var horizontalScope = new GUILayout.HorizontalScope())
+				if (_showGrabGesture)
 				{
-					EditorGUILayout.PrefixLabel("Min Threshold");
-					Options.GrabMinThreshold = GUILayout.HorizontalSlider(Options.GrabMinThreshold, 0f, 1f);
-					Options.GrabMinThreshold = EditorGUILayout.FloatField(Options.GrabMinThreshold, GUILayout.Width(50));
-
-					if (Options.GrabMinThreshold > Options.GrabMaxThreshold)
+					//Options.GrabEnabled = EditorGUILayout.ToggleLeft("Enable", Options.GrabEnabled);
+					using (var horizontalScope = new GUILayout.HorizontalScope())
 					{
-						Options.GrabMaxThreshold = Options.GrabMinThreshold;
+						EditorGUILayout.PrefixLabel("Min Threshold");
+						Options.GrabMinThreshold = GUILayout.HorizontalSlider(Options.GrabMinThreshold, 0f, 1f);
+						Options.GrabMinThreshold = EditorGUILayout.FloatField(Options.GrabMinThreshold, GUILayout.Width(50));
+
+						if (Options.GrabMinThreshold > Options.GrabMaxThreshold)
+						{
+							Options.GrabMaxThreshold = Options.GrabMinThreshold;
+						}
+					}
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Max Threshold");
+						Options.GrabMaxThreshold = GUILayout.HorizontalSlider(Options.GrabMaxThreshold, 0f, 1f);
+						Options.GrabMaxThreshold = EditorGUILayout.FloatField(Options.GrabMaxThreshold, GUILayout.Width(50));
+
+						if (Options.GrabMaxThreshold < Options.GrabMinThreshold)
+						{
+							Options.GrabMinThreshold = Options.GrabMaxThreshold;
+						}
 					}
 				}
-				using (var horizontalScope = new GUILayout.HorizontalScope())
+			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					EditorGUILayout.PrefixLabel("Max Threshold");
-					Options.GrabMaxThreshold = GUILayout.HorizontalSlider(Options.GrabMaxThreshold, 0f, 1f);
-					Options.GrabMaxThreshold = EditorGUILayout.FloatField(Options.GrabMaxThreshold, GUILayout.Width(50));
 
-					if (Options.GrabMaxThreshold < Options.GrabMinThreshold)
-					{
-						Options.GrabMinThreshold = Options.GrabMaxThreshold;
-					}
-				}
-
-				EditorGUI.indentLevel--;
+					EditorGUI.indentLevel--;
 				GUILayout.Space(8);
 				GUILayout.Label("Camera", EditorStyles.boldLabel);
 				GUILayout.Space(4);
