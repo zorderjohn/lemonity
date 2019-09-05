@@ -181,6 +181,11 @@ namespace Leanity
 			set { SetFieldValue(ref _posFilterDcutoff, value); }
 		}
 
+
+		public static bool Dirty { get; private set; } = false;
+		#endregion
+
+		#region Debug
 		private static int _numGridLines;
 		public static int NumGridLines
 		{
@@ -188,9 +193,20 @@ namespace Leanity
 			set { SetFieldValue(ref _numGridLines, value); }
 		}
 
-		public static bool Dirty { get; private set; } = false;
-		#endregion
+		private static bool _showGrid;
+		public static bool ShowGrid
+		{
+			get { return _showGrid; }
+			set { SetFieldValue(ref _showGrid, value); }
+		}
 
+		private static bool _gestureDebug;
+		public static bool GestureDebug
+		{
+			get { return _gestureDebug; }
+			set { SetFieldValue(ref _gestureDebug, value); }
+		}
+		#endregion
 
 		private static bool _init = false;
 
@@ -256,6 +272,11 @@ namespace Leanity
 				PlayerPrefs.SetFloat("PosFilterMinCutoff", PosFilterMinCutoff);
 				PlayerPrefs.SetFloat("PosFilterBeta", PosFilterBeta);
 				PlayerPrefs.SetFloat("PosFilterDcutoff", PosFilterDcutoff);
+
+				// Debug
+				PlayerPrefs.SetInt("NumGridLines", NumGridLines);
+				PlayerPrefs.SetInt("ShowGrid", ShowGrid ? 1 : 0);
+				PlayerPrefs.SetInt("GestureDebug", GestureDebug ? 1 : 0);
 			}
 		}
 
@@ -301,7 +322,10 @@ namespace Leanity
 				PosFilterBeta = PlayerPrefs.GetFloat("PosFilterBeta", 0f);
 				PosFilterDcutoff = PlayerPrefs.GetFloat("PosFilterDcutoff", 1f);
 
+				// Debug
 				NumGridLines = PlayerPrefs.GetInt("NumGridLines", 6);
+				ShowGrid = PlayerPrefs.GetInt("ShowGrid", 1) == 1;
+				GestureDebug = PlayerPrefs.GetInt("GestureDebug", 1) == 1;
 
 				_init = true;
 				Dirty = false;

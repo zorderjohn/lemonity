@@ -47,23 +47,40 @@ namespace Leanity
 			var rightHandData = HandTracking.RightHandData;
 			var leftHandData = HandTracking.LeftHandData;
 
-			GUILayout.BeginVertical();
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Grid Lines");
+					Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 1f, 20f);
+					Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines, GUILayout.Width(50));
+				}
 
-			GUILayout.Label("Right Hand Data");
-			DrawHandData(rightHandData);
+				Options.GestureDebug = EditorGUILayout.Toggle("Gesture Debug", Options.GestureDebug);
+			}
+			GUILayout.Space(4);
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				GUILayout.Label("Right Hand Data");
+				DrawHandData(rightHandData);
 
-			GUILayout.Label("Left Hand Data");
-			DrawHandData(leftHandData);
+				GUILayout.Label("Left Hand Data");
+				DrawHandData(leftHandData);
+			}
+			GUILayout.Space(4);
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				Rect r = GUILayoutUtility.GetAspectRect(1f);
 
-			Rect r = GUILayoutUtility.GetAspectRect(1f);
+				EditorGUI.IndentedRect(r);
 
-			EditorGUI.IndentedRect(r);
+				EditorGUI.DrawRect(r, Color.white);
+				DrawHandPosition(rightHandData, r);
+				DrawHandPosition(leftHandData, r);
 
-			EditorGUI.DrawRect(r, Color.white);
-			DrawHandPosition(rightHandData, r);
-			DrawHandPosition(leftHandData, r);
+			}
 
-			GUILayout.EndVertical();
 			GUILayout.EndScrollView();
 		}
 
@@ -198,7 +215,11 @@ namespace Leanity
 					PaintHand(HandTracking.RightHandData);
 				}
 
-				PaintWorkspace();
+				if (Options.ShowGrid)
+				{
+					PaintWorkspace();
+				}
+
 				SceneView.RepaintAll();
 			}
 		}
@@ -260,7 +281,10 @@ namespace Leanity
 			// Right
 			PaintGrid(0, 1, 3, 2);
 
-			motionController.MotionStyle.DebugDraw();
+			if (Options.GestureDebug)
+			{
+				motionController.MotionStyle.DebugDraw();
+			}
 		}
 
 		// Clockwise vertices
