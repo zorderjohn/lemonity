@@ -47,7 +47,7 @@ namespace Leanity
 			_leftHandData.SetPositionFilterParams(Options.FilterFrequency, Options.PosFilterMinCutoff, Options.PosFilterBeta, Options.PosFilterDcutoff);
 		}
 
-		protected override void UpdateTracking()
+		protected override bool UpdateTracking()
 		{
 			if (_controller != null && _controller.IsConnected)
 			{
@@ -70,8 +70,10 @@ namespace Leanity
 							UpdateHandData(hand, ref _leftHandData);
 						}
 					}
+					return true;
 				}
 			}
+			return false;
 		}
 
 		protected override HandData GetRightHandData()

@@ -21,7 +21,7 @@ namespace Leanity
 			EditorApplication.update += Update;
 		}
 
-		static void Update()
+		static public void Update()
 		{
 			// Calculate cam position and rotation
 			var scene = SceneView.lastActiveSceneView;

@@ -19,9 +19,9 @@ namespace Leanity
 			get { return Instance.GetWorkspace(); }
 		}
 
-		public static void Update()
+		public static bool Update()
 		{
-			Instance.UpdateTracking();
+			return Instance.UpdateTracking();
 		}
 
 		public static Vector3 TransformPosition { get; set; }
@@ -66,7 +66,7 @@ namespace Leanity
 		}
 		#endregion
 
-		protected abstract void UpdateTracking();
+		protected abstract bool UpdateTracking();
 		protected abstract HandData GetRightHandData();
 		protected abstract HandData GetLeftHandData();
 		protected abstract Vector3 GetWorkspace();

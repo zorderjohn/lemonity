@@ -17,16 +17,35 @@ public class InertialObject {
 	public Vector3 LinearVelocity { get; set; }
 	public Vector3 AngularVelocityEuler { get; set; }
 
+	private readonly int MIN_BUFFER_SIZE = 2;
+	private readonly int MAX_BUFFER_SIZE = 1000;
+
 	private CircularBuffer<PositionTime> _posBuffer;
 	private CircularBuffer<RotationTime> _rotBuffer;
-	private readonly int _bufferLength;
 
+	private int _bufferLength = -1;
+	public int BufferLength
+	{
+		get
+		{
+			return _bufferLength;
+		}
+		set
+		{
+			int newLength = Mathf.Clamp(value, MIN_BUFFER_SIZE, MAX_BUFFER_SIZE);
+
+			if (_bufferLength != newLength)
+			{
+				_bufferLength = newLength;
+				_posBuffer = new CircularBuffer<PositionTime>(_bufferLength);
+				_rotBuffer = new CircularBuffer<RotationTime>(_bufferLength);
+			}
+		}
+	}
 
 	public InertialObject (int bufferLength)
 	{
-		_bufferLength = bufferLength;
-		_posBuffer = new CircularBuffer<PositionTime>(_bufferLength);
-		_rotBuffer = new CircularBuffer<RotationTime>(_bufferLength);
+		BufferLength = Mathf.Clamp(bufferLength, 2, 1000);
 	}
 
 
@@ -70,7 +89,8 @@ public class InertialObject {
 			var oldPos = _posBuffer.Front();
 
 			float deltaTime = lastPos.Timestamp - oldPos.Timestamp;
-			LinearVelocity = (lastPos.Position - oldPos.Position) / deltaTime;
+
+			LinearVelocity = deltaTime <= 0f ? Vector3.zero : (lastPos.Position - oldPos.Position) / deltaTime;
 		}
 	}
 
@@ -78,7 +98,7 @@ public class InertialObject {
 	{
 		if (_rotBuffer.IsEmpty || _rotBuffer.Size == 1)
 		{
-			AngularVelocityEuler = Vector3.one;
+			AngularVelocityEuler = Vector3.zero;
 		}
 		else
 		{

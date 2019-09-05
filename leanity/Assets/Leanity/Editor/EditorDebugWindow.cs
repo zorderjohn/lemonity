@@ -230,7 +230,10 @@ namespace Leanity
 
 		private void PaintWorkspace()
 		{
-			Handles.color = Color.white;
+			var motionController = EditorController.EditorMotionController;
+			EditorController.Update();
+
+			Handles.color = motionController.IsHolding ? Color.red : Color.white;
 
 			// Top
 			PaintGrid(0, 1, 5, 4);
@@ -247,7 +250,7 @@ namespace Leanity
 			// Right
 			PaintGrid(0, 1, 3, 2);
 
-			EditorController.EditorMotionController.MotionStyle.DebugDraw();
+			motionController.MotionStyle.DebugDraw();
 		}
 
 		// Clockwise vertices
