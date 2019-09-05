@@ -200,7 +200,10 @@ namespace Leanity
 		{
 			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
-			if (hand.GrabValue > Options.GrabThreshold)
+			var motionController = EditorController.EditorMotionController;
+
+			bool holding = hand.IsRight ? motionController.RightGrab.IsHolding : motionController.LeftGrab.IsHolding;
+			if ( holding )
 			{
 				Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .3f, EventType.Repaint);
 			}
