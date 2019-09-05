@@ -23,9 +23,9 @@ namespace Leanity
 			}
 
 			// Only for cameras
-			deltaMovement = ObjectRotation * deltaMovement;
+			deltaMovement = Rotation * deltaMovement;
 
-			ObjectPosition = absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : ObjectPosition + deltaMovement;
+			Position = absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
 
 
 			// Initial Rotation
@@ -44,10 +44,10 @@ namespace Leanity
 			eulerDeltaRot *= Options.RotScale;
 			deltaRot = Quaternion.Euler(eulerDeltaRot);
 
-			Quaternion targetRotation = absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : ObjectRotation * deltaRot;
+			Quaternion targetRotation = absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : Rotation * deltaRot;
 
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
+			Rotation = Quaternion.Euler(clampedEulerRotation);
 
 
 		}

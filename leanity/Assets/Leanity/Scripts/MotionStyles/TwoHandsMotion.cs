@@ -74,7 +74,7 @@ namespace Leanity
 
 			// Remove any roll rotation
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-			ObjectRotation = Quaternion.Euler(clampedEulerRotation);
+			Rotation = Quaternion.Euler(clampedEulerRotation);
 			#endregion
 
 			#region Position calculation
@@ -93,12 +93,12 @@ namespace Leanity
 			}
 
 			// Gesture translation in world coordinates
-			Vector3 wcDeltaTranslation = ObjectRotation * ccDeltaTranslation;
+			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
 			// Effect of rotation around the pivot
 			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
 
-			ObjectPosition = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
+			Position = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 
 			#endregion
 		}

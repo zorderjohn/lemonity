@@ -5,8 +5,8 @@ namespace Leanity
 	public interface IMotionStyle
 	{
 		void Update();
-		Vector3 ObjectPosition { get; set; }
-		Quaternion ObjectRotation { get; set; }
+		Vector3 Position { get; set; }
+		Quaternion Rotation { get; set; }
 		GrabController LeftGrab { get; set; }
 		GrabController RightGrab { get; set; }
 		InertialObject InertialData { get; set; }
@@ -17,8 +17,8 @@ namespace Leanity
 
 	public abstract class MotionStyleBase : IMotionStyle
 	{
-		public Vector3 ObjectPosition { get; set; }
-		public Quaternion ObjectRotation { get; set; }
+		public Vector3 Position { get; set; }
+		public Quaternion Rotation { get; set; }
 		public GrabController LeftGrab { get; set; }
 		public GrabController RightGrab { get; set; }
 		public InertialObject InertialData { get; set; }

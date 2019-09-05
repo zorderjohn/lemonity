@@ -46,8 +46,8 @@ namespace Leanity
 		{
 			motion.Update(transform.position, transform.rotation);
 
-			transform.position = motion.ObjectPosition;
-			transform.rotation = motion.ObjectRotation;
+			transform.position = motion.Position;
+			transform.rotation = motion.Rotation;
 		}
 
 

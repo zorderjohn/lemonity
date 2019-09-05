@@ -33,8 +33,8 @@ namespace Leanity
 
 				if (_motion.Update(camPos, camRot))
 				{
-					camPos = _motion.ObjectPosition;
-					camRot = _motion.ObjectRotation;
+					camPos = _motion.Position;
+					camRot = _motion.Rotation;
 
 					scene.rotation = camRot;
 					scene.pivot = MathHelper.CameraPivot(camPos, camRot, scene.cameraDistance);

@@ -19,15 +19,15 @@ namespace Leanity
 		}
 		public bool IsCamera { get; set; }
 
-		public Vector3 ObjectPosition
+		public Vector3 Position
 		{
-			get { return _motionStyle.ObjectPosition; }
-			set { _motionStyle.ObjectPosition = value; }
+			get { return _motionStyle.Position; }
+			set { _motionStyle.Position = value; }
 		}
-		public Quaternion ObjectRotation
+		public Quaternion Rotation
 		{
-			get { return _motionStyle.ObjectRotation; }
-			set { _motionStyle.ObjectRotation = value; }
+			get { return _motionStyle.Rotation; }
+			set { _motionStyle.Rotation = value; }
 		}
 
 		public static MotionController LatestInstance { get; private set; }
@@ -85,16 +85,16 @@ namespace Leanity
 
 		public bool Update(Vector3 position, Quaternion rotation)
 		{
-			ObjectPosition = position;
-			ObjectRotation = rotation;
+			Position = position;
+			Rotation = rotation;
 
 			HandTracking.TransformPosition = position + rotation * HandTracking.CamToHandOffset();
 			HandTracking.TransformRotation = rotation;
 			HandTracking.TransformScale = Options.PosScale;
 			HandTracking.Update();
 
-			LeftGrab.Update(HandTracking.LeftHandData, ObjectPosition, ObjectRotation);
-			RightGrab.Update(HandTracking.RightHandData, ObjectPosition, ObjectRotation);
+			LeftGrab.Update(HandTracking.LeftHandData, Position, Rotation);
+			RightGrab.Update(HandTracking.RightHandData, Position, Rotation);
 
 			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1000);
@@ -130,8 +130,8 @@ namespace Leanity
 					StartMoving();
 				}
 				float t = Time.time;
-				_inertialData.SetPosition(ObjectPosition, t);
-				_inertialData.SetRotation(ObjectRotation, t);
+				_inertialData.SetPosition(Position, t);
+				_inertialData.SetRotation(Rotation, t);
 
 				MotionStyle.Update();
 
@@ -165,8 +165,8 @@ namespace Leanity
 			_inertialData.LinearVelocity = linearVelocity;
 
 
-			ObjectPosition += linearVelocity * deltaTime;
-			_inertialData.SetPosition(ObjectPosition, Time.time);
+			Position += linearVelocity * deltaTime;
+			_inertialData.SetPosition(Position, Time.time);
 
 			Vector3 eulerVelocity = _inertialData.AngularVelocityEuler * Options.AngularDrag;
 
@@ -176,14 +176,14 @@ namespace Leanity
 
 			Quaternion deltaRotation = Quaternion.Euler(eulerVelocity * deltaTime);
 
-			Quaternion orientation = deltaRotation * ObjectRotation;
+			Quaternion orientation = deltaRotation * Rotation;
 
 			if (IsCamera)
 			{
 				orientation.eulerAngles = MathHelper.ClampEulerRotationXZ(orientation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			}
 
-			ObjectRotation = orientation;
+			Rotation = orientation;
 
 			return linearVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt ||
 				   eulerVelocity.sqrMagnitude >= Vector3.kEpsilonNormalSqrt;
