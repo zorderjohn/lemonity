@@ -36,8 +36,7 @@ namespace Leanity
 
 			Quaternion targetRotation = absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : Rotation * deltaRot;
 
-			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-			Rotation = Quaternion.Euler(clampedEulerRotation);
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 
 			// Not camera
 			//transform.rotation = deltaRot * initialObjectRot;

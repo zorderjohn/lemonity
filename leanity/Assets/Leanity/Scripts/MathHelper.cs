@@ -28,6 +28,12 @@ public static class MathHelper
 		return euler;
 	}
 
+	public static Quaternion ClampRotationXZ(Quaternion rot, float xMin, float xMax, float zMin, float zMax)
+	{
+		return Quaternion.Euler(ClampEulerRotationXZ(rot.eulerAngles, xMin, xMax, zMin, zMax));
+	}
+
+
 	public static Vector3 CameraPosition(Vector3 pivot, Quaternion rotation, float distance)
 	{
 		return pivot - (rotation * (Vector3.forward * distance));
