@@ -4,7 +4,6 @@ namespace Leanity
 {
 	public interface IMotionStyle
 	{
-		void Update();
 		Vector3 Position { get; set; }
 		Quaternion Rotation { get; set; }
 		GrabController LeftGrab { get; set; }
@@ -12,6 +11,9 @@ namespace Leanity
 		InertialObject InertialData { get; set; }
 		bool RequiresTwoHands { get; }
 		bool InvertAxis { get; set; }
+
+		void Start();
+		void Update();
 		void DebugDraw();
 	}
 
@@ -26,6 +28,7 @@ namespace Leanity
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
 
+		public abstract void Start();
 		public abstract void Update();
 
 		protected GrabController GetDominantGrabController(bool latestHold = true)

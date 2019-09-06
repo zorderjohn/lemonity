@@ -7,35 +7,47 @@ namespace Leanity
 		Vector3 wcCamPivot;
 		Vector3 wcLeftInitialPos;
 		Vector3 wcRightInitialPos;
+		Quaternion wcCamInitialRot;
 		Vector3 wcPivotToCam;
+		Vector3 hcCenterInitialPos;
+		Vector3 hcGestureInitialRotation;
+
 		public override bool RequiresTwoHands { get { return true; } }
+
+		// hc = Hand Coordinates
+		// cc = Camera Coordinates
+		// wc = World Coordinates
+
+		public override void Start()
+		{
+			GrabController grabInfo = GetDominantGrabController(latestHold: false);
+			Vector3 wcCamInitialPos = grabInfo.ObjectInitialPosition;
+
+			// Middle point between hands
+			hcCenterInitialPos = (LeftGrab.HandInitialPosition + RightGrab.HandInitialPosition) * 0.5f;
+
+			// Store camera initial rotation
+			wcCamInitialRot = grabInfo.ObjectInitialRotation;
+
+			// Calculate camera rotation pivot
+			wcCamPivot = wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
+
+			// Vector from pivot to camera which will be rotated by the gesture
+			wcPivotToCam = wcCamInitialPos - wcCamPivot;
+
+			hcGestureInitialRotation = LeftGrab.HandInitialPosition - RightGrab.HandInitialPosition;
+			// Projecting to XZ plane to preserve only yaw rotation
+			hcGestureInitialRotation.y = 0;
+		}
 
 		public override void Update()
 		{
-			// hc = Hand Coordinates
-			// cc = Camera Coordinates
-			// wc = World Coordinates
-
-			GrabController grabInfo = GetDominantGrabController(latestHold: false);
-			Vector3 wcCamInitialPos = grabInfo.ObjectInitialPosition;
-			Quaternion wcCamInitialRot = grabInfo.ObjectInitialRotation;
-
-			Vector3 hcLeftInitialPos = LeftGrab.HandInitialPosition;
-			Vector3 hcRightInitialPos = RightGrab.HandInitialPosition;
-			Vector3 hcLeftFinalPos = LeftGrab.HandCurrentPosition;
-			Vector3 hcRightFinalPos = RightGrab.HandCurrentPosition;
-
-			Vector3 hcCenterInitialPos = (hcLeftInitialPos + hcRightInitialPos) * 0.5f;
-			Vector3 hcCenterFinalPos = (hcLeftFinalPos + hcRightFinalPos) * 0.5f;
-
 
 			#region Yaw Rotation
 			// Gesture rotation
-			Vector3 hcGestureInitialRotation = hcLeftInitialPos - hcRightInitialPos;
-			Vector3 hcGestureCurrentRotation = hcLeftFinalPos - hcRightFinalPos;
+			Vector3 hcGestureCurrentRotation = LeftGrab.HandCurrentPosition - RightGrab.HandCurrentPosition;
 
 			// Projecting to XZ plane to preserve only yaw rotation
-			hcGestureInitialRotation.y = 0;
 			hcGestureCurrentRotation.y = 0;
 
 			var hcYawDeltaRot = Quaternion.FromToRotation(hcGestureCurrentRotation, hcGestureInitialRotation);
@@ -78,13 +90,9 @@ namespace Leanity
 			#endregion
 
 			#region Position calculation
-			// Calculate camera rotation pivot
-			wcCamPivot = wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
-
-			// Vector from pivot to camera which will be rotated by the gesture
-			wcPivotToCam = wcCamInitialPos - wcCamPivot;
 
 			// Calculate translation as the relative translation of the hands
+			Vector3 hcCenterFinalPos = (LeftGrab.HandCurrentPosition + RightGrab.HandCurrentPosition) * 0.5f;
 			Vector3 ccDeltaTranslation = (hcCenterInitialPos - hcCenterFinalPos) * Options.PosScale;
 
 			if (InvertAxis)

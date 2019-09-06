@@ -216,11 +216,15 @@ namespace Leanity
 		{
 			_inertialData.Clear();
 
-			if (MotionStyle != null && MotionStyle.RequiresTwoHands)
+			if (MotionStyle != null)
 			{
-				//TODO: Only on two hand gestures
-				LeftGrab.Reset();
-				RightGrab.Reset();
+				MotionStyle.Start();
+
+				if (MotionStyle.RequiresTwoHands)
+				{
+					LeftGrab.Reset();
+					RightGrab.Reset();
+				}
 			}
 		}
 

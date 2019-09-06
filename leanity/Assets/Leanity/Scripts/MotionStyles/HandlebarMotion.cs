@@ -4,6 +4,10 @@ namespace Leanity
 {
 	public class HandlebarMotion : MotionStyleBase
 	{
+		public override void Start()
+		{
+		}
+
 		public override void Update()
 		{
 			bool absoluteMovement = true;
