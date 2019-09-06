@@ -4,11 +4,9 @@ namespace Leanity
 {
 	public class HandlebarMotion : MotionStyleBase
 	{
-		public override void Start()
-		{
-		}
+		protected override void StartMotion() {}
 
-		public override void Update()
+		protected override void UpdateMotion()
 		{
 			bool absoluteMovement = true;
 
@@ -52,8 +50,6 @@ namespace Leanity
 
 			Vector3 clampedEulerRotation = MathHelper.ClampEulerRotationXZ(targetRotation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 			Rotation = Quaternion.Euler(clampedEulerRotation);
-
-
 		}
 	}
 }

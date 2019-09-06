@@ -14,6 +14,11 @@ namespace Leanity
 
 		void Start();
 		void Update();
+		void Stop();
+		bool InertialUpdate();
+		void LateFrameUpdate();
+
+		void OptionsChange();
 		void DebugDraw();
 	}
 
@@ -28,8 +33,81 @@ namespace Leanity
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
 
-		public abstract void Start();
-		public abstract void Update();
+		protected InertialObject _inertialData;
+		protected float _lastFrameTime = 0f;
+		protected readonly float TERMINAL_SQR_VELOCITY = 0.001f;
+
+		public MotionStyleBase()
+		{
+			_inertialData = new InertialObject(Options.VelocityFrames);
+		}
+
+		protected abstract void StartMotion();
+		public void Start()
+		{
+			_inertialData.Clear();
+			StartMotion();
+		}
+
+		protected abstract void UpdateMotion();
+		public void Update()
+		{
+			UpdateMotion();
+
+			float t = GetTime();
+			_inertialData.SetPosition(Position, t);
+			_inertialData.SetRotation(Rotation, t);
+
+			// Debugging
+			_inertialData.CalculateAngularVelocity();
+
+			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
+			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
+
+		}
+
+		public void Stop()
+		{
+			_inertialData.DiscardFrames(Options.DiscardFrames);
+			_inertialData.CalculateAngularVelocity();
+			_inertialData.CalculateLinearVelocity();
+		}
+
+		public virtual bool InertialUpdate()
+		{
+			float deltaTime = GetDeltaTime();
+
+			var linearVelocity = _inertialData.LinearVelocity;
+			linearVelocity *= Options.LinearDrag;
+			_inertialData.LinearVelocity = linearVelocity;
+
+
+			Position += linearVelocity * deltaTime;
+			_inertialData.SetPosition(Position, GetTime());
+
+			Vector3 eulerVelocity = _inertialData.AngularVelocityEuler * Options.AngularDrag;
+
+			// Up vector always pointing up
+			eulerVelocity.z = 0;
+			_inertialData.AngularVelocityEuler = eulerVelocity;
+
+			Quaternion deltaRotation = Quaternion.Euler(eulerVelocity * deltaTime);
+			Quaternion orientation = Rotation * deltaRotation;
+			orientation.eulerAngles = MathHelper.ClampEulerRotationXZ(orientation.eulerAngles, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+
+			Rotation = orientation;
+
+			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
+			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
+
+			return linearVelocity.sqrMagnitude + eulerVelocity.sqrMagnitude >= TERMINAL_SQR_VELOCITY;
+		}
+
+		public virtual void OptionsChange()
+		{
+			_inertialData.BufferLength = Options.VelocityFrames;
+			InvertAxis = Options.InvertAxis;
+		}
 
 		protected GrabController GetDominantGrabController(bool latestHold = true)
 		{
@@ -56,6 +134,21 @@ namespace Leanity
 			{
 				return null;
 			}
+		}
+
+		protected float GetTime()
+		{
+			return Time.realtimeSinceStartup;
+		}
+
+		protected float GetDeltaTime()
+		{
+			return Time.realtimeSinceStartup - _lastFrameTime;
+		}
+
+		public void LateFrameUpdate()
+		{
+			_lastFrameTime = GetTime();
 		}
 	}
 }

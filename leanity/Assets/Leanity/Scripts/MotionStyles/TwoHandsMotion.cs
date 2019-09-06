@@ -7,10 +7,10 @@ namespace Leanity
 		Vector3 wcCamPivot;
 		Vector3 wcLeftInitialPos;
 		Vector3 wcRightInitialPos;
-		Quaternion wcCamInitialRot;
 		Vector3 wcPivotToCam;
 		Vector3 hcCenterInitialPos;
 		Vector3 hcGestureInitialRotation;
+		Quaternion wcCamInitialRot;
 
 		public override bool RequiresTwoHands { get { return true; } }
 
@@ -18,7 +18,7 @@ namespace Leanity
 		// cc = Camera Coordinates
 		// wc = World Coordinates
 
-		public override void Start()
+		protected override void StartMotion()
 		{
 			GrabController grabInfo = GetDominantGrabController(latestHold: false);
 			Vector3 wcCamInitialPos = grabInfo.ObjectInitialPosition;
@@ -40,7 +40,7 @@ namespace Leanity
 			hcGestureInitialRotation.y = 0;
 		}
 
-		public override void Update()
+		protected override void UpdateMotion()
 		{
 
 			#region Yaw Rotation

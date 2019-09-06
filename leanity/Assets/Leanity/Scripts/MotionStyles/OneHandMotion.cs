@@ -4,11 +4,9 @@ namespace Leanity
 {
 	public class OneHandMotion : MotionStyleBase
 	{
-		public override void Start()
-		{
-		}
+		protected override void StartMotion() {}
 
-		public override void Update()
+		protected override void UpdateMotion()
 		{
 			bool absoluteMovement = true;
 			GrabController grabInfo = GetDominantGrabController();
@@ -43,7 +41,6 @@ namespace Leanity
 
 			// Not camera
 			//transform.rotation = deltaRot * initialObjectRot;
-
 		}
 	}
 }
