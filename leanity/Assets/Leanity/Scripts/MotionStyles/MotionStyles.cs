@@ -17,6 +17,7 @@ namespace Leanity
 		void Stop();
 		bool InertialUpdate();
 		void LateFrameUpdate();
+		void StopInertia();
 
 		void OptionsChange();
 		void DebugDraw();
@@ -76,6 +77,11 @@ namespace Leanity
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 
 			return _inertialData.IsMoving();
+		}
+
+		public void StopInertia()
+		{
+			_inertialData.Clear();
 		}
 
 		public virtual void OptionsChange()

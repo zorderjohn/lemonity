@@ -101,6 +101,11 @@ namespace Leanity
 			return false;
 		}
 
+		public void StopInertia()
+		{
+			MotionStyle?.StopInertia();
+		}
+
 		private void InitMotionStyle()
 		{
 			_motionStyle.LeftGrab = LeftGrab;

@@ -82,6 +82,8 @@ namespace Leanity
 		{
 			_posBuffer.Clear();
 			_rotBuffer.Clear();
+			LinearVelocity = Vector3.zero;
+			AngularVelocityEuler = Vector3.zero;
 		}
 
 		public void DiscardFrames(int frames)
