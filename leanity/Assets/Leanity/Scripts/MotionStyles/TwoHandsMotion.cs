@@ -107,9 +107,39 @@ namespace Leanity
 
 			Position = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 
+			// Update Inertial data with relative position and rotation
+		/*	float t = GetTime();
+			_inertialData.SetPosition(ccDeltaTranslation, t);
+			_inertialData.SetRotation(hcYawDeltaRot, t);
+			*/
 			#endregion
 		}
 
+		/*public override bool InertialUpdate()
+		{
+			_inertialData.DragAngularVelocity(Options.AngularDrag);
+			_inertialData.DragLinearVelocity(Options.LinearDrag);
+
+			float deltaTime = GetDeltaTime();
+			Position += _inertialData.LinearVelocity * deltaTime;
+
+			Vector3 eulerVelocity = _inertialData.AngularVelocityEuler;
+			Quaternion deltaRotation = Quaternion.Euler(eulerVelocity * deltaTime);
+			Quaternion newOrientation = Rotation * deltaRotation;
+			Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+
+
+			return _inertialData.IsMoving();
+		}*/
+
+		/*protected override void UpdateInertialData()
+		{
+			// Debugging
+			_inertialData.CalculateAngularVelocity();
+			_inertialData.CalculateLinearVelocity();
+			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
+			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
+		}*/
 
 		public override void DebugDraw()
 		{

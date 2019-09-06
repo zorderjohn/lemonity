@@ -35,7 +35,7 @@ namespace Leanity
 
 		protected InertialObject _inertialData;
 		protected float _lastFrameTime = 0f;
-		protected readonly float TERMINAL_SQR_VELOCITY = 0.001f;
+
 
 		public MotionStyleBase()
 		{
@@ -67,18 +67,15 @@ namespace Leanity
 			_inertialData.DragAngularVelocity(Options.AngularDrag);
 			_inertialData.DragLinearVelocity(Options.LinearDrag);
 
-			float deltaTime = GetDeltaTime();
-			Position += _inertialData.LinearVelocity * deltaTime;
+			_inertialData.Update(GetTime());
 
-			Vector3 eulerVelocity = _inertialData.AngularVelocityEuler;
-			Quaternion deltaRotation = Quaternion.Euler(eulerVelocity * deltaTime);
-			Quaternion newOrientation = Rotation * deltaRotation;
-			Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+			Position = _inertialData.Position;
+			Rotation = _inertialData.Rotation;
 
 			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 
-			return _inertialData.LinearVelocity.sqrMagnitude + eulerVelocity.sqrMagnitude >= TERMINAL_SQR_VELOCITY;
+			return _inertialData.IsMoving();
 		}
 
 		public virtual void OptionsChange()
@@ -88,7 +85,9 @@ namespace Leanity
 		}
 
 		protected abstract void StartMotion();
+
 		protected abstract void UpdateMotion();
+
 		protected virtual void UpdateInertialData()
 		{
 			float t = GetTime();

@@ -5,13 +5,13 @@ namespace Leanity
 {
 	public class InertialObject
 	{
-		struct PositionTime
+		struct PositionFrame
 		{
 			public Vector3 Position;
 			public float Timestamp;
 		}
 
-		struct RotationTime
+		struct RotationFrame
 		{
 			public Quaternion Rotation;
 			public float Timestamp;
@@ -20,11 +20,26 @@ namespace Leanity
 		public Vector3 LinearVelocity { get; set; }
 		public Vector3 AngularVelocityEuler { get; set; }
 
+		public Vector3 Position
+		{
+			get { return _lastPositionFrame.Position; }
+		}
+
+		public Quaternion Rotation
+		{
+			get { return _lastRotationFrame.Rotation; }
+		}
+
 		private readonly int MIN_BUFFER_SIZE = 2;
 		private readonly int MAX_BUFFER_SIZE = 1000;
 
-		private CircularBuffer<PositionTime> _posBuffer;
-		private CircularBuffer<RotationTime> _rotBuffer;
+		private CircularBuffer<PositionFrame> _posBuffer;
+		private CircularBuffer<RotationFrame> _rotBuffer;
+
+		private PositionFrame _lastPositionFrame;
+		private RotationFrame _lastRotationFrame;
+
+		protected readonly float TERMINAL_SQR_VELOCITY = 0.001f;
 
 		private int _bufferLength = -1;
 		public int BufferLength
@@ -40,8 +55,8 @@ namespace Leanity
 				if (_bufferLength != newLength)
 				{
 					_bufferLength = newLength;
-					_posBuffer = new CircularBuffer<PositionTime>(_bufferLength);
-					_rotBuffer = new CircularBuffer<RotationTime>(_bufferLength);
+					_posBuffer = new CircularBuffer<PositionFrame>(_bufferLength);
+					_rotBuffer = new CircularBuffer<RotationFrame>(_bufferLength);
 				}
 			}
 		}
@@ -51,15 +66,16 @@ namespace Leanity
 			BufferLength = Mathf.Clamp(bufferLength, 2, 1000);
 		}
 
-
 		public void SetPosition(Vector3 position, float timestamp)
 		{
-			_posBuffer.PushBack(new PositionTime() { Position = position, Timestamp = timestamp });
+			_lastPositionFrame = new PositionFrame() { Position = position, Timestamp = timestamp };
+			_posBuffer.PushBack(_lastPositionFrame);
 		}
 
 		public void SetRotation(Quaternion rotation, float timestamp)
 		{
-			_rotBuffer.PushBack(new RotationTime() { Rotation = rotation, Timestamp = timestamp });
+			_lastRotationFrame = new RotationFrame() { Rotation = rotation, Timestamp = timestamp };
+			_rotBuffer.PushBack(_lastRotationFrame);
 		}
 
 		public void Clear()
@@ -123,6 +139,24 @@ namespace Leanity
 		public void DragAngularVelocity(float drag)
 		{
 			LinearVelocity *= drag;
+		}
+
+		public void Update(float time)
+		{
+			float posDeltaTime = time - _lastPositionFrame.Timestamp;
+			_lastPositionFrame.Position += LinearVelocity * posDeltaTime;
+			_lastPositionFrame.Timestamp = time;
+
+			float rotDeltaTime = time - _lastRotationFrame.Timestamp;
+			Quaternion deltaRotation = Quaternion.Euler(AngularVelocityEuler * rotDeltaTime);
+			Quaternion newOrientation = _lastRotationFrame.Rotation * deltaRotation;
+			_lastRotationFrame.Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+			_lastRotationFrame.Timestamp = time;
+		}
+
+		public bool IsMoving()
+		{
+			return LinearVelocity.sqrMagnitude + AngularVelocityEuler.sqrMagnitude >= TERMINAL_SQR_VELOCITY;
 		}
 
 		private Vector3 NormalizedEulerAngles(Quaternion q)
