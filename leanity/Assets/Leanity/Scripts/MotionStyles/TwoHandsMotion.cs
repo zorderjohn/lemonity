@@ -11,6 +11,7 @@ namespace Leanity
 		Vector3 hcCenterInitialPos;
 		Vector3 hcGestureInitialRotation;
 		Quaternion wcCamInitialRot;
+		Quaternion hcPitchDeltaRot;
 
 		public override bool RequiresTwoHands { get { return true; } }
 
@@ -42,8 +43,8 @@ namespace Leanity
 
 		protected override void UpdateMotion()
 		{
+			// Yaw Rotation
 
-			#region Yaw Rotation
 			// Gesture rotation
 			Vector3 hcGestureCurrentRotation = LeftGrab.HandCurrentPosition - RightGrab.HandCurrentPosition;
 
@@ -51,9 +52,8 @@ namespace Leanity
 			hcGestureCurrentRotation.y = 0;
 
 			var hcYawDeltaRot = Quaternion.FromToRotation(hcGestureCurrentRotation, hcGestureInitialRotation);
-			#endregion
 
-			#region Pitch Rotation
+			// Pitch Rotation
 			Quaternion hcLeftDeltaRot = LeftGrab.DeltaRotation;
 			Quaternion hcRightDeltaRot = RightGrab.DeltaRotation;
 
@@ -62,10 +62,8 @@ namespace Leanity
 			hcLeftDeltaRot.eulerAngles = new Vector3(hcLeftDeltaRot.eulerAngles.x, 0f, 0f);
 
 			// Promediate pitch rotations
-			Quaternion hcPitchDeltaRot = Quaternion.Lerp(hcLeftDeltaRot, hcRightDeltaRot, .5f);
-			#endregion
+			hcPitchDeltaRot = Quaternion.Lerp(hcLeftDeltaRot, hcRightDeltaRot, .5f);
 
-			#region Rotation calculation
 			if (InvertAxis)
 			{
 				hcYawDeltaRot = Quaternion.Inverse(hcYawDeltaRot);
@@ -81,14 +79,7 @@ namespace Leanity
 			eulerYawDeltaRot *= Options.RotScale;
 			hcYawDeltaRot = Quaternion.Euler(eulerYawDeltaRot);
 
-			// Combine pitch and yaw rotations
-			Quaternion targetRotation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
-
-			// Remove any roll rotation
-			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-			#endregion
-
-			#region Position calculation
+			// Position calculation
 
 			// Calculate translation as the relative translation of the hands
 			Vector3 hcCenterFinalPos = (LeftGrab.HandCurrentPosition + RightGrab.HandCurrentPosition) * 0.5f;
@@ -99,6 +90,35 @@ namespace Leanity
 				ccDeltaTranslation *= -1f;
 			}
 
+			UpdatePose(hcYawDeltaRot, ccDeltaTranslation);
+
+			// Update Inertial data with relative position and rotation
+			float t = GetTime();
+			_inertialData.SetPosition(ccDeltaTranslation, t);
+			_inertialData.SetRotation(hcYawDeltaRot, t);
+
+		}
+
+		public override bool InertialUpdate()
+		{
+			_inertialData.DragAngularVelocity(Options.AngularDrag);
+			_inertialData.DragLinearVelocity(Options.LinearDrag);
+
+			_inertialData.Update(GetTime());
+
+			UpdatePose(_inertialData.Rotation, _inertialData.Position);
+
+			return _inertialData.IsMoving();
+		}
+
+		private void UpdatePose(Quaternion hcYawDeltaRot, Vector3 ccDeltaTranslation)
+		{
+			// Combine pitch and yaw rotations
+			Quaternion targetRotation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
+
+			// Remove any roll rotation
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+
 			// Gesture translation in world coordinates
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
@@ -106,40 +126,16 @@ namespace Leanity
 			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
 
 			Position = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
-
-			// Update Inertial data with relative position and rotation
-		/*	float t = GetTime();
-			_inertialData.SetPosition(ccDeltaTranslation, t);
-			_inertialData.SetRotation(hcYawDeltaRot, t);
-			*/
-			#endregion
 		}
 
-		/*public override bool InertialUpdate()
-		{
-			_inertialData.DragAngularVelocity(Options.AngularDrag);
-			_inertialData.DragLinearVelocity(Options.LinearDrag);
-
-			float deltaTime = GetDeltaTime();
-			Position += _inertialData.LinearVelocity * deltaTime;
-
-			Vector3 eulerVelocity = _inertialData.AngularVelocityEuler;
-			Quaternion deltaRotation = Quaternion.Euler(eulerVelocity * deltaTime);
-			Quaternion newOrientation = Rotation * deltaRotation;
-			Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-
-
-			return _inertialData.IsMoving();
-		}*/
-
-		/*protected override void UpdateInertialData()
+		protected override void UpdateInertialData()
 		{
 			// Debugging
 			_inertialData.CalculateAngularVelocity();
 			_inertialData.CalculateLinearVelocity();
 			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
-		}*/
+		}
 
 		public override void DebugDraw()
 		{
