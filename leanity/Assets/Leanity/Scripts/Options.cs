@@ -36,7 +36,14 @@ namespace Leanity
 		public static float PosScale
 		{
 			get { return _posScale; }
-			set { SetFieldValue(ref _posScale, value); }
+			set
+			{
+				if (SetFieldValue(ref _posScale, value))
+				{
+					_gridFade.FadeIn(.5f);
+					_gridFade.FadeOutAfterTime(1f, 1f);
+				}
+			}
 		}
 
 		private static float _rotScale;
