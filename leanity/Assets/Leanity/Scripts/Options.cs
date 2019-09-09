@@ -193,6 +193,18 @@ namespace Leanity
 		#endregion
 
 		#region Debug
+
+		public static Color GridColor
+		{
+			get { return new Color(0f, 0.5f, 0f); }
+		}
+
+		public static Color GrabGridColor
+		{
+			get { return Color.red; }
+		}
+
+
 		private static int _numGridLines;
 		public static int NumGridLines
 		{
@@ -254,6 +266,8 @@ namespace Leanity
 		{
 			get { return _gridFade.Value > _gridFade.MinValue; }
 		}
+
+
 
 		#endregion
 

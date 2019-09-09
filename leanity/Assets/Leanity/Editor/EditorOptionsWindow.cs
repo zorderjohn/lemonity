@@ -54,7 +54,10 @@ namespace Leanity
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
 					EditorGUILayout.PrefixLabel("Translation");
-					Options.PosScale = GUILayout.HorizontalSlider(Options.PosScale, 0f, 50f);
+					// Use logaritmic scale starting from 0
+					float sliderValue = Mathf.Log(Options.PosScale + 1f, 3f);
+					sliderValue = GUILayout.HorizontalSlider(sliderValue, 0f, 10f);
+					Options.PosScale = Mathf.Pow(3f, sliderValue) - 1f;
 					Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
 				}
 
@@ -64,6 +67,9 @@ namespace Leanity
 					Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 5f);
 					Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
 				}
+
+				float xRange = HandTracking.Workspace.x * Options.PosScale;
+				EditorGUILayout.LabelField("Workspace width around " + xRange + " meters");
 
 				EditorGUI.indentLevel--;
 

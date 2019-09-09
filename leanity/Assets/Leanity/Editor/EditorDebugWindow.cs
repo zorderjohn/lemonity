@@ -282,7 +282,7 @@ namespace Leanity
 			var motionController = EditorController.EditorMotionController;
 			EditorController.Update();
 
-			var gridColor = motionController.IsHolding ? Color.red : Color.white;
+			var gridColor = motionController.IsHolding ? Options.GrabGridColor : Options.GridColor;
 			gridColor.a = Options.GridTransparency;
 			Handles.color = gridColor;
 
