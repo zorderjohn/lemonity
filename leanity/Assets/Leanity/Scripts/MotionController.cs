@@ -30,6 +30,7 @@ namespace Leanity
 		}
 
 		public event Action OnHandsVisible;
+		public event Action OnHandsInVisible;
 
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
@@ -119,6 +120,10 @@ namespace Leanity
 			if (!_handsVisible && handsDetected && OnHandsVisible != null)
 			{
 				OnHandsVisible.Invoke();
+			}
+			else if (_handsVisible && !handsDetected && OnHandsInVisible != null)
+			{
+				OnHandsInVisible.Invoke();
 			}
 			_handsVisible = handsDetected;
 		}

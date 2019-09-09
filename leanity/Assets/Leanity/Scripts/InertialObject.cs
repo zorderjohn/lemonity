@@ -39,7 +39,7 @@ namespace Leanity
 		private PositionFrame _lastPositionFrame;
 		private RotationFrame _lastRotationFrame;
 
-		protected readonly float TERMINAL_SQR_VELOCITY = 0.001f;
+		protected readonly float TERMINAL_SQR_VELOCITY = 0.01f;
 
 		private int _bufferLength = -1;
 		public int BufferLength

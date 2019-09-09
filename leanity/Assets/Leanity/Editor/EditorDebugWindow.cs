@@ -34,11 +34,18 @@ namespace Leanity
 			LoadResources();
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 			EditorController.EditorMotionController.OnHandsVisible += OnHandsVisible;
+			EditorController.EditorMotionController.OnHandsInVisible += OnHandsInVisible;
+			Options.OnOptionsChange += OnOptionsChange;
 		}
 
 		void OnDisable()
 		{
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+		}
+
+		private void OnOptionsChange()
+		{
+			SceneView.RepaintAll();
 		}
 
 		public void OnGUI()
@@ -107,6 +114,11 @@ namespace Leanity
 		private void OnHandsVisible()
 		{
 			SceneView.RepaintAll();
+			Options.GridFadeIn();
+		}
+		private void OnHandsInVisible()
+		{
+			Options.GridFadeOut();
 		}
 
 		private void DrawHandPosition(HandData hand, Rect r)
@@ -206,7 +218,7 @@ namespace Leanity
 				return;
 			}
 
-			if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected)
+			if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected || Options.GridVisible)
 			{
 				Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
 
@@ -270,7 +282,10 @@ namespace Leanity
 			var motionController = EditorController.EditorMotionController;
 			EditorController.Update();
 
-			Handles.color = motionController.IsHolding ? Color.red : Color.white;
+			var gridColor = motionController.IsHolding ? Color.red : Color.white;
+			gridColor.a = Options.GridTransparency;
+			Handles.color = gridColor;
+
 
 			// Top
 			PaintGrid(0, 1, 5, 4);

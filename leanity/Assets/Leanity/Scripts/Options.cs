@@ -190,14 +190,34 @@ namespace Leanity
 		public static int NumGridLines
 		{
 			get { return _numGridLines; }
-			set { SetFieldValue(ref _numGridLines, value); }
+			set
+			{
+				if (SetFieldValue(ref _numGridLines, value))
+				{
+					_gridFade.FadeIn(.5f);
+					_gridFade.FadeOutAfterTime(1f, 1f);
+				}
+			}
 		}
 
 		private static bool _showGrid;
 		public static bool ShowGrid
 		{
 			get { return _showGrid; }
-			set { SetFieldValue(ref _showGrid, value); }
+			set {
+				if (SetFieldValue(ref _showGrid, value))
+				{
+					if (_showGrid)
+					{
+						_gridFade.FadeIn(.5f);
+						_gridFade.FadeOutAfterTime(1f, 1f);
+					}
+					else
+					{
+						_gridFade.FadeOut(1f);
+					}
+				}
+			}
 		}
 
 		private static bool _gestureDebug;
@@ -206,28 +226,54 @@ namespace Leanity
 			get { return _gestureDebug; }
 			set { SetFieldValue(ref _gestureDebug, value); }
 		}
+
+		private static ValueFade _gridFade = new ValueFade();
+		public static void GridFadeIn()
+		{
+			_gridFade.FadeIn();
+		}
+
+		public static void GridFadeOut()
+		{
+			_gridFade.FadeOut();
+		}
+
+		public static float GridTransparency
+		{
+			get { return _gridFade.Value; }
+		}
+
+		public static bool GridVisible
+		{
+			get { return _gridFade.Value > _gridFade.MinValue; }
+		}
+
 		#endregion
 
 		private static bool _init = false;
 
-		private static void SetFieldValue<T>(ref T field, T newValue) where T : IComparable
+		private static bool SetFieldValue<T>(ref T field, T newValue) where T : IComparable
 		{
 			if (!field.Equals(newValue))
 			{
 				field = newValue;
 				Dirty = true;
 				OnOptionsChange?.Invoke();
+				return true;
 			}
+			return false;
 		}
 
-		private static void SetComplexFieldValue<T>(ref T field, T newValue) where T : IEquatable<T>
+		private static bool SetComplexFieldValue<T>(ref T field, T newValue) where T : IEquatable<T>
 		{
 			if (!field.Equals(newValue))
 			{
 				field = newValue;
 				Dirty = true;
 				OnOptionsChange?.Invoke();
+				return true;
 			}
+			return false;
 		}
 
 		public static void Save()
