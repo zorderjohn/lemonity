@@ -209,34 +209,14 @@ namespace Leanity
 		public static int NumGridLines
 		{
 			get { return _numGridLines; }
-			set
-			{
-				if (SetFieldValue(ref _numGridLines, value))
-				{
-					_gridFade.FadeIn(.5f);
-					_gridFade.FadeOutAfterTime(1f, 1f);
-				}
-			}
+			set { SetFieldValue(ref _numGridLines, value); }
 		}
 
 		private static bool _showGrid;
 		public static bool ShowGrid
 		{
 			get { return _showGrid; }
-			set {
-				if (SetFieldValue(ref _showGrid, value))
-				{
-					if (_showGrid)
-					{
-						_gridFade.FadeIn(.5f);
-						_gridFade.FadeOutAfterTime(1f, 1f);
-					}
-					else
-					{
-						_gridFade.FadeOut(1f);
-					}
-				}
-			}
+			set { SetFieldValue(ref _showGrid, value); }
 		}
 
 		private static bool _gestureDebug;
@@ -267,6 +247,18 @@ namespace Leanity
 			get { return _gridFade.Value > _gridFade.MinValue; }
 		}
 
+		public static float MaxGridTransparency
+		{
+			get { return _gridFade.MaxValue; }
+			set { _gridFade.MaxValue = value; }
+		}
+
+		private static float _trackingZOffset;
+		public static float TrackingZOffset
+		{
+			get { return _trackingZOffset; }
+			set { SetFieldValue(ref _trackingZOffset, value); }
+		}
 
 
 		#endregion
@@ -344,6 +336,9 @@ namespace Leanity
 				PlayerPrefs.SetInt("NumGridLines", NumGridLines);
 				PlayerPrefs.SetInt("ShowGrid", ShowGrid ? 1 : 0);
 				PlayerPrefs.SetInt("GestureDebug", GestureDebug ? 1 : 0);
+				PlayerPrefs.SetFloat("MaxTransparency", _gridFade.MaxValue);
+				PlayerPrefs.SetFloat("TrackingZOffset", TrackingZOffset);
+
 			}
 		}
 
@@ -393,6 +388,8 @@ namespace Leanity
 				NumGridLines = PlayerPrefs.GetInt("NumGridLines", 6);
 				ShowGrid = PlayerPrefs.GetInt("ShowGrid", 1) == 1;
 				GestureDebug = PlayerPrefs.GetInt("GestureDebug", 1) == 1;
+				_gridFade.MaxValue = PlayerPrefs.GetFloat("MaxTransparency", .8f);
+				TrackingZOffset = PlayerPrefs.GetFloat("TrackingZOffset", 1f);
 
 				_init = true;
 				Dirty = false;

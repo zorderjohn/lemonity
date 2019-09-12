@@ -63,8 +63,21 @@ namespace Leanity
 					Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 1f, 20f);
 					Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines, GUILayout.Width(50));
 				}
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Grid Transparency");
+					Options.MaxGridTransparency = GUILayout.HorizontalSlider(Options.MaxGridTransparency, 0f, 1f);
+					Options.MaxGridTransparency = EditorGUILayout.FloatField(Options.MaxGridTransparency, GUILayout.Width(50));
+				}
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Grid Z Offset");
+					Options.TrackingZOffset= GUILayout.HorizontalSlider(Options.TrackingZOffset, 0f, 2f);
+					Options.TrackingZOffset = EditorGUILayout.FloatField(Options.TrackingZOffset, GUILayout.Width(50));
+				}
 
 				Options.GestureDebug = EditorGUILayout.Toggle("Gesture Debug", Options.GestureDebug);
+
 			}
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
@@ -246,16 +259,17 @@ namespace Leanity
 		{
 			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
+			var cameraRot = HandTracking.ToWorldCoordinates(Quaternion.identity);
 			var motionController = EditorController.EditorMotionController;
 
 			bool holding = hand.IsRight ? motionController.RightGrab.IsHolding : motionController.LeftGrab.IsHolding;
 			if ( holding )
 			{
-				Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .3f, EventType.Repaint);
+				Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), HandleUtility.GetHandleSize(handPos) * .5f, EventType.Repaint);
 			}
 			else
 			{
-				Handles.SphereHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), .2f, EventType.Repaint);
+				Handles.SphereHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), HandleUtility.GetHandleSize(handPos) * .4f, EventType.Repaint);
 			}
 
 			float x = HandTracking.Workspace.x / 2f;
@@ -263,17 +277,17 @@ namespace Leanity
 			v0 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, hand.Position.z));
 
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.IsRight ? x : -x, hand.Position.y, hand.Position.z));
-			Handles.DrawWireDisc(v1, Vector3.right, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawWireDisc(v1, cameraRot * Vector3.right, HandleUtility.GetHandleSize(v1) * 0.1f);
 			Handles.DrawDottedLine(v1, v0, 5);
 
 			float z = HandTracking.Workspace.z / 2f;
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, z));
-			Handles.DrawWireDisc(v1, Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawWireDisc(v1, cameraRot * Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
 			Handles.DrawDottedLine(v1, v0, 5);
 
 			float y = HandTracking.Workspace.y / 2f;
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, -y, hand.Position.z));
-			Handles.DrawWireDisc(v1, Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
+			Handles.DrawWireDisc(v1, cameraRot * Vector3.back, HandleUtility.GetHandleSize(v1) * 0.1f);
 			Handles.DrawDottedLine(v1, v0, 5);
 		}
 

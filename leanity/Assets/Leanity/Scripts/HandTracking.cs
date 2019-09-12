@@ -30,7 +30,7 @@ namespace Leanity
 
 		public static Vector3 CamToHandOffset()
 		{
-			return Vector3.forward * Options.PosScale * Workspace.z * 1f;
+			return Vector3.forward * Options.PosScale * Workspace.z * Options.TrackingZOffset;
 		}
 
 		public static Vector3 HandToCamCoordinates(Vector3 position)

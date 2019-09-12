@@ -69,7 +69,7 @@ namespace Leanity
 				}
 
 				float xRange = HandTracking.Workspace.x * Options.PosScale;
-				EditorGUILayout.LabelField("Workspace width around " + xRange + " meters");
+				EditorGUILayout.LabelField("Workspace width around " + xRange.ToString("0.##") + " meters");
 
 				EditorGUI.indentLevel--;
 
