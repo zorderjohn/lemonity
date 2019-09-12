@@ -196,7 +196,7 @@ namespace Leanity
 
 		public static Color GridColor
 		{
-			get { return new Color(0f, 0.5f, 0f); }
+			get { return new Color(0f, 1f, 0f); }
 		}
 
 		public static Color GrabGridColor
@@ -260,6 +260,8 @@ namespace Leanity
 			set { SetFieldValue(ref _trackingZOffset, value); }
 		}
 
+		// Ugly workaround
+		public static LeanityWorkspace RegisteredLeanityWorkspace { get; set; }
 
 		#endregion
 

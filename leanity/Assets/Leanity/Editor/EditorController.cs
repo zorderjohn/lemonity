@@ -1,49 +1,54 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System;
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 namespace Leanity
 {
 	[InitializeOnLoad]
-	[Serializable]
-	class EditorController
+	//[Serializable]
+	public class EditorController
 	{
 		private static LeanityWorkspace _workspace;
-		private static MotionController _motion;
 		private const string CAMERA_GRID_PREFAB = "WorkspaceGridDummy";
+		private static UnityEngine.SceneManagement.Scene _scene;
 
-		public static MotionController EditorMotionController
-		{
-			get { return _motion; }
-		}
+		public static MotionController EditorMotionController { get; private set; }
 
 		static EditorController()
 		{
-			_motion = new MotionController();
+			EditorMotionController = new MotionController();
 			InitCameraGrid();
 			EditorApplication.update += Update;
 		}
 
 		static public void Update()
 		{
-			// Calculate cam position and rotation
-			var scene = SceneView.lastActiveSceneView;
-
-
-			if (scene != null && UnityEditorInternal.InternalEditorUtility.isApplicationActive)
+			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
+			if (activeScene != _scene)
 			{
-				var camRot = scene.rotation;
-				var camPos = MathHelper.CameraPosition(scene.pivot, scene.rotation, scene.cameraDistance);
+				_scene = activeScene;
+				InitCameraGrid();
+			}
+
+			// Calculate cam position and rotation
+			var sceneView = SceneView.lastActiveSceneView;
+
+
+			if (sceneView != null && UnityEditorInternal.InternalEditorUtility.isApplicationActive)
+			{
+				var camRot = sceneView.rotation;
+				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
 				UpdateCameraGrid(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
 
-				if (_motion.Update(camPos, camRot))
+				if (EditorMotionController.Update(camPos, camRot))
 				{
-					camPos = _motion.Position;
-					camRot = _motion.Rotation;
+					camPos = EditorMotionController.Position;
+					camRot = EditorMotionController.Rotation;
 
-					scene.rotation = camRot;
-					scene.pivot = MathHelper.CameraPivot(camPos, camRot, scene.cameraDistance);
+					sceneView.rotation = camRot;
+					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 			}
 		}
@@ -62,10 +67,11 @@ namespace Leanity
 				cameraGrid = _workspace.gameObject;
 			}
 
-			//_cameraGrid.hideFlags = HideFlags.HideAndDontSave;
+			Options.RegisteredLeanityWorkspace = _workspace;
+			cameraGrid.hideFlags = HideFlags.HideAndDontSave;
 		}
 
-		public static void UpdateCameraGrid(Vector3 camPos, Quaternion camRot)
+		private static void UpdateCameraGrid(Vector3 camPos, Quaternion camRot)
 		{
 			if (_workspace)
 			{
@@ -76,6 +82,8 @@ namespace Leanity
 			}
 		}
 
+
+
 	}
 }
-#endif
+//#endif

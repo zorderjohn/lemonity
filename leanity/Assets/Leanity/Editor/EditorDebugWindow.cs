@@ -324,7 +324,6 @@ namespace Leanity
 			gridColor.a = Options.GridTransparency;
 			Handles.color = gridColor;
 
-
 			// Top
 			PaintGrid(0, 1, 5, 4);
 
