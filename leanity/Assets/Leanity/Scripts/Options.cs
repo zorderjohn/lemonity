@@ -260,9 +260,6 @@ namespace Leanity
 			set { SetFieldValue(ref _trackingZOffset, value); }
 		}
 
-		// Ugly workaround
-		public static LeanityWorkspace RegisteredLeanityWorkspace { get; set; }
-
 		#endregion
 
 		private static bool _init = false;

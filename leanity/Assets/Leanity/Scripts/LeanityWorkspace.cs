@@ -7,13 +7,15 @@ namespace Leanity
 	[ExecuteInEditMode]
 	public class LeanityWorkspace : MonoBehaviour
 	{
+		public static LeanityWorkspace Instance { get; private set; }
 
-		private static Color _cameraGridColor;
-		private static Material _cameraGridMaterial;
-		private static bool _init = false;
+		private Color _cameraGridColor;
+		private Material _cameraGridMaterial;
+		private bool _init = false;
 
 		void Init()
 		{
+			Debug.Log(gameObject.name + gameObject.GetHashCode() + ": init");
 			_cameraGridMaterial = GetComponentInChildren<MeshRenderer>().sharedMaterial;
 			if (_cameraGridMaterial)
 			{
@@ -22,24 +24,29 @@ namespace Leanity
 			_init = true;
 		}
 
-		private void Start()
+		private void Awake()
 		{
-			if (Options.RegisteredLeanityWorkspace != this)
+			if (Instance == null)
 			{
-				Debug.Log(gameObject.name + ": workspace start dying.");
-				DestroyImmediate(gameObject);
+				Instance = this;
+				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace awake succesfully .");
 			}
 			else
 			{
-				Debug.Log(gameObject.name + ": workspace start succesfully .");
+				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace awake dying.");
+				DestroyImmediate(gameObject);
 			}
+		}
+		private void Start()
+		{
+			Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace start");
 		}
 
 		private void Update()
 		{
-			if (Options.RegisteredLeanityWorkspace != this)
+			if (Instance != this)
 			{
-				Debug.Log(gameObject.name + ": workspace update dying.");
+				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace update dying.");
 				DestroyImmediate(gameObject);
 			}
 		}
@@ -58,5 +65,11 @@ namespace Leanity
 			}
 		}
 
+		public void SetTransform(Vector3 pos, Quaternion rot, Vector3 scale)
+		{
+			transform.position = pos;
+			transform.rotation = rot;
+			transform.localScale = scale;
+		}
 	}
 }

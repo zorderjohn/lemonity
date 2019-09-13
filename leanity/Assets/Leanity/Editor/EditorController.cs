@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using System;
 
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
 namespace Leanity
 {
 	[InitializeOnLoad]
-	//[Serializable]
 	public class EditorController
 	{
-		private static LeanityWorkspace _workspace;
 		private const string CAMERA_GRID_PREFAB = "WorkspaceGridDummy";
 		private static UnityEngine.SceneManagement.Scene _scene;
 
@@ -18,8 +15,9 @@ namespace Leanity
 
 		static EditorController()
 		{
+			Debug.Log("EditorController constructor");
 			EditorMotionController = new MotionController();
-			InitCameraGrid();
+			InitWorkspace();
 			EditorApplication.update += Update;
 		}
 
@@ -28,8 +26,9 @@ namespace Leanity
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)
 			{
+				Debug.Log("Scene change, reset camera grid");
 				_scene = activeScene;
-				InitCameraGrid();
+				InitWorkspace();
 			}
 
 			// Calculate cam position and rotation
@@ -40,7 +39,7 @@ namespace Leanity
 			{
 				var camRot = sceneView.rotation;
 				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
-				UpdateCameraGrid(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
+				UpdateWorkspace(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
 
 				if (EditorMotionController.Update(camPos, camRot))
 				{
@@ -53,37 +52,40 @@ namespace Leanity
 			}
 		}
 
-		private static void InitCameraGrid()
+		private static void InitWorkspace()
 		{
-			_workspace = GameObject.FindObjectOfType<LeanityWorkspace>();
-			GameObject cameraGrid;
+			var workspace = LeanityWorkspace.Instance;
+			GameObject workspaceGameObject;
 
-			if (!_workspace)
+			if (!workspace)
 			{
-				cameraGrid = UnityEngine.Object.Instantiate(Resources.Load(CAMERA_GRID_PREFAB)) as GameObject;
-				_workspace = cameraGrid.GetComponent<LeanityWorkspace>();
-			} else
+				workspaceGameObject = Object.Instantiate(Resources.Load(CAMERA_GRID_PREFAB)) as GameObject;
+			}
+			else
 			{
-				cameraGrid = _workspace.gameObject;
+				workspaceGameObject = workspace.gameObject;
 			}
 
-			Options.RegisteredLeanityWorkspace = _workspace;
-			cameraGrid.hideFlags = HideFlags.HideAndDontSave;
-		}
-
-		private static void UpdateCameraGrid(Vector3 camPos, Quaternion camRot)
-		{
-			if (_workspace)
+			if (workspaceGameObject)
 			{
-				_workspace.transform.position = camPos;
-				_workspace.transform.rotation = camRot;
-				_workspace.transform.localScale = Options.AxisRotScale * Options.PosScale;
-				_workspace.SetTransparency(Options.GridTransparency);
+				workspaceGameObject.hideFlags = HideFlags.HideAndDontSave;
+			}
+			else
+			{
+				Debug.LogError("Unable to load " + CAMERA_GRID_PREFAB + " prefab. Workspace visualization disabled.");
 			}
 		}
 
+		private static void UpdateWorkspace(Vector3 camPos, Quaternion camRot)
+		{
+			var workspace = LeanityWorkspace.Instance;
 
-
+			if (workspace)
+			{
+				workspace.SetTransform(camPos, camRot, Options.AxisRotScale * Options.PosScale);
+				workspace.SetTransparency(Options.GridTransparency);
+			}
+		}
 	}
 }
-//#endif
+#endif
