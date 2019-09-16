@@ -27,6 +27,7 @@ namespace Leanity
 				_rotation = _rotationFilter.Filter(value);
 			}
 		}
+		public float PinchDistance { get; set; }
 
 		private OneEuroFilter<Quaternion> _rotationFilter;
 		private OneEuroFilter<Vector3> _positionFilter;

@@ -99,6 +99,34 @@ namespace Leanity
 			get { return _invertAxis; }
 			set { SetFieldValue(ref _invertAxis, value); }
 		}
+
+		private static bool _pinchEnabled;
+		public static bool PinchEnabled
+		{
+			get { return _pinchEnabled; }
+			set { SetFieldValue(ref _pinchEnabled, value);  }
+		}
+
+		private static float _pinchMinThreshold;
+		public static float PinchMinThreshold
+		{
+			get { return _pinchMinThreshold; }
+			set { SetFieldValue(ref _pinchMinThreshold, value); }
+		}
+
+		private static float _pinchMaxThreshold;
+		public static float PinchMaxThreshold
+		{
+			get { return _pinchMaxThreshold; }
+			set { SetFieldValue(ref _pinchMaxThreshold, value); }
+		}
+
+		private static float _pinchScale;
+		public static float PinchScale
+		{
+			get { return _pinchScale; }
+			set { SetFieldValue(ref _pinchScale, value); }
+		}
 		#endregion
 
 		#region Inertia
@@ -314,6 +342,10 @@ namespace Leanity
 				PlayerPrefs.SetFloat("GrabMinThreshold", GrabMinThreshold);
 				PlayerPrefs.SetFloat("GrabMaxThreshold", GrabMaxThreshold);
 				PlayerPrefs.SetInt("InvertAxis", InvertAxis ? 1 : 0);
+				PlayerPrefs.SetInt("PinchEnabled", PinchEnabled ? 1 : 0);
+				PlayerPrefs.SetFloat("PinchMinThreshold", PinchMinThreshold);
+				PlayerPrefs.SetFloat("PinchMaxThreshold", PinchMaxThreshold);
+				PlayerPrefs.SetFloat("PinchScale", PinchScale);
 
 				// Inertia
 				PlayerPrefs.SetInt("EnableInertia", EnableInertia ? 1 : 0);
@@ -366,6 +398,11 @@ namespace Leanity
 				GrabMinThreshold = PlayerPrefs.GetFloat("GrabMinThreshold", 0.5f);
 				GrabMaxThreshold = PlayerPrefs.GetFloat("GrabMaxThreshold", 0.6f);
 				InvertAxis = PlayerPrefs.GetInt("InvertAxis", 1) == 1;
+
+				PinchEnabled = PlayerPrefs.GetInt("PinchEnabled", 1) == 1;
+				PinchMinThreshold = PlayerPrefs.GetFloat("PinchMinThreshold", 0.5f);
+				PinchMaxThreshold = PlayerPrefs.GetFloat("PinchMaxThreshold", 0.6f);
+				PinchScale = PlayerPrefs.GetFloat("PinchScale", 1f);
 
 				// Inertia
 				EnableInertia = PlayerPrefs.GetInt("EnableInertia", 1) == 1;

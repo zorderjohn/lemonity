@@ -29,16 +29,26 @@ namespace Leanity
 			set { _motionStyle.Rotation = value; }
 		}
 
+		public float Scale { get; private set; }
+
 		public event Action OnHandsVisible;
 		public event Action OnHandsInVisible;
+		public event Action OnStartDualPinch;
+		public event Action OnEndDualPinch;
 
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
 
+		public PinchController LeftPinch { get; private set; }
+		public PinchController RightPinch { get; private set; }
+
 		public bool IsHolding { get; private set; } = false;
+		public bool IsPinching { get; private set; } = false;
 
 		private bool _handsVisible = false;
 		private WorkingGesture _currentGesture;
+
+		private float _initialScale;
 
 
 		public MotionController()
@@ -49,9 +59,14 @@ namespace Leanity
 			LeftGrab = new GrabController();
 			RightGrab = new GrabController();
 
+			LeftPinch = new PinchController();
+			RightPinch = new PinchController();
+			Scale = 0f;
+
 			// Always instantiate after Left and Right grabs
 			_currentGesture = Options.Gesture;
 			LoadMotionStyle();
+
 		}
 
 		private void LoadMotionStyle()
@@ -93,11 +108,27 @@ namespace Leanity
 				LeftGrab.Update(HandTracking.LeftHandData, Position, Rotation);
 				RightGrab.Update(HandTracking.RightHandData, Position, Rotation);
 
+				LeftPinch.Update(HandTracking.LeftHandData, Position, Rotation);
+				RightPinch.Update(HandTracking.RightHandData, Position, Rotation);
+
 				HandDetectedEvent();
 
 				bool retValue = EventController();
 				MotionStyle.LateFrameUpdate();
 				return retValue;
+			}
+			return false;
+		}
+
+		public bool ScaleUpdate(float scale)
+		{
+			if (IsPinching)
+			{
+				return true;
+			}
+			else
+			{
+				Scale = scale;
 			}
 			return false;
 		}
@@ -141,6 +172,8 @@ namespace Leanity
 				holding = LeftGrab.IsHolding || RightGrab.IsHolding;
 			}
 
+			bool pinching = LeftPinch.IsHolding && RightPinch.IsHolding;
+
 			if (holding)
 			{
 				if (!IsHolding)
@@ -159,6 +192,27 @@ namespace Leanity
 					IsHolding = false;
 					StopMoving();
 				}
+
+				if (IsPinching)
+				{
+					if (!pinching)
+					{
+						IsPinching = false;
+						StopPinching();
+					} else
+					{
+						PinchingUpdate();
+					}
+				}
+				else
+				{
+					if (pinching)
+					{
+						IsPinching = true;
+						StartPinching();
+					}
+				}
+
 				if (Options.EnableInertia)
 				{
 					return MotionStyle.InertialUpdate();
@@ -186,5 +240,27 @@ namespace Leanity
 		{
 			MotionStyle?.Stop();
 		}
+
+		private void StartPinching()
+		{
+			OnStartDualPinch?.Invoke();
+			_initialScale = Scale;
+		}
+
+		private void PinchingUpdate()
+		{
+			var initialSep = Vector3.Distance(LeftPinch.HandInitialPosition, RightPinch.HandInitialPosition);
+			var finalSep = Vector3.Distance(LeftPinch.HandCurrentPosition, RightPinch.HandCurrentPosition);
+
+			float sep = finalSep - initialSep;
+			float sepDelta = 5f * sep * Options.PinchScale;
+			Scale = Mathf.Clamp(_initialScale + sepDelta, 0f, 10f);
+		}
+
+		private void StopPinching()
+		{
+			OnEndDualPinch?.Invoke();
+		}
+
 	}
 }

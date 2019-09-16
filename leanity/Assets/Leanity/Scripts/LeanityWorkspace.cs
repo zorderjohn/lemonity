@@ -7,7 +7,7 @@ namespace Leanity
 	[ExecuteInEditMode]
 	public class LeanityWorkspace : MonoBehaviour
 	{
-		public static LeanityWorkspace Instance { get; private set; }
+		public static LeanityWorkspace Instance { get; private set; } = null;
 
 		private Color _cameraGridColor;
 		private Material _cameraGridMaterial;

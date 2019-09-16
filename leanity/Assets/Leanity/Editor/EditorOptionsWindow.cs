@@ -14,6 +14,7 @@ namespace Leanity
 
 		AnimBool _showFilters = new AnimBool();
 		protected static bool _showGrabGesture = false;
+		protected static bool _showPinchGesture = false;
 
 		public void OnGUI()
 		{
@@ -55,9 +56,9 @@ namespace Leanity
 				{
 					EditorGUILayout.PrefixLabel("Translation");
 					// Use logaritmic scale starting from 0
-					float sliderValue = Mathf.Log(Options.PosScale + 1f, 3f);
+					float sliderValue = MathHelper.LinearToLogScale(Options.PosScale);
 					sliderValue = GUILayout.HorizontalSlider(sliderValue, 0f, 10f);
-					Options.PosScale = Mathf.Pow(3f, sliderValue) - 1f;
+					Options.PosScale = MathHelper.LogToLinearScale(sliderValue);
 					Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
 				}
 
@@ -106,6 +107,41 @@ namespace Leanity
 						if (Options.GrabMaxThreshold < Options.GrabMinThreshold)
 						{
 							Options.GrabMinThreshold = Options.GrabMaxThreshold;
+						}
+					}
+				}
+			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				EditorGUI.indentLevel--;
+
+				Options.PinchEnabled = EditorGUILayout.Toggle("Pinch Gesture", Options.PinchEnabled);
+				_showPinchGesture = EditorGUILayout.Foldout(_showPinchGesture, "Pinch Gesture", EditorStyles.foldout);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
+				if (_showPinchGesture)
+				{
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Min Threshold");
+						Options.PinchMinThreshold = GUILayout.HorizontalSlider(Options.PinchMinThreshold, 0f, 100f);
+						Options.PinchMinThreshold = EditorGUILayout.FloatField(Options.PinchMinThreshold, GUILayout.Width(50));
+
+						if (Options.PinchMinThreshold > Options.PinchMaxThreshold)
+						{
+							Options.PinchMaxThreshold = Options.PinchMinThreshold;
+						}
+					}
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Max Threshold");
+						Options.PinchMaxThreshold = GUILayout.HorizontalSlider(Options.PinchMaxThreshold, 0f, 100f);
+						Options.PinchMaxThreshold = EditorGUILayout.FloatField(Options.PinchMaxThreshold, GUILayout.Width(50));
+
+						if (Options.PinchMaxThreshold < Options.PinchMinThreshold)
+						{
+							Options.PinchMinThreshold = Options.PinchMaxThreshold;
 						}
 					}
 				}

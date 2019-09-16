@@ -107,17 +107,14 @@ namespace Leanity
 
 		private void DrawHandData(HandData hand)
 		{
-			GUILayout.BeginHorizontal();
 			GUI.enabled = hand.Detected;
 
-			var handTexture = hand.IsRight ? _rightHandTexture : _leftHandTexture;
+			GUILayout.BeginHorizontal();
 
-			if (hand.Detected)
-			{
-				GUILayout.Box(handTexture);
-			}
 			GUILayout.Label(hand.Detected ? (hand.Position * 1000f).ToString() : "(--, --, --)");
 			GUILayout.EndHorizontal();
+
+			GUILayout.Label("Pinch distance: " + (hand.Detected ? (hand.PinchDistance).ToString() : "--"));
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 100, 20, 20);
 			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
 

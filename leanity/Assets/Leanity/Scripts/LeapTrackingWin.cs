@@ -126,6 +126,7 @@ namespace Leanity
 			hand.GrabValue = leapHand.GrabStrength;
 			hand.Detected = true;
 			hand.IsRight = leapHand.IsRight;
+			hand.PinchDistance = leapHand.PinchDistance;
 		}
 
 		private Vector3 leapToUnityVector(Leap.Vector lv)

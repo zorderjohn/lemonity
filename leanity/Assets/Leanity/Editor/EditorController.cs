@@ -49,6 +49,11 @@ namespace Leanity
 					sceneView.rotation = camRot;
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
+
+				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(MathHelper.LinearToLogScale(Options.PosScale)))
+				{
+					Options.PosScale = MathHelper.LogToLinearScale(EditorMotionController.Scale);
+				}
 			}
 		}
 

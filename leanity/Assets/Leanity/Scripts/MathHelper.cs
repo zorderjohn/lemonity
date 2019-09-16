@@ -43,4 +43,19 @@ public static class MathHelper
 	{
 		return rotation * (Vector3.forward * distance) + position;
 	}
+
+
+	// x = 0, y = 0
+	// x = 59048, y = 10
+	public static float LinearToLogScale(float value)
+	{
+		return Mathf.Log(value + 1f, 3f);
+	}
+
+	// x = 0, y = 0
+	// x = 10, y = 59048
+	public static float LogToLinearScale(float value)
+	{
+		return Mathf.Pow(3f, value) - 1f;
+	}
 }
