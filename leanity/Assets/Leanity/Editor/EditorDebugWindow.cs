@@ -57,6 +57,7 @@ namespace Leanity
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
+				Options.ShowWorkspace = EditorGUILayout.Toggle("Show Workspace", Options.ShowWorkspace);
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
 					EditorGUILayout.PrefixLabel("Grid Lines");

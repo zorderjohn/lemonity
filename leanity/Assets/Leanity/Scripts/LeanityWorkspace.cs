@@ -24,22 +24,22 @@ namespace Leanity
 			_init = true;
 		}
 
-		private void Awake()
+		private void Start()
 		{
 			if (Instance == null)
 			{
 				Instance = this;
-				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace awake succesfully .");
+			}
+
+			if (Instance == this)
+			{
+				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace start succesfully .");
 			}
 			else
 			{
-				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace awake dying.");
+				Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace start dying.");
 				DestroyImmediate(gameObject);
 			}
-		}
-		private void Start()
-		{
-			Debug.Log(gameObject.name + gameObject.GetHashCode() + ": workspace start");
 		}
 
 		private void Update()

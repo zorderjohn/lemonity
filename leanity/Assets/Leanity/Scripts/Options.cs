@@ -20,7 +20,7 @@ namespace Leanity
 		public static WorkingMode Mode
 		{
 			get { return _mode; }
-			set { SetFieldValue(ref _mode, value);}
+			set { SetFieldValue(ref _mode, value); }
 		}
 
 		[SerializeField]
@@ -40,8 +40,8 @@ namespace Leanity
 			{
 				if (SetFieldValue(ref _posScale, value))
 				{
-					_gridFade.FadeIn(.5f);
-					_gridFade.FadeOutAfterTime(1f, 1f);
+					//_gridFade.FadeIn(.5f);
+					//_gridFade.FadeOutAfterTime(1f, 1f);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ namespace Leanity
 		public static bool PinchEnabled
 		{
 			get { return _pinchEnabled; }
-			set { SetFieldValue(ref _pinchEnabled, value);  }
+			set { SetFieldValue(ref _pinchEnabled, value); }
 		}
 
 		private static float _pinchMinThreshold;
@@ -247,6 +247,13 @@ namespace Leanity
 			set { SetFieldValue(ref _showGrid, value); }
 		}
 
+		private static bool _showWorkspace;
+		public static bool ShowWorkspace
+		{
+			get { return _showWorkspace; }
+			set { SetFieldValue(ref _showWorkspace, value); }
+		}
+
 		private static bool _gestureDebug;
 		public static bool GestureDebug
 		{
@@ -366,6 +373,7 @@ namespace Leanity
 				// Debug
 				PlayerPrefs.SetInt("NumGridLines", NumGridLines);
 				PlayerPrefs.SetInt("ShowGrid", ShowGrid ? 1 : 0);
+				PlayerPrefs.SetInt("ShowWorkspace", ShowWorkspace ? 1 : 0);
 				PlayerPrefs.SetInt("GestureDebug", GestureDebug ? 1 : 0);
 				PlayerPrefs.SetFloat("MaxTransparency", _gridFade.MaxValue);
 				PlayerPrefs.SetFloat("TrackingZOffset", TrackingZOffset);
@@ -423,6 +431,7 @@ namespace Leanity
 				// Debug
 				NumGridLines = PlayerPrefs.GetInt("NumGridLines", 6);
 				ShowGrid = PlayerPrefs.GetInt("ShowGrid", 1) == 1;
+				ShowWorkspace = PlayerPrefs.GetInt("ShowWorkspace", 1) == 1;
 				GestureDebug = PlayerPrefs.GetInt("GestureDebug", 1) == 1;
 				_gridFade.MaxValue = PlayerPrefs.GetFloat("MaxTransparency", .8f);
 				TrackingZOffset = PlayerPrefs.GetFloat("TrackingZOffset", 1f);

@@ -19,6 +19,7 @@ namespace Leanity
 			EditorMotionController = new MotionController();
 			InitWorkspace();
 			EditorApplication.update += Update;
+			Options.OnOptionsChange += OptionsChange;
 		}
 
 		static public void Update()
@@ -85,10 +86,20 @@ namespace Leanity
 		{
 			var workspace = LeanityWorkspace.Instance;
 
-			if (workspace)
+			if (workspace && Options.ShowWorkspace)
 			{
 				workspace.SetTransform(camPos, camRot, Options.AxisRotScale * Options.PosScale);
 				workspace.SetTransparency(Options.GridTransparency);
+			}
+		}
+
+		private static void OptionsChange()
+		{
+			var workspace = LeanityWorkspace.Instance;
+
+			if (workspace && workspace.gameObject)
+			{
+				workspace.gameObject.SetActive(Options.ShowWorkspace);
 			}
 		}
 	}
