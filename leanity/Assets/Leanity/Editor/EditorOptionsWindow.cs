@@ -54,7 +54,7 @@ namespace Leanity
 
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
-					EditorGUILayout.PrefixLabel("Translation");
+					EditorGUILayout.PrefixLabel("World scale");
 					// Use logaritmic scale starting from 0
 					float sliderValue = MathHelper.LinearToLogScale(Options.PosScale);
 					sliderValue = GUILayout.HorizontalSlider(sliderValue, 0f, 10f);
@@ -64,9 +64,16 @@ namespace Leanity
 
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
-					EditorGUILayout.PrefixLabel("Rotation");
+					EditorGUILayout.PrefixLabel("Rotation factor");
 					Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 5f);
 					Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
+				}
+
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Zoom speed");
+					Options.ZoomScale = GUILayout.HorizontalSlider(Options.ZoomScale, 0f, 3f);
+					Options.ZoomScale = EditorGUILayout.FloatField(Options.ZoomScale, GUILayout.Width(50));
 				}
 
 				float xRange = HandTracking.Workspace.x * Options.PosScale;

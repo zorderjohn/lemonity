@@ -4,15 +4,17 @@ namespace Leanity
 {
 	public class ScaleMotion : MotionStyleBase
 	{
-		float _initialScale;
-		Vector3 _wcInitialOrigin;
-		Vector3 _wcInitialPosition;
+		private float _initialLogScale;
+
+		private Vector3 _initialRelativeVector;
+		private Vector3 _wcInitialPosition;
 
 		protected override void StartMotion()
 		{
-			_initialScale = Scale;
-			_wcInitialOrigin = HandTracking.ToWorldCoordinates(Vector3.zero);
+			_initialLogScale = MathHelper.LinearToLogScale(Scale);
+
 			_wcInitialPosition = Position;
+			_initialRelativeVector = Rotation * HandTracking.CamToHandOffset(Scale);
 		}
 
 		protected override void UpdateMotion()
@@ -21,12 +23,14 @@ namespace Leanity
 			var finalSep = Vector3.Distance(LeftGesture.HandCurrentPosition, RightGesture.HandCurrentPosition);
 
 			float sep = -finalSep + initialSep;
-			float sepDelta = 5f * sep * Options.PinchScale;
-			Scale = Mathf.Clamp(_initialScale + sepDelta, 0f, 10f);
+			float sepDelta = 5f * sep * Options.ZoomScale;
+			float currentLogScale = Mathf.Clamp(_initialLogScale + sepDelta, 0f, 10f);
+			Scale = MathHelper.LogToLinearScale(currentLogScale);
 
-			var wcCurrentOrigin = HandTracking.ToWorldCoordinates(Vector3.zero);
-			var deltaPos = -wcCurrentOrigin + _wcInitialOrigin;
-			Position = _wcInitialPosition + deltaPos;
+			var finalRelativeVector = Rotation * HandTracking.CamToHandOffset(Scale);
+			var deltaVector = -finalRelativeVector + _initialRelativeVector;
+
+			Position = _wcInitialPosition + deltaVector;
 		}
 	}
 }

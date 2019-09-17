@@ -33,6 +33,11 @@ namespace Leanity
 			return Vector3.forward * Options.PosScale * Workspace.z * Options.TrackingZOffset;
 		}
 
+		public static Vector3 CamToHandOffset(float scale)
+		{
+			return Vector3.forward * scale * Workspace.z * Options.TrackingZOffset;
+		}
+
 		public static Vector3 HandToCamCoordinates(Vector3 position)
 		{
 			return position * Options.PosScale + CamToHandOffset();

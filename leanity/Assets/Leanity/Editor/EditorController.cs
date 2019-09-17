@@ -50,9 +50,9 @@ namespace Leanity
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
-				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(MathHelper.LinearToLogScale(Options.PosScale)))
+				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(Options.PosScale))
 				{
-					Options.PosScale = MathHelper.LogToLinearScale(EditorMotionController.Scale);
+					Options.PosScale = EditorMotionController.Scale;
 				}
 			}
 		}

@@ -12,6 +12,7 @@ namespace Leanity
 	[Serializable]
 	public static class Options
 	{
+		private static readonly string _prefix = "Leanity.";
 		public static event Action OnOptionsLoad;
 		public static event Action OnOptionsChange;
 
@@ -51,6 +52,13 @@ namespace Leanity
 		{
 			get { return _rotScale; }
 			set { SetFieldValue(ref _rotScale, value); }
+		}
+
+		private static float _zoomScale;
+		public static float ZoomScale
+		{
+			get { return _zoomScale; }
+			set { SetFieldValue(ref _zoomScale, value); }
 		}
 
 		private static Vector3 _axisRotScale;
@@ -121,12 +129,6 @@ namespace Leanity
 			set { SetFieldValue(ref _pinchMaxThreshold, value); }
 		}
 
-		private static float _pinchScale;
-		public static float PinchScale
-		{
-			get { return _pinchScale; }
-			set { SetFieldValue(ref _pinchScale, value); }
-		}
 		#endregion
 
 		#region Inertia
@@ -329,54 +331,54 @@ namespace Leanity
 			{
 				Dirty = false;
 				// Working gesture
-				PlayerPrefs.SetInt("Gesture", (int)Gesture);
+				PlayerPrefs.SetInt(_prefix + "Gesture", (int)Gesture);
 
 				// Working mode
-				PlayerPrefs.SetInt("Mode", (int)Mode);
+				PlayerPrefs.SetInt(_prefix + "Mode", (int)Mode);
 
 				// Sensitivity
-				PlayerPrefs.SetFloat("PosScale", PosScale);
-				PlayerPrefs.SetFloat("RotScale", RotScale);
-				PlayerPrefs.SetFloat("AxisRotScaleX", AxisRotScale.x);
-				PlayerPrefs.SetFloat("AxisRotScaleY", AxisRotScale.y);
-				PlayerPrefs.SetFloat("AxisRotScaleZ", AxisRotScale.z);
+				PlayerPrefs.SetFloat(_prefix + "PosScale", PosScale);
+				PlayerPrefs.SetFloat(_prefix + "RotScale", RotScale);
+				PlayerPrefs.SetFloat(_prefix + "ZoomScale", ZoomScale);
+				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleX", AxisRotScale.x);
+				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleY", AxisRotScale.y);
+				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleZ", AxisRotScale.z);
 
 				// Camera
-				PlayerPrefs.SetFloat("PitchLimit", PitchLimit);
+				PlayerPrefs.SetFloat(_prefix + "PitchLimit", PitchLimit);
 
 				// Interaction
-				PlayerPrefs.SetInt("GrabEnabled", GrabEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat("GrabMinThreshold", GrabMinThreshold);
-				PlayerPrefs.SetFloat("GrabMaxThreshold", GrabMaxThreshold);
-				PlayerPrefs.SetInt("InvertAxis", InvertAxis ? 1 : 0);
-				PlayerPrefs.SetInt("PinchEnabled", PinchEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat("PinchMinThreshold", PinchMinThreshold);
-				PlayerPrefs.SetFloat("PinchMaxThreshold", PinchMaxThreshold);
-				PlayerPrefs.SetFloat("PinchScale", PinchScale);
+				PlayerPrefs.SetInt(_prefix + "GrabEnabled", GrabEnabled ? 1 : 0);
+				PlayerPrefs.SetFloat(_prefix + "GrabMinThreshold", GrabMinThreshold);
+				PlayerPrefs.SetFloat(_prefix + "GrabMaxThreshold", GrabMaxThreshold);
+				PlayerPrefs.SetInt(_prefix + "InvertAxis", InvertAxis ? 1 : 0);
+				PlayerPrefs.SetInt(_prefix + "PinchEnabled", PinchEnabled ? 1 : 0);
+				PlayerPrefs.SetFloat(_prefix + "PinchMinThreshold", PinchMinThreshold);
+				PlayerPrefs.SetFloat(_prefix + "PinchMaxThreshold", PinchMaxThreshold);
 
 				// Inertia
-				PlayerPrefs.SetInt("EnableInertia", EnableInertia ? 1 : 0);
-				PlayerPrefs.SetFloat("AngularDrag", AngularDrag);
-				PlayerPrefs.SetFloat("LinearDrag", LinearDrag);
-				PlayerPrefs.SetInt("VelocityFrames", VelocityFrames);
-				PlayerPrefs.SetInt("DiscardFrames", DiscardFrames);
+				PlayerPrefs.SetInt(_prefix + "EnableInertia", EnableInertia ? 1 : 0);
+				PlayerPrefs.SetFloat(_prefix + "AngularDrag", AngularDrag);
+				PlayerPrefs.SetFloat(_prefix + "LinearDrag", LinearDrag);
+				PlayerPrefs.SetInt(_prefix + "VelocityFrames", VelocityFrames);
+				PlayerPrefs.SetInt(_prefix + "DiscardFrames", DiscardFrames);
 
 				// Filter
-				PlayerPrefs.SetFloat("FilterFrequency", FilterFrequency);
-				PlayerPrefs.SetFloat("RotFilterMinCutoff", RotFilterMinCutoff);
-				PlayerPrefs.SetFloat("RotFilterBeta", RotFilterBeta);
-				PlayerPrefs.SetFloat("RotFilterDcutoff", RotFilterDcutoff);
-				PlayerPrefs.SetFloat("PosFilterMinCutoff", PosFilterMinCutoff);
-				PlayerPrefs.SetFloat("PosFilterBeta", PosFilterBeta);
-				PlayerPrefs.SetFloat("PosFilterDcutoff", PosFilterDcutoff);
+				PlayerPrefs.SetFloat(_prefix + "FilterFrequency", FilterFrequency);
+				PlayerPrefs.SetFloat(_prefix + "RotFilterMinCutoff", RotFilterMinCutoff);
+				PlayerPrefs.SetFloat(_prefix + "RotFilterBeta", RotFilterBeta);
+				PlayerPrefs.SetFloat(_prefix + "RotFilterDcutoff", RotFilterDcutoff);
+				PlayerPrefs.SetFloat(_prefix + "PosFilterMinCutoff", PosFilterMinCutoff);
+				PlayerPrefs.SetFloat(_prefix + "PosFilterBeta", PosFilterBeta);
+				PlayerPrefs.SetFloat(_prefix + "PosFilterDcutoff", PosFilterDcutoff);
 
 				// Debug
-				PlayerPrefs.SetInt("NumGridLines", NumGridLines);
-				PlayerPrefs.SetInt("ShowGrid", ShowGrid ? 1 : 0);
-				PlayerPrefs.SetInt("ShowWorkspace", ShowWorkspace ? 1 : 0);
-				PlayerPrefs.SetInt("GestureDebug", GestureDebug ? 1 : 0);
-				PlayerPrefs.SetFloat("MaxTransparency", _gridFade.MaxValue);
-				PlayerPrefs.SetFloat("TrackingZOffset", TrackingZOffset);
+				PlayerPrefs.SetInt(_prefix + "NumGridLines", NumGridLines);
+				PlayerPrefs.SetInt(_prefix + "ShowGrid", ShowGrid ? 1 : 0);
+				PlayerPrefs.SetInt(_prefix + "ShowWorkspace", ShowWorkspace ? 1 : 0);
+				PlayerPrefs.SetInt(_prefix + "GestureDebug", GestureDebug ? 1 : 0);
+				PlayerPrefs.SetFloat(_prefix + "MaxTransparency", _gridFade.MaxValue);
+				PlayerPrefs.SetFloat(_prefix + "TrackingZOffset", TrackingZOffset);
 
 			}
 		}
@@ -386,55 +388,55 @@ namespace Leanity
 			if (!_init)
 			{
 				// Working gesture
-				Gesture = (WorkingGesture)PlayerPrefs.GetInt("Gesture", (int)WorkingGesture.OneHand);
+				Gesture = (WorkingGesture)PlayerPrefs.GetInt(_prefix + "Gesture", (int)WorkingGesture.OneHand);
 
 				// Working mode
-				Mode = (WorkingMode)PlayerPrefs.GetInt("Mode", (int)WorkingMode.Absolute);
+				Mode = (WorkingMode)PlayerPrefs.GetInt(_prefix + "Mode", (int)WorkingMode.Absolute);
 
 				// Sensitivity
-				PosScale = PlayerPrefs.GetFloat("PosScale", 1f);
-				RotScale = PlayerPrefs.GetFloat("RotScale", 1f);
-				_axisRotScale.x = PlayerPrefs.GetFloat("AxisRotScaleX", 1f);
-				_axisRotScale.y = PlayerPrefs.GetFloat("AxisRotScaleY", 1f);
-				_axisRotScale.z = PlayerPrefs.GetFloat("AxisRotScaleZ", 1f);
+				PosScale = PlayerPrefs.GetFloat(_prefix + "PosScale", 1f);
+				RotScale = PlayerPrefs.GetFloat(_prefix + "RotScale", 1f);
+				ZoomScale = PlayerPrefs.GetFloat(_prefix + "ZoomScale", 1f);
+				_axisRotScale.x = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleX", 1f);
+				_axisRotScale.y = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleY", 1f);
+				_axisRotScale.z = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleZ", 1f);
 
 				// Camera
-				PitchLimit = PlayerPrefs.GetFloat("PitchLimit", 75f);
+				PitchLimit = PlayerPrefs.GetFloat(_prefix + "PitchLimit", 75f);
 
 				// Interaction
-				GrabEnabled = PlayerPrefs.GetInt("GrabEnabled", 1) == 1;
-				GrabMinThreshold = PlayerPrefs.GetFloat("GrabMinThreshold", 0.5f);
-				GrabMaxThreshold = PlayerPrefs.GetFloat("GrabMaxThreshold", 0.6f);
-				InvertAxis = PlayerPrefs.GetInt("InvertAxis", 1) == 1;
+				GrabEnabled = PlayerPrefs.GetInt(_prefix + "GrabEnabled", 1) == 1;
+				GrabMinThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMinThreshold", 0.5f);
+				GrabMaxThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMaxThreshold", 0.6f);
+				InvertAxis = PlayerPrefs.GetInt(_prefix + "InvertAxis", 1) == 1;
 
-				PinchEnabled = PlayerPrefs.GetInt("PinchEnabled", 1) == 1;
-				PinchMinThreshold = PlayerPrefs.GetFloat("PinchMinThreshold", 0.5f);
-				PinchMaxThreshold = PlayerPrefs.GetFloat("PinchMaxThreshold", 0.6f);
-				PinchScale = PlayerPrefs.GetFloat("PinchScale", 1f);
+				PinchEnabled = PlayerPrefs.GetInt(_prefix + "PinchEnabled", 1) == 1;
+				PinchMinThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMinThreshold", 0.5f);
+				PinchMaxThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMaxThreshold", 0.6f);
 
 				// Inertia
-				EnableInertia = PlayerPrefs.GetInt("EnableInertia", 1) == 1;
-				AngularDrag = PlayerPrefs.GetFloat("AngularDrag", .95f);
-				LinearDrag = PlayerPrefs.GetFloat("LinearDrag", .95f);
-				VelocityFrames = PlayerPrefs.GetInt("VelocityFrames", 5);
-				DiscardFrames = PlayerPrefs.GetInt("DiscardFrames", 5);
+				EnableInertia = PlayerPrefs.GetInt(_prefix + "EnableInertia", 1) == 1;
+				AngularDrag = PlayerPrefs.GetFloat(_prefix + "AngularDrag", .95f);
+				LinearDrag = PlayerPrefs.GetFloat(_prefix + "LinearDrag", .95f);
+				VelocityFrames = PlayerPrefs.GetInt(_prefix + "VelocityFrames", 5);
+				DiscardFrames = PlayerPrefs.GetInt(_prefix + "DiscardFrames", 5);
 
 				// Filter
-				FilterFrequency = PlayerPrefs.GetFloat("FilterFrequency", 120f);
-				RotFilterMinCutoff = PlayerPrefs.GetFloat("RotFilterMinCutoff", 1f);
-				RotFilterBeta = PlayerPrefs.GetFloat("RotFilterBeta", 0f);
-				RotFilterDcutoff = PlayerPrefs.GetFloat("RotFilterDcutoff", 1f);
-				PosFilterMinCutoff = PlayerPrefs.GetFloat("PosFilterMinCutoff", 1f);
-				PosFilterBeta = PlayerPrefs.GetFloat("PosFilterBeta", 0f);
-				PosFilterDcutoff = PlayerPrefs.GetFloat("PosFilterDcutoff", 1f);
+				FilterFrequency = PlayerPrefs.GetFloat(_prefix + "FilterFrequency", 120f);
+				RotFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterMinCutoff", 1f);
+				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 0f);
+				RotFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterDcutoff", 1f);
+				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 1f);
+				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 0f);
+				PosFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterDcutoff", 1f);
 
 				// Debug
-				NumGridLines = PlayerPrefs.GetInt("NumGridLines", 6);
-				ShowGrid = PlayerPrefs.GetInt("ShowGrid", 1) == 1;
-				ShowWorkspace = PlayerPrefs.GetInt("ShowWorkspace", 1) == 1;
-				GestureDebug = PlayerPrefs.GetInt("GestureDebug", 1) == 1;
-				_gridFade.MaxValue = PlayerPrefs.GetFloat("MaxTransparency", .8f);
-				TrackingZOffset = PlayerPrefs.GetFloat("TrackingZOffset", 1f);
+				NumGridLines = PlayerPrefs.GetInt(_prefix + "NumGridLines", 6);
+				ShowGrid = PlayerPrefs.GetInt(_prefix + "ShowGrid", 1) == 1;
+				ShowWorkspace = PlayerPrefs.GetInt(_prefix + "ShowWorkspace", 1) == 1;
+				GestureDebug = PlayerPrefs.GetInt(_prefix + "GestureDebug", 1) == 1;
+				_gridFade.MaxValue = PlayerPrefs.GetFloat(_prefix + "MaxTransparency", .8f);
+				TrackingZOffset = PlayerPrefs.GetFloat(_prefix + "TrackingZOffset", 1f);
 
 				_init = true;
 				Dirty = false;
