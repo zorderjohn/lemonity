@@ -27,9 +27,8 @@ namespace Leanity
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)
 			{
-				Debug.Log("Scene change, reset camera grid");
 				_scene = activeScene;
-				InitWorkspace();
+				OnSceneChange();
 			}
 
 			// Calculate cam position and rotation
@@ -100,6 +99,34 @@ namespace Leanity
 			{
 				workspace.gameObject.SetActive(Options.ShowWorkspace);
 			}
+		}
+
+		private static void OnSceneChange()
+		{
+			Debug.Log("On scene change");
+			InitWorkspace();
+			if (Options.AutoPosScaleOnLoad)
+			{
+				AutoScale();
+			}
+		}
+
+		private static void AutoScale()
+		{
+			var sceneBounds = GetSceneBounds();
+			var bbox = sceneBounds.size;
+			var workspace = HandTracking.Workspace;
+			Options.PosScale = Mathf.Max(bbox.x / workspace.x, bbox.y / workspace.y, bbox.z / workspace.z);
+		}
+
+		private static Bounds GetSceneBounds()
+		{
+			Bounds b = new Bounds(Vector3.zero, Vector3.zero);
+			foreach (Renderer r in Object.FindObjectsOfType(typeof(Renderer)))
+			{
+				b.Encapsulate(r.bounds);
+			}
+			return b;
 		}
 	}
 }

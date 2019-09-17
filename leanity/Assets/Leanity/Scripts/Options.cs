@@ -47,6 +47,13 @@ namespace Leanity
 			}
 		}
 
+		private static bool _autoPosScaleOnLoad;
+		public static bool AutoPosScaleOnLoad
+		{
+			get { return _autoPosScaleOnLoad; }
+			set { SetFieldValue(ref _autoPosScaleOnLoad, value); }
+		}
+
 		private static float _rotScale;
 		public static float RotScale
 		{
@@ -343,6 +350,7 @@ namespace Leanity
 				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleX", AxisRotScale.x);
 				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleY", AxisRotScale.y);
 				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleZ", AxisRotScale.z);
+				PlayerPrefs.SetInt(_prefix + "AutoPosScaleOnLoad", AutoPosScaleOnLoad ? 1 : 0);
 
 				// Camera
 				PlayerPrefs.SetFloat(_prefix + "PitchLimit", PitchLimit);
@@ -388,7 +396,7 @@ namespace Leanity
 			if (!_init)
 			{
 				// Working gesture
-				Gesture = (WorkingGesture)PlayerPrefs.GetInt(_prefix + "Gesture", (int)WorkingGesture.OneHand);
+				Gesture = (WorkingGesture)PlayerPrefs.GetInt(_prefix + "Gesture", (int)WorkingGesture.TwoHands);
 
 				// Working mode
 				Mode = (WorkingMode)PlayerPrefs.GetInt(_prefix + "Mode", (int)WorkingMode.Absolute);
@@ -400,6 +408,7 @@ namespace Leanity
 				_axisRotScale.x = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleX", 1f);
 				_axisRotScale.y = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleY", 1f);
 				_axisRotScale.z = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleZ", 1f);
+				AutoPosScaleOnLoad = PlayerPrefs.GetInt(_prefix + "AutoPosScaleOnLoad", 1) == 1;
 
 				// Camera
 				PitchLimit = PlayerPrefs.GetFloat(_prefix + "PitchLimit", 75f);
@@ -408,11 +417,11 @@ namespace Leanity
 				GrabEnabled = PlayerPrefs.GetInt(_prefix + "GrabEnabled", 1) == 1;
 				GrabMinThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMinThreshold", 0.5f);
 				GrabMaxThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMaxThreshold", 0.6f);
-				InvertAxis = PlayerPrefs.GetInt(_prefix + "InvertAxis", 1) == 1;
+				InvertAxis = PlayerPrefs.GetInt(_prefix + "InvertAxis", 0) == 1;
 
 				PinchEnabled = PlayerPrefs.GetInt(_prefix + "PinchEnabled", 1) == 1;
-				PinchMinThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMinThreshold", 0.5f);
-				PinchMaxThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMaxThreshold", 0.6f);
+				PinchMinThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMinThreshold", 22f);
+				PinchMaxThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMaxThreshold", 40f);
 
 				// Inertia
 				EnableInertia = PlayerPrefs.GetInt(_prefix + "EnableInertia", 1) == 1;
