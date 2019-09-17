@@ -20,14 +20,28 @@ namespace Leanity
 
 		public Vector3 Position
 		{
-			get { return _motionStyle.Position; }
-			set { _motionStyle.Position = value; }
+			get
+			{
+				return IsPinching ? _scaleStyle.Position : _motionStyle.Position;
+			}
+			set
+			{
+				_motionStyle.Position = value;
+				_scaleStyle.Position = value;
+			}
 		}
 
 		public Quaternion Rotation
 		{
-			get { return _motionStyle.Rotation; }
-			set { _motionStyle.Rotation = value; }
+			get
+			{
+				return IsPinching ? _scaleStyle.Rotation : _motionStyle.Rotation;
+			}
+			set
+			{
+				_motionStyle.Rotation = value;
+				_scaleStyle.Rotation = value;
+			}
 		}
 
 		public float Scale
@@ -210,6 +224,7 @@ namespace Leanity
 					} else
 					{
 						_scaleStyle.Update();
+						return true;
 					}
 				}
 				else
