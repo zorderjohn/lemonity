@@ -35,7 +35,6 @@ namespace Leanity
 			// Calculate cam position and rotation
 			var sceneView = SceneView.lastActiveSceneView;
 
-
 			if (sceneView != null && UnityEditorInternal.InternalEditorUtility.isApplicationActive)
 			{
 				var camRot = sceneView.rotation;

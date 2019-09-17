@@ -9,8 +9,8 @@ namespace Leanity
 		protected override void UpdateMotion()
 		{
 			bool absoluteMovement = true;
-			GrabController grabInfo = GetDominantGrabController();
-			Vector3 deltaMovement = grabInfo.DeltaPosition * Options.PosScale;
+			var grabInfo = GetDominantGrabController();
+			Vector3 deltaMovement = grabInfo.HandDeltaPosition * Options.PosScale;
 			if (!InvertAxis)
 			{
 				deltaMovement *= -1f;
@@ -22,7 +22,7 @@ namespace Leanity
 			Position = absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
 
 
-			Quaternion deltaRot = grabInfo.DeltaRotation;
+			Quaternion deltaRot = grabInfo.HandDeltaRotation;
 			if (!InvertAxis)
 			{
 				deltaRot = Quaternion.Inverse(deltaRot);

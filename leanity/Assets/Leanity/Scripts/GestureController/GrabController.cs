@@ -2,12 +2,14 @@
 
 namespace Leanity
 {
-	public class PinchController
+	public class GrabController : GestureController
 	{
-		public float StartTime;
-		public bool IsHolding;
-		public Vector3 HandInitialPosition;
-		public Quaternion HandInitialRotation;
+		public float StartTime { get; private set; }
+		public bool IsHolding { get; private set; }
+
+		public Vector3 HandInitialPosition { get; private set; }
+		public Quaternion HandInitialRotation { get; private set; }
+
 		public Vector3 HandCurrentPosition
 		{
 			get { return _hand.Position; }
@@ -16,15 +18,16 @@ namespace Leanity
 		{
 			get { return _hand.Rotation; }
 		}
-		public Vector3 ObjectInitialPosition;
-		public Quaternion ObjectInitialRotation;
 
-		public Vector3 DeltaPosition
+		public Vector3 ObjectInitialPosition { get; private set; }
+		public Quaternion ObjectInitialRotation { get; private set; }
+
+		public Vector3 HandDeltaPosition
 		{
 			get { return _hand.Position - HandInitialPosition; }
 		}
 
-		public Quaternion DeltaRotation
+		public Quaternion HandDeltaRotation
 		{
 			get { return Quaternion.Inverse(HandInitialRotation) * _hand.Rotation; }
 		}
@@ -33,8 +36,7 @@ namespace Leanity
 		private Vector3 _latestObjectPosition;
 		private Quaternion _latestObjectRotation;
 
-		public PinchController
-()
+		public GrabController()
 		{
 			IsHolding = false;
 		}
@@ -55,14 +57,14 @@ namespace Leanity
 
 			if (IsHolding)
 			{
-				if (!hand.Detected || hand.PinchDistance >= Options.PinchMaxThreshold)
+				if (!hand.Detected || hand.GrabValue < Options.GrabMinThreshold)
 				{
 					IsHolding = false;
 				}
 			}
 			else
 			{
-				if (hand.Detected && hand.PinchDistance < Options.PinchMinThreshold)
+				if (hand.Detected && hand.GrabValue >= Options.GrabMaxThreshold)
 				{
 					IsHolding = true;
 					StartHolding();

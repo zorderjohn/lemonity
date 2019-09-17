@@ -5,6 +5,7 @@ namespace Leanity
 {
 	public class MotionController
 	{
+		private IMotionStyle _scaleStyle;
 		private IMotionStyle _motionStyle;
 
 		public IMotionStyle MotionStyle
@@ -16,20 +17,24 @@ namespace Leanity
 				InitMotionStyle();
 			}
 		}
-		public bool IsCamera { get; set; }
 
 		public Vector3 Position
 		{
 			get { return _motionStyle.Position; }
 			set { _motionStyle.Position = value; }
 		}
+
 		public Quaternion Rotation
 		{
 			get { return _motionStyle.Rotation; }
 			set { _motionStyle.Rotation = value; }
 		}
 
-		public float Scale { get; private set; }
+		public float Scale
+		{
+			get { return _scaleStyle.Scale; }
+			set { _scaleStyle.Scale = value; }
+		}
 
 		public event Action OnHandsVisible;
 		public event Action OnHandsInVisible;
@@ -61,12 +66,12 @@ namespace Leanity
 
 			LeftPinch = new PinchController();
 			RightPinch = new PinchController();
-			Scale = 0f;
 
 			// Always instantiate after Left and Right grabs
 			_currentGesture = Options.Gesture;
+			_scaleStyle = new ScaleMotion();
+			Scale = 0f;
 			LoadMotionStyle();
-
 		}
 
 		private void LoadMotionStyle()
@@ -140,9 +145,12 @@ namespace Leanity
 
 		private void InitMotionStyle()
 		{
-			_motionStyle.LeftGrab = LeftGrab;
-			_motionStyle.RightGrab = RightGrab;
+			_motionStyle.LeftGesture = LeftGrab;
+			_motionStyle.RightGesture = RightGrab;
 			_motionStyle.OptionsChange();
+
+			_scaleStyle.LeftGesture = LeftPinch;
+			_scaleStyle.RightGesture = RightPinch;
 		}
 
 		private void HandDetectedEvent()
@@ -201,7 +209,7 @@ namespace Leanity
 						StopPinching();
 					} else
 					{
-						PinchingUpdate();
+						_scaleStyle.Update();
 					}
 				}
 				else
@@ -244,17 +252,7 @@ namespace Leanity
 		private void StartPinching()
 		{
 			OnStartDualPinch?.Invoke();
-			_initialScale = Scale;
-		}
-
-		private void PinchingUpdate()
-		{
-			var initialSep = Vector3.Distance(LeftPinch.HandInitialPosition, RightPinch.HandInitialPosition);
-			var finalSep = Vector3.Distance(LeftPinch.HandCurrentPosition, RightPinch.HandCurrentPosition);
-
-			float sep = finalSep - initialSep;
-			float sepDelta = 5f * sep * Options.PinchScale;
-			Scale = Mathf.Clamp(_initialScale + sepDelta, 0f, 10f);
+			_scaleStyle.Start();
 		}
 
 		private void StopPinching()
