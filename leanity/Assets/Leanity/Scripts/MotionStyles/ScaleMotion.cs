@@ -4,6 +4,8 @@ namespace Leanity
 {
 	public class ScaleMotion : MotionStyleBase
 	{
+		public override bool RequiresTwoHands { get { return true; } }
+
 		private float _initialLogScale;
 
 		private Vector3 _initialRelativeVector;

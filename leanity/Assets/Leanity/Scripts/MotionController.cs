@@ -249,13 +249,12 @@ namespace Leanity
 		{
 			if (MotionStyle != null)
 			{
-				MotionStyle.Start();
-
 				if (MotionStyle.RequiresTwoHands)
 				{
 					LeftGrab.Reset();
 					RightGrab.Reset();
 				}
+				MotionStyle.Start();
 			}
 		}
 
@@ -267,6 +266,11 @@ namespace Leanity
 		private void StartPinching()
 		{
 			OnStartDualPinch?.Invoke();
+			if (_scaleStyle.RequiresTwoHands)
+			{
+				LeftPinch.Reset();
+				RightPinch.Reset();
+			}
 			_scaleStyle.Start();
 		}
 

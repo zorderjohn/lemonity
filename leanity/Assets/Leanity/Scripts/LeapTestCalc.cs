@@ -7,19 +7,6 @@ namespace Leanity
 
 	public class LeapTestCalc : MonoBehaviour
 	{
-		HandData mainHand;
-		HandData auxHand;
-
-		public KeyCode key = KeyCode.A;
-		Controller c;
-		bool isHolding = false;
-
-		Quaternion startupObjectRot;
-		Vector3 startupObjectPos;
-
-		Quaternion initialObjectRot;
-		Vector3 initialObjectPos;
-
 		[Header("Operation Mode")]
 
 		public bool isCamera = false;
@@ -34,10 +21,6 @@ namespace Leanity
 		void Start()
 		{
 			motion = new MotionController();
-
-			startupObjectPos = transform.position;
-			startupObjectRot = transform.rotation;
-
 			OnValidate();
 		}
 
