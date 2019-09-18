@@ -16,218 +16,58 @@ namespace Leanity
 		public static event Action OnOptionsLoad;
 		public static event Action OnOptionsChange;
 
-		[SerializeField]
-		private static WorkingMode _mode;
-		public static WorkingMode Mode
-		{
-			get { return _mode; }
-			set { SetFieldValue(ref _mode, value); }
-		}
-
-		[SerializeField]
-		private static WorkingGesture _gesture;
-		public static WorkingGesture Gesture
-		{
-			get { return _gesture; }
-			set { SetFieldValue(ref _gesture, value); }
-		}
+		public static WorkingMode Mode { get; set; }
+		public static WorkingGesture Gesture { get; set; }
 
 		#region Sensitivity
-		private static float _posScale;
-		public static float PosScale
-		{
-			get { return _posScale; }
-			set
-			{
-				if (SetFieldValue(ref _posScale, value))
-				{
-					//_gridFade.FadeIn(.5f);
-					//_gridFade.FadeOutAfterTime(1f, 1f);
-				}
-			}
-		}
-
-		private static bool _autoPosScaleOnLoad;
-		public static bool AutoPosScaleOnLoad
-		{
-			get { return _autoPosScaleOnLoad; }
-			set { SetFieldValue(ref _autoPosScaleOnLoad, value); }
-		}
-
-		private static float _rotScale;
-		public static float RotScale
-		{
-			get { return _rotScale; }
-			set { SetFieldValue(ref _rotScale, value); }
-		}
-
-		private static float _zoomScale;
-		public static float ZoomScale
-		{
-			get { return _zoomScale; }
-			set { SetFieldValue(ref _zoomScale, value); }
-		}
-
-		private static Vector3 _axisRotScale;
-		public static Vector3 AxisRotScale
-		{
-			get { return _axisRotScale; }
-			set { SetComplexFieldValue(ref _axisRotScale, value); }
-		}
+		public static float PosScale { get; set; }
+		public static bool AutoPosScaleOnLoad { get; set; }
+		public static float RotScale { get; set; }
+		public static float ZoomScale { get; set; }
+		public static Vector3 AxisRotScale { get; set; }
 		#endregion
 
 		#region Camera
-		private static float _pitchLimit;
-		public static float PitchLimit
-		{
-			get { return _pitchLimit; }
-			set { SetFieldValue(ref _pitchLimit, value); }
-		}
-
+		public static float PitchLimit { get; set; }
 		#endregion
 
 		#region Interaction
-		private static float _grabMinThreshold;
-		public static float GrabMinThreshold
-		{
-			get { return _grabMinThreshold; }
-			set { SetFieldValue(ref _grabMinThreshold, value); }
-		}
-
-		private static float _grabMaxThreshold;
-		public static float GrabMaxThreshold
-		{
-			get { return _grabMaxThreshold; }
-			set { SetFieldValue(ref _grabMaxThreshold, value); }
-		}
-
-		private static bool _grabEnabled;
-		public static bool GrabEnabled
-		{
-			get { return _grabEnabled; }
-			set { SetFieldValue(ref _grabEnabled, value); }
-		}
-
-		private static bool _invertAxis;
-		public static bool InvertAxis
-		{
-			get { return _invertAxis; }
-			set { SetFieldValue(ref _invertAxis, value); }
-		}
-
-		private static bool _pinchEnabled;
-		public static bool PinchEnabled
-		{
-			get { return _pinchEnabled; }
-			set { SetFieldValue(ref _pinchEnabled, value); }
-		}
-
-		private static float _pinchMinThreshold;
-		public static float PinchMinThreshold
-		{
-			get { return _pinchMinThreshold; }
-			set { SetFieldValue(ref _pinchMinThreshold, value); }
-		}
-
-		private static float _pinchMaxThreshold;
-		public static float PinchMaxThreshold
-		{
-			get { return _pinchMaxThreshold; }
-			set { SetFieldValue(ref _pinchMaxThreshold, value); }
-		}
-
+		public static float GrabMinThreshold { get; set; }
+		public static float GrabMaxThreshold { get; set; }
+		public static bool GrabEnabled { get; set; }
+		public static bool InvertAxis { get; set; }
+		public static bool PinchEnabled { get; set; }
+		public static float PinchMinThreshold { get; set; }
+		public static float PinchMaxThreshold { get; set; }
 		#endregion
 
 		#region Inertia
-		private static bool _enableInertia;
-		public static bool EnableInertia
-		{
-			get { return _enableInertia; }
-			set { SetFieldValue(ref _enableInertia, value); }
-		}
-
-		private static float _angularDrag;
-		public static float AngularDrag
-		{
-			get { return _angularDrag; }
-			set { SetFieldValue(ref _angularDrag, value); }
-		}
-
-		private static float _linearDrag;
-		public static float LinearDrag
-		{
-			get { return _linearDrag; }
-			set { SetFieldValue(ref _linearDrag, value); }
-		}
-
-		private static int _velocityFrames;
-		public static int VelocityFrames
-		{
-			get { return _velocityFrames; }
-			set { SetFieldValue(ref _velocityFrames, value); }
-		}
-
-		private static int _discardFrames;
-		public static int DiscardFrames
-		{
-			get { return _discardFrames; }
-			set { SetFieldValue(ref _discardFrames, value); }
-		}
+		public static bool EnableInertia { get; set; }
+		public static float AngularDrag { get; set; }
+		public static float LinearDrag { get; set; }
+		public static int VelocityFrames { get; set; }
+		public static int DiscardFrames { get; set; }
 		#endregion
 
 		#region Filter
-		private static float _filterFrequency;
-		public static float FilterFrequency
-		{
-			get { return _filterFrequency; }
-			set { SetFieldValue(ref _filterFrequency, value); }
-		}
-
-		private static float _rotFilterMinCutoff;
-		public static float RotFilterMinCutoff
-		{
-			get { return _rotFilterMinCutoff; }
-			set { SetFieldValue(ref _rotFilterMinCutoff, value); }
-		}
-
-		private static float _rotFilterBeta;
-		public static float RotFilterBeta
-		{
-			get { return _rotFilterBeta; }
-			set { SetFieldValue(ref _rotFilterBeta, value); }
-		}
-
-		private static float _rotFilterDcutoff;
-		public static float RotFilterDcutoff
-		{
-			get { return _rotFilterDcutoff; }
-			set { SetFieldValue(ref _rotFilterDcutoff, value); }
-		}
-
-		private static float _posFilterMinCutoff;
-		public static float PosFilterMinCutoff
-		{
-			get { return _posFilterMinCutoff; }
-			set { SetFieldValue(ref _posFilterMinCutoff, value); }
-		}
-
-		private static float _posFilterBeta;
-		public static float PosFilterBeta
-		{
-			get { return _posFilterBeta; }
-			set { SetFieldValue(ref _posFilterBeta, value); }
-		}
-
-		private static float _posFilterDcutoff;
-		public static float PosFilterDcutoff
-		{
-			get { return _posFilterDcutoff; }
-			set { SetFieldValue(ref _posFilterDcutoff, value); }
-		}
-
-
-		public static bool Dirty { get; private set; } = false;
+		public static float FilterFrequency { get; set; }
+		public static float RotFilterMinCutoff { get; set; }
+		public static float RotFilterBeta { get; set; }
+		public static float RotFilterDcutoff { get; set; }
+		public static float PosFilterMinCutoff { get; set; }
+		public static float PosFilterBeta { get; set; }
+		public static float PosFilterDcutoff { get; set; }
 		#endregion
+
+		private static bool _dirty = false;
+		public static bool Dirty
+		{
+			get { return _dirty; }
+			set {
+				_dirty = value;
+				if (_dirty) { OnOptionsChange?.Invoke(); }
+			}
+		}
 
 		#region Debug
 
@@ -240,35 +80,10 @@ namespace Leanity
 		{
 			get { return Color.red; }
 		}
-
-
-		private static int _numGridLines;
-		public static int NumGridLines
-		{
-			get { return _numGridLines; }
-			set { SetFieldValue(ref _numGridLines, value); }
-		}
-
-		private static bool _showGrid;
-		public static bool ShowGrid
-		{
-			get { return _showGrid; }
-			set { SetFieldValue(ref _showGrid, value); }
-		}
-
-		private static bool _showWorkspace;
-		public static bool ShowWorkspace
-		{
-			get { return _showWorkspace; }
-			set { SetFieldValue(ref _showWorkspace, value); }
-		}
-
-		private static bool _gestureDebug;
-		public static bool GestureDebug
-		{
-			get { return _gestureDebug; }
-			set { SetFieldValue(ref _gestureDebug, value); }
-		}
+		public static int NumGridLines { get; set; }
+		public static bool ShowGrid { get; set; }
+		public static bool ShowWorkspace { get; set; }
+		public static bool GestureDebug { get; set; }
 
 		private static ValueFade _gridFade = new ValueFade();
 		public static void GridFadeIn()
@@ -297,40 +112,11 @@ namespace Leanity
 			set { _gridFade.MaxValue = value; }
 		}
 
-		private static float _trackingZOffset;
-		public static float TrackingZOffset
-		{
-			get { return _trackingZOffset; }
-			set { SetFieldValue(ref _trackingZOffset, value); }
-		}
+		public static float TrackingZOffset { get; set; }
 
 		#endregion
 
 		private static bool _init = false;
-
-		private static bool SetFieldValue<T>(ref T field, T newValue) where T : IComparable
-		{
-			if (!field.Equals(newValue))
-			{
-				field = newValue;
-				Dirty = true;
-				OnOptionsChange?.Invoke();
-				return true;
-			}
-			return false;
-		}
-
-		private static bool SetComplexFieldValue<T>(ref T field, T newValue) where T : IEquatable<T>
-		{
-			if (!field.Equals(newValue))
-			{
-				field = newValue;
-				Dirty = true;
-				OnOptionsChange?.Invoke();
-				return true;
-			}
-			return false;
-		}
 
 		public static void Save()
 		{
@@ -405,9 +191,13 @@ namespace Leanity
 				PosScale = PlayerPrefs.GetFloat(_prefix + "PosScale", 1f);
 				RotScale = PlayerPrefs.GetFloat(_prefix + "RotScale", 1f);
 				ZoomScale = PlayerPrefs.GetFloat(_prefix + "ZoomScale", 1f);
-				_axisRotScale.x = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleX", 1f);
-				_axisRotScale.y = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleY", 1f);
-				_axisRotScale.z = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleZ", 1f);
+
+				Vector3 axisRotScale = new Vector3();
+				axisRotScale.x = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleX", 1f);
+				axisRotScale.y = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleY", 1f);
+				axisRotScale.z = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleZ", 1f);
+				AxisRotScale = axisRotScale;
+
 				AutoPosScaleOnLoad = PlayerPrefs.GetInt(_prefix + "AutoPosScaleOnLoad", 1) == 1;
 
 				// Camera

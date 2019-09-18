@@ -250,6 +250,11 @@ namespace Leanity
 			}
 
 			GUILayout.EndScrollView();
+			if (GUI.changed)
+			{
+				Options.Dirty = true;
+			}
+
 			GUI.enabled = Options.Dirty;
 			if (GUILayout.Button("Save"))
 			{
