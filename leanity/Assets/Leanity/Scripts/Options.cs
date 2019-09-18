@@ -59,18 +59,7 @@ namespace Leanity
 		public static float PosFilterDcutoff { get; set; }
 		#endregion
 
-		private static bool _dirty = false;
-		public static bool Dirty
-		{
-			get { return _dirty; }
-			set {
-				_dirty = value;
-				if (_dirty) { OnOptionsChange?.Invoke(); }
-			}
-		}
-
 		#region Debug
-
 		public static Color GridColor
 		{
 			get { return new Color(0f, 1f, 0f); }
@@ -113,8 +102,17 @@ namespace Leanity
 		}
 
 		public static float TrackingZOffset { get; set; }
-
 		#endregion
+
+		private static bool _dirty = false;
+		public static bool Dirty
+		{
+			get { return _dirty; }
+			set {
+				_dirty = value;
+				if (_dirty) { OnOptionsChange?.Invoke(); }
+			}
+		}
 
 		private static bool _init = false;
 
