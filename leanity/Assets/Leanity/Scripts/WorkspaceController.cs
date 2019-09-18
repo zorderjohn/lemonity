@@ -5,9 +5,10 @@ namespace Leanity
 {
 	public class WorkspaceController
 	{
+		private static readonly string _shaderStr = "Legacy Shaders/Transparent/Diffuse";
 		private Vector3 _size;
 		private List<Vector3> _gridLines;
-		private readonly Vector3[] _cubeVertices =
+		private Vector3[] _cubeVertices =
 			{
 			new Vector3( 1f,  1f,  1f), // 0
 			new Vector3( 1f,  1f, -1f), // 1
@@ -18,17 +19,58 @@ namespace Leanity
 			new Vector3(-1f, -1f,  1f), // 6
 			new Vector3(-1f, -1f, -1f) // 7
 		};
+		private Mesh _mesh;
+		private Material _mat;
 
 		public WorkspaceController(Vector3 size)
 		{
 			_size = size;
 			_gridLines = new List<Vector3>();
+
+			for (int i = 0; i < _cubeVertices.Length; i++)
+			{
+				_cubeVertices[i] = Vector3.Scale(_cubeVertices[i], _size) * 0.5f;
+			}
+
+			//TODO: shader in options?
+			Shader shader = Shader.Find(_shaderStr);
+			if (!shader)
+			{
+				Debug.LogError("Leanity: Unable to find shader " + _shaderStr);
+			}
+			else
+			{
+				_mat = new Material(shader);
+			}
+			GenerateMesh();
+		}
+
+		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
+		{
+			var color = _mat.color;
+			color.a = alpha;
+			_mat.color = color;
+
+			_mat.SetPass(0);
+			Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
+
+			Graphics.DrawMeshNow(_mesh, matrix);
 		}
 
 		private void GenerateMesh()
 		{
-			Mesh mesh = new Mesh();
-			Vector3[] vertices = new Vector3[6];
+			_mesh = new Mesh();
+
+			int[] triangles = {
+				0, 5, 1, 0, 4, 5,
+				2, 3, 7, 2, 7, 6,
+				0, 2, 6, 0, 6, 4,
+				4, 7, 5, 4, 6, 7,
+				0, 1, 3, 0, 3, 2
+			};
+
+			_mesh.vertices = _cubeVertices;
+			_mesh.triangles = triangles;
 		}
 
 
@@ -80,12 +122,7 @@ namespace Leanity
 
 		private Vector3 GetCubeCoord(uint id)
 		{
-			if (id < 8)
-			{
-				var localPosition = Vector3.Scale(_size, _cubeVertices[id]) * 0.5f;
-				return HandTracking.ToWorldCoordinates(localPosition);
-			}
-			return Vector3.zero;
+			return id < 8 ? HandTracking.ToWorldCoordinates(_cubeVertices[id]) : Vector3.zero;
 		}
 	}
 }

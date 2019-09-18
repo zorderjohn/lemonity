@@ -8,7 +8,6 @@ namespace Leanity
 	[InitializeOnLoad]
 	public class EditorController
 	{
-		private const string CAMERA_GRID_PREFAB = "WorkspaceGridDummy";
 		private static UnityEngine.SceneManagement.Scene _scene;
 
 		public static MotionController EditorMotionController { get; private set; }
@@ -21,9 +20,7 @@ namespace Leanity
 			Debug.Log("EditorController constructor");
 			EditorMotionController = new MotionController();
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
-			InitWorkspace();
 			EditorApplication.update += Update;
-			Options.OnOptionsChange += OptionsChange;
 		}
 
 		static public void Update()
@@ -60,58 +57,20 @@ namespace Leanity
 			}
 		}
 
-		private static void InitWorkspace()
-		{
-			var workspace = LeanityWorkspace.Instance;
-			GameObject workspaceGameObject;
-
-			if (!workspace)
-			{
-				workspaceGameObject = Object.Instantiate(Resources.Load(CAMERA_GRID_PREFAB)) as GameObject;
-			}
-			else
-			{
-				workspaceGameObject = workspace.gameObject;
-			}
-
-			if (workspaceGameObject)
-			{
-				_mesh = workspaceGameObject.GetComponentInChildren<MeshFilter>().sharedMesh;
-				workspaceGameObject.hideFlags = HideFlags.HideAndDontSave;
-			}
-			else
-			{
-				Debug.LogError("Unable to load " + CAMERA_GRID_PREFAB + " prefab. Workspace visualization disabled.");
-			}
-		}
-
 		private static void UpdateWorkspace(Vector3 camPos, Quaternion camRot)
 		{
-			var workspace = LeanityWorkspace.Instance;
-
-			if (workspace && Options.ShowWorkspace)
+			if (Options.ShowWorkspace)
 			{
-				workspace.SetTransform(camPos, camRot, Options.AxisRotScale * Options.PosScale);
-				workspace.SetTransparency(Options.GridTransparency);
-
-				Graphics.DrawMeshNow(_mesh, Vector3.zero, Quaternion.identity);
-			}
-		}
-
-		private static void OptionsChange()
-		{
-			var workspace = LeanityWorkspace.Instance;
-
-			if (workspace && workspace.gameObject)
-			{
-				workspace.gameObject.SetActive(Options.ShowWorkspace);
+				var position = HandTracking.ToWorldCoordinates(Vector3.zero);
+				var scale = Options.AxisRotScale * Options.PosScale;
+				var rotation = camRot;
+				EditorWorkspaceController.Draw(Options.GridTransparency, position, rotation, scale);
 			}
 		}
 
 		private static void OnSceneChange()
 		{
 			Debug.Log("On scene change");
-			InitWorkspace();
 			if (Options.AutoPosScaleOnLoad)
 			{
 				AutoScale();
