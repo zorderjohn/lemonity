@@ -42,7 +42,6 @@ namespace Leanity
 			{
 				var camRot = sceneView.rotation;
 				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
-				UpdateWorkspace(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
 
 				if (EditorMotionController.Update(camPos, camRot))
 				{
@@ -53,9 +52,16 @@ namespace Leanity
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
+				UpdateWorkspace(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
+
 				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(Options.PosScale))
 				{
 					Options.PosScale = EditorMotionController.Scale;
+				}
+
+				if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected || Options.GridVisible)
+				{
+					SceneView.RepaintAll();
 				}
 			}
 		}
