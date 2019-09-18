@@ -14,7 +14,7 @@ namespace Leanity
 			set { _state = value; }
 		}
 
-		private static readonly string _shaderStr = "UI-Unlit-Transparent";
+		private static readonly string _shaderStr = "UI/Unlit/Transparent";
 		private Vector3 _size;
 		private List<Vector3> _gridLines;
 		private Vector3[] _cubeVertices =
@@ -42,7 +42,7 @@ namespace Leanity
 			}
 
 			//TODO: choose shader in options?
-			Shader shader = Resources.Load<Shader>(_shaderStr);
+			Shader shader = Shader.Find(_shaderStr);
 			if (!shader)
 			{
 				Debug.LogError("Leanity: Unable to load shader " + _shaderStr);
@@ -56,19 +56,22 @@ namespace Leanity
 
 		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
 		{
-			if (Options.ShowWorkspace)
+			if (_mat != null)
 			{
-				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
-				DrawMesh(alpha, matrix);
-			}
+				if (Options.ShowWorkspace)
+				{
+					Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
+					DrawMesh(alpha, matrix);
+				}
 
-			if (Options.ShowGrid)
-			{
-				UpdateWorkspaceGridLines();
+				if (Options.ShowGrid)
+				{
+					UpdateWorkspaceGridLines();
 
-				Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
-				color.a = alpha;
-				DrawLines(color);
+					Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
+					color.a = alpha;
+					DrawLines(color);
+				}
 			}
 		}
 

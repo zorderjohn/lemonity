@@ -248,8 +248,6 @@ namespace Leanity
 				{
 					motionController.MotionStyle.DebugDraw();
 				}
-
-				SceneView.RepaintAll();
 			}
 
 		}
