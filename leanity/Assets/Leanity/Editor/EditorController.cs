@@ -12,11 +12,15 @@ namespace Leanity
 		private static UnityEngine.SceneManagement.Scene _scene;
 
 		public static MotionController EditorMotionController { get; private set; }
+		public static WorkspaceController EditorWorkspaceController { get; private set; }
+		private static Mesh _mesh;
+
 
 		static EditorController()
 		{
 			Debug.Log("EditorController constructor");
 			EditorMotionController = new MotionController();
+			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
 			InitWorkspace();
 			EditorApplication.update += Update;
 			Options.OnOptionsChange += OptionsChange;
@@ -72,6 +76,7 @@ namespace Leanity
 
 			if (workspaceGameObject)
 			{
+				_mesh = workspaceGameObject.GetComponentInChildren<MeshFilter>().sharedMesh;
 				workspaceGameObject.hideFlags = HideFlags.HideAndDontSave;
 			}
 			else
@@ -88,6 +93,8 @@ namespace Leanity
 			{
 				workspace.SetTransform(camPos, camRot, Options.AxisRotScale * Options.PosScale);
 				workspace.SetTransparency(Options.GridTransparency);
+
+				Graphics.DrawMeshNow(_mesh, Vector3.zero, Quaternion.identity);
 			}
 		}
 

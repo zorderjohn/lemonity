@@ -17,18 +17,6 @@ namespace Leanity
 		private readonly float _workspaceDepth = 0.5f;
 		private static bool _handsVisible = false;
 
-		private readonly Vector3[] _cubeVertices =
-		{
-			new Vector3( 1f,  1f,  1f), // 0
-			new Vector3( 1f,  1f, -1f), // 1
-			new Vector3( 1f, -1f,  1f), // 2
-			new Vector3( 1f, -1f, -1f), // 3
-			new Vector3(-1f,  1f,  1f), // 4
-			new Vector3(-1f,  1f, -1f), // 5
-			new Vector3(-1f, -1f,  1f), // 6
-			new Vector3(-1f, -1f, -1f) // 7
-		};
-
 		void OnEnable()
 		{
 			LoadResources();
@@ -253,6 +241,14 @@ namespace Leanity
 
 			if (leftDetected || rightDetected || Options.GridVisible)
 			{
+				var motionController = EditorController.EditorMotionController;
+				EditorController.Update();
+
+				if (Options.GestureDebug)
+				{
+					motionController.MotionStyle.DebugDraw();
+				}
+
 				if (Options.ShowGrid)
 				{
 					PaintWorkspace();
@@ -260,6 +256,20 @@ namespace Leanity
 				SceneView.RepaintAll();
 			}
 
+		}
+		private void PaintWorkspace()
+		{
+			var motionController = EditorController.EditorMotionController;
+			var gridColor = motionController.IsHolding ? Options.GrabGridColor : Options.GridColor;
+			gridColor.a = Options.GridTransparency;
+			Handles.color = gridColor;
+
+			var lines = EditorController.EditorWorkspaceController.GetWorkspaceGridLines();
+
+			for (int i = 0; i < lines.Count; i+=2)
+			{
+				Handles.DrawLine(lines[i], lines[i + 1]);
+			}
 		}
 
 		private void PaintHand(HandData hand)
@@ -311,68 +321,6 @@ namespace Leanity
 
 			Handles.DrawLine(leftPos, rightPos);
 			Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.PosScale * .03f, EventType.Repaint);
-		}
-
-		private void PaintWorkspace()
-		{
-			var motionController = EditorController.EditorMotionController;
-			EditorController.Update();
-
-			var gridColor = motionController.IsHolding ? Options.GrabGridColor : Options.GridColor;
-			gridColor.a = Options.GridTransparency;
-			Handles.color = gridColor;
-
-			// Top
-			PaintGrid(0, 1, 5, 4);
-
-			// Bottom
-			PaintGrid(2, 3, 7, 6);
-
-			// Front
-			PaintGrid(0, 2, 6, 4);
-
-			// Left
-			PaintGrid(4, 5, 7, 6);
-
-			// Right
-			PaintGrid(0, 1, 3, 2);
-
-			if (Options.GestureDebug)
-			{
-				motionController.MotionStyle.DebugDraw();
-			}
-		}
-
-		// Clockwise vertices
-		private void PaintGrid(uint i0, uint i1, uint i2, uint i3)
-		{
-			var v0 = GetCubeCoord(i0);
-			var v1 = GetCubeCoord(i1);
-			var v2 = GetCubeCoord(i2);
-			var v3 = GetCubeCoord(i3);
-
-			int div = Options.NumGridLines + 1;
-			for (int i = 0; i <= div; i++)
-			{
-				float f = i / (float)div;
-				var vert0 = Vector3.Lerp(v0, v1, f);
-				var vert1 = Vector3.Lerp(v3, v2, f);
-				Handles.DrawLine(vert0, vert1);
-
-				vert0 = Vector3.Lerp(v0, v3, f);
-				vert1 = Vector3.Lerp(v1, v2, f);
-				Handles.DrawLine(vert0, vert1);
-			}
-		}
-
-		private Vector3 GetCubeCoord(uint id)
-		{
-			if (id < 8)
-			{
-				var localPosition = Vector3.Scale(HandTracking.Workspace, _cubeVertices[id]) * 0.5f;
-				return HandTracking.ToWorldCoordinates(localPosition);
-			}
-			return Vector3.zero;
 		}
 
 	}
