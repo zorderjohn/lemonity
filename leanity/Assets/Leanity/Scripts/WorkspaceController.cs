@@ -3,8 +3,17 @@ using UnityEngine;
 
 namespace Leanity
 {
+	public enum WorkspaceState { Hide, Idle, Grab, Pinch };
+
 	public class WorkspaceController
 	{
+		private WorkspaceState _state;
+		public WorkspaceState State
+		{
+			get { return _state; }
+			set { _state = value; }
+		}
+
 		private static readonly string _shaderStr = "UI-Unlit-Transparent";
 		private Vector3 _size;
 		private List<Vector3> _gridLines;
@@ -47,11 +56,26 @@ namespace Leanity
 
 		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
 		{
+			if (Options.ShowWorkspace)
+			{
+				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
+				DrawMesh(alpha, matrix);
+			}
+
+			if (Options.ShowGrid)
+			{
+				UpdateWorkspaceGridLines();
+
+				Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
+				color.a = alpha;
+				DrawLines(color);
+			}
+		}
+
+		private void DrawMesh(float alpha, Matrix4x4 matrix)
+		{
 			_mat.color = new Color(0, 0, 0, alpha);
 			_mat.SetPass(0);
-
-			Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
-
 			Graphics.DrawMeshNow(_mesh, matrix);
 		}
 
@@ -72,7 +96,7 @@ namespace Leanity
 		}
 
 
-		public List<Vector3> GetWorkspaceGridLines()
+		public void UpdateWorkspaceGridLines()
 		{
 			_gridLines.Clear();
 
@@ -90,8 +114,6 @@ namespace Leanity
 
 			// Right
 			PaintGrid(0, 1, 3, 2);
-
-			return _gridLines;
 		}
 
 		// Clockwise vertices
@@ -121,6 +143,23 @@ namespace Leanity
 		private Vector3 GetCubeCoord(uint id)
 		{
 			return id < 8 ? HandTracking.ToWorldCoordinates(_cubeVertices[id]) : Vector3.zero;
+		}
+
+		private void DrawLines(Color color)
+		{
+			_mat.color = color;
+			_mat.SetPass(0);
+
+			GL.PushMatrix();
+
+			GL.Begin(GL.LINES);
+			foreach(var vertex in _gridLines)
+			{
+				GL.Vertex(vertex);
+			}
+			GL.End();
+
+			GL.PopMatrix();
 		}
 	}
 }

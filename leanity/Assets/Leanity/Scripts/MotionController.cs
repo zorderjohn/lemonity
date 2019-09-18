@@ -52,8 +52,11 @@ namespace Leanity
 
 		public event Action OnHandsVisible;
 		public event Action OnHandsInVisible;
-		public event Action OnStartDualPinch;
-		public event Action OnEndDualPinch;
+		public event Action OnStartPinch;
+		public event Action OnEndPinch;
+		public event Action OnStartGrab;
+		public event Action OnEndGrab;
+		public event Action OnStateChange;
 
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
@@ -122,6 +125,7 @@ namespace Leanity
 			HandTracking.TransformPosition = position + rotation * HandTracking.CamToHandOffset();
 			HandTracking.TransformRotation = rotation;
 			HandTracking.TransformScale = Options.PosScale;
+
 			if (HandTracking.Update())
 			{
 				LeftGrab.Update(HandTracking.LeftHandData, Position, Rotation);
@@ -136,6 +140,7 @@ namespace Leanity
 				MotionStyle.LateFrameUpdate();
 				return retValue;
 			}
+
 			return false;
 		}
 
@@ -170,13 +175,15 @@ namespace Leanity
 		private void HandDetectedEvent()
 		{
 			bool handsDetected = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
-			if (!_handsVisible && handsDetected && OnHandsVisible != null)
+			if (!_handsVisible && handsDetected)
 			{
-				OnHandsVisible.Invoke();
+				OnHandsVisible?.Invoke();
+				OnStateChange?.Invoke();
 			}
-			else if (_handsVisible && !handsDetected && OnHandsInVisible != null)
+			else if (_handsVisible && !handsDetected)
 			{
-				OnHandsInVisible.Invoke();
+				OnHandsInVisible?.Invoke();
+				OnStateChange?.Invoke();
 			}
 			_handsVisible = handsDetected;
 		}
@@ -256,27 +263,33 @@ namespace Leanity
 				}
 				MotionStyle.Start();
 			}
+			OnStartGrab?.Invoke();
+			OnStateChange?.Invoke();
 		}
 
 		private void StopMoving()
 		{
 			MotionStyle?.Stop();
+			OnEndGrab?.Invoke();
+			OnStateChange?.Invoke();
 		}
 
 		private void StartPinching()
 		{
-			OnStartDualPinch?.Invoke();
 			if (_scaleStyle.RequiresTwoHands)
 			{
 				LeftPinch.Reset();
 				RightPinch.Reset();
 			}
 			_scaleStyle.Start();
+			OnStartPinch?.Invoke();
+			OnStateChange?.Invoke();
 		}
 
 		private void StopPinching()
 		{
-			OnEndDualPinch?.Invoke();
+			OnEndPinch?.Invoke();
+			OnStateChange?.Invoke();
 		}
 
 	}

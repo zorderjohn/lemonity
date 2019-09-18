@@ -17,10 +17,13 @@ namespace Leanity
 
 		static EditorController()
 		{
-			Debug.Log("EditorController constructor");
 			EditorMotionController = new MotionController();
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
 			EditorApplication.update += Update;
+			EditorMotionController.OnHandsVisible += OnHandsVisible;
+			EditorMotionController.OnHandsInVisible += OnHandsInvisible;
+			EditorMotionController.OnStateChange += OnStateChange;
+
 		}
 
 		static public void Update()
@@ -70,7 +73,6 @@ namespace Leanity
 
 		private static void OnSceneChange()
 		{
-			Debug.Log("On scene change");
 			if (Options.AutoPosScaleOnLoad)
 			{
 				AutoScale();
@@ -93,6 +95,31 @@ namespace Leanity
 				b.Encapsulate(r.bounds);
 			}
 			return b;
+		}
+
+		private static void OnHandsVisible()
+		{
+		}
+
+		private static void OnHandsInvisible()
+		{
+			EditorWorkspaceController.State = WorkspaceState.Hide;
+		}
+
+		private static void OnStateChange()
+		{
+			if (EditorMotionController.IsHolding)
+			{
+				EditorWorkspaceController.State = WorkspaceState.Grab;
+			}
+			else if (EditorMotionController.IsPinching)
+			{
+				EditorWorkspaceController.State = WorkspaceState.Pinch;
+			}
+			else
+			{
+				EditorWorkspaceController.State = WorkspaceState.Idle;
+			}
 		}
 	}
 }

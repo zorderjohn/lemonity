@@ -249,27 +249,9 @@ namespace Leanity
 					motionController.MotionStyle.DebugDraw();
 				}
 
-				if (Options.ShowGrid)
-				{
-					PaintWorkspace();
-				}
 				SceneView.RepaintAll();
 			}
 
-		}
-		private void PaintWorkspace()
-		{
-			var motionController = EditorController.EditorMotionController;
-			var gridColor = motionController.IsHolding ? Options.GrabGridColor : Options.GridColor;
-			gridColor.a = Options.GridTransparency;
-			Handles.color = gridColor;
-
-			var lines = EditorController.EditorWorkspaceController.GetWorkspaceGridLines();
-
-			for (int i = 0; i < lines.Count; i+=2)
-			{
-				Handles.DrawLine(lines[i], lines[i + 1]);
-			}
 		}
 
 		private void PaintHand(HandData hand)
