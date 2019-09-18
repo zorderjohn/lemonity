@@ -220,11 +220,11 @@ namespace Leanity
 
 				// Filter
 				FilterFrequency = PlayerPrefs.GetFloat(_prefix + "FilterFrequency", 120f);
-				RotFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterMinCutoff", 1f);
-				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 0f);
+				RotFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterMinCutoff", 0.2f);
+				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 1f);
 				RotFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterDcutoff", 1f);
-				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 1f);
-				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 0f);
+				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 0.5f);
+				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 4f);
 				PosFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterDcutoff", 1f);
 
 				// Debug
