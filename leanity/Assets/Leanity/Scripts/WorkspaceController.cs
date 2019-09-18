@@ -5,7 +5,7 @@ namespace Leanity
 {
 	public class WorkspaceController
 	{
-		private static readonly string _shaderStr = "Legacy Shaders/Transparent/Diffuse";
+		private static readonly string _shaderStr = "UI-Unlit-Transparent";
 		private Vector3 _size;
 		private List<Vector3> _gridLines;
 		private Vector3[] _cubeVertices =
@@ -32,11 +32,11 @@ namespace Leanity
 				_cubeVertices[i] = Vector3.Scale(_cubeVertices[i], _size) * 0.5f;
 			}
 
-			//TODO: shader in options?
-			Shader shader = Shader.Find(_shaderStr);
+			//TODO: choose shader in options?
+			Shader shader = Resources.Load<Shader>(_shaderStr);
 			if (!shader)
 			{
-				Debug.LogError("Leanity: Unable to find shader " + _shaderStr);
+				Debug.LogError("Leanity: Unable to load shader " + _shaderStr);
 			}
 			else
 			{
@@ -47,11 +47,9 @@ namespace Leanity
 
 		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
 		{
-			var color = _mat.color;
-			color.a = alpha;
-			_mat.color = color;
-
+			_mat.color = new Color(0, 0, 0, alpha);
 			_mat.SetPass(0);
+
 			Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
 			Graphics.DrawMeshNow(_mesh, matrix);
