@@ -52,6 +52,14 @@ namespace Leanity
 				_mat = new Material(shader);
 				_mat.hideFlags = HideFlags.HideAndDontSave;
 			}
+
+			GenerateDrawingStuff();
+
+			Options.OnOptionsChange += GenerateDrawingStuff;
+		}
+
+		private void GenerateDrawingStuff()
+		{
 			GenerateMesh();
 			GenerateWorkspaceGridLines();
 		}
@@ -84,6 +92,10 @@ namespace Leanity
 				_mat.SetPass(0);
 				Graphics.DrawMeshNow(_mesh, matrix);
 			}
+			else
+			{
+				Debug.LogWarning("Leanity: Workspace mesh is null");
+			}
 		}
 
 		private void GenerateMesh()
@@ -104,6 +116,8 @@ namespace Leanity
 
 		public void GenerateWorkspaceGridLines()
 		{
+			_gridLines.Clear();
+
 			GenerateGridOnQuad(0, 1, 5, 4); // Top
 			GenerateGridOnQuad(2, 3, 7, 6); // Bottom
 			GenerateGridOnQuad(0, 2, 6, 4); // Front

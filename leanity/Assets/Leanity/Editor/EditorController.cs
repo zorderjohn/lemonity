@@ -18,11 +18,16 @@ namespace Leanity
 		{
 			EditorMotionController = new MotionController();
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
-			EditorApplication.update += Update;
+			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			EditorMotionController.OnHandsVisible += OnHandsVisible;
 			EditorMotionController.OnHandsInVisible += OnHandsInvisible;
 			EditorMotionController.OnStateChange += OnStateChange;
 
+		}
+
+		static private void OnSceneGUI(SceneView sceneView)
+		{
+			Update();
 		}
 
 		static public void Update()
@@ -55,16 +60,22 @@ namespace Leanity
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
-
 				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(Options.PosScale))
 				{
 					Options.PosScale = EditorMotionController.Scale;
 				}
 
-				if (HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected || Options.GridVisible)
+				bool anyHandVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
+				if (anyHandVisible|| Options.GridVisible)
 				{
+					if (Options.GestureDebug)
+					{
+						EditorMotionController.MotionStyle.DebugDraw();
+					}
+
 					SceneView.RepaintAll();
 				}
+
 			}
 		}
 

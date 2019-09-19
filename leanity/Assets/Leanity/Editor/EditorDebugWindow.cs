@@ -91,6 +91,11 @@ namespace Leanity
 			}
 
 			GUILayout.EndScrollView();
+
+			if (GUI.changed)
+			{
+				Options.Dirty = true;
+			}
 		}
 
 
@@ -238,19 +243,6 @@ namespace Leanity
 			{
 				PaintPivot();
 			}
-
-			if (leftDetected || rightDetected || Options.GridVisible)
-			{
-				var motionController = EditorController.EditorMotionController;
-				EditorController.Update();
-
-				if (Options.GestureDebug)
-				{
-					motionController.MotionStyle.DebugDraw();
-				}
-				//SceneView.RepaintAll();
-			}
-
 		}
 
 		private void PaintHand(HandData hand)
