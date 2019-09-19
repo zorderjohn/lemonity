@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 
 #if UNITY_EDITOR
 namespace Leanity
@@ -43,6 +42,10 @@ namespace Leanity
 				var camRot = sceneView.rotation;
 				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
 
+				// As we are not drawing on PostRender we need to draw workspace using data from previous update
+				// before changing camera
+				DrawWorkspace(camPos + camRot * HandTracking.CamToHandOffset(), camRot);
+
 				if (EditorMotionController.Update(camPos, camRot))
 				{
 					camPos = EditorMotionController.Position;
@@ -52,7 +55,6 @@ namespace Leanity
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
-				UpdateWorkspace(HandTracking.ToWorldCoordinates(Vector3.zero), camRot);
 
 				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(Options.PosScale))
 				{
@@ -66,11 +68,11 @@ namespace Leanity
 			}
 		}
 
-		private static void UpdateWorkspace(Vector3 camPos, Quaternion camRot)
+		private static void DrawWorkspace(Vector3 camPos, Quaternion camRot)
 		{
 			if (Options.ShowWorkspace)
 			{
-				var position = HandTracking.ToWorldCoordinates(Vector3.zero);
+				var position = camPos;
 				var scale = Options.AxisRotScale * Options.PosScale;
 				var rotation = camRot;
 				EditorWorkspaceController.Draw(Options.GridTransparency, position, rotation, scale);

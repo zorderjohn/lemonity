@@ -122,10 +122,6 @@ namespace Leanity
 			Position = position;
 			Rotation = rotation;
 
-			HandTracking.TransformPosition = position + rotation * HandTracking.CamToHandOffset();
-			HandTracking.TransformRotation = rotation;
-			HandTracking.TransformScale = Options.PosScale;
-
 			if (HandTracking.Update())
 			{
 				LeftGrab.Update(HandTracking.LeftHandData, Position, Rotation);
@@ -137,6 +133,11 @@ namespace Leanity
 				HandDetectedEvent();
 
 				bool retValue = EventController();
+
+				HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
+				HandTracking.TransformRotation = Rotation;
+				HandTracking.TransformScale = Options.PosScale;
+
 				MotionStyle.LateFrameUpdate();
 				return retValue;
 			}
