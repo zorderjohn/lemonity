@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Leanity
 {
-	public enum WorkspaceState { Hide, Idle, Grab, Pinch };
+	public enum WorkspaceState { Hide = 0, Idle = 1, Grab = 2, Pinch = 3};
 
 	public class WorkspaceController
 	{
@@ -14,8 +14,7 @@ namespace Leanity
 			set { _state = value; }
 		}
 
-		private static readonly string _shaderStr = "UI/Unlit/Transparent";
-		private Vector3 _size;
+		private static readonly string _workspaceShaderStr = "UI/Unlit/Transparent";
 		private List<Vector3> _gridLines;
 		private Vector3[] _cubeVertices =
 			{
@@ -28,34 +27,52 @@ namespace Leanity
 			new Vector3(-1f, -1f,  1f), // 6
 			new Vector3(-1f, -1f, -1f) // 7
 		};
-		private Mesh _mesh;
-		private Material _mat;
+		private Mesh _workspaceMesh;
+		private Material _workspaceMat;
+
+		private Material _handMat;
+
+		private Mesh[] _handMeshes;
 
 		public WorkspaceController(Vector3 size)
 		{
-			_size = size;
-			_gridLines = new List<Vector3>();
+			Debug.Log("Workspace Controller constructor");
+			ScaleWorkspace(size);
+			CreateMaterials();
+			GenerateDrawingStuff();
+			LoadMeshes();
 
-			for (int i = 0; i < _cubeVertices.Length; i++)
-			{
-				_cubeVertices[i] = Vector3.Scale(_cubeVertices[i], _size) * 0.5f;
-			}
+			Options.OnOptionsChange += GenerateDrawingStuff;
+		}
 
-			//TODO: choose shader in options?
-			Shader shader = Shader.Find(_shaderStr);
+		private void CreateMaterials()
+		{
+			_workspaceMat = CreateMaterial(_workspaceShaderStr);
+			_handMat = Resources.Load<Material>("HandMaterial");
+		}
+
+		private Material CreateMaterial (string shaderStr)
+		{
+			Material mat = null;
+			Shader shader = Shader.Find(shaderStr);
 			if (!shader)
 			{
-				Debug.LogError("Leanity: Unable to load shader " + _shaderStr);
+				Debug.LogError("Leanity: Unable to load shader " + shaderStr);
 			}
 			else
 			{
-				_mat = new Material(shader);
-				_mat.hideFlags = HideFlags.HideAndDontSave;
+				mat = new Material(shader);
+				mat.hideFlags = HideFlags.HideAndDontSave;
 			}
+			return mat;
+		}
 
-			GenerateDrawingStuff();
-
-			Options.OnOptionsChange += GenerateDrawingStuff;
+		private void ScaleWorkspace(Vector3 size)
+		{
+			for (int i = 0; i < _cubeVertices.Length; i++)
+			{
+				_cubeVertices[i] = Vector3.Scale(_cubeVertices[i], size) * 0.5f;
+			}
 		}
 
 		private void GenerateDrawingStuff()
@@ -66,7 +83,7 @@ namespace Leanity
 
 		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
 		{
-			if (_mat != null)
+			if (_workspaceMat != null)
 			{
 				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
@@ -81,26 +98,32 @@ namespace Leanity
 					color.a = alpha;
 					DrawLines(color, matrix);
 				}
+
+				DrawHand(HandTracking.LeftHandData);
+				DrawHand(HandTracking.RightHandData);
 			}
 		}
 
 		private void DrawMesh(float alpha, Matrix4x4 matrix)
 		{
-			if (_mesh != null)
+			if (_workspaceMesh != null)
 			{
-				_mat.color = new Color(0, 0, 0, alpha);
-				_mat.SetPass(0);
-				Graphics.DrawMeshNow(_mesh, matrix);
+				_workspaceMat.color = new Color(0, 0, 0, alpha);
+				_workspaceMat.SetPass(0);
+				Graphics.DrawMeshNow(_workspaceMesh, matrix);
 			}
 			else
 			{
-				Debug.LogWarning("Leanity: Workspace mesh is null");
+				Debug.LogWarning("Leanity: Workspace mesh is null. Hash:" + GetHashCode());
+				GenerateMesh();
 			}
 		}
 
 		private void GenerateMesh()
 		{
-			_mesh = new Mesh();
+			Debug.Log("Generating workspace mesh  Hash: " + GetHashCode());
+			_workspaceMesh = new Mesh();
+
 
 			int[] triangles = {
 				0, 5, 1, 0, 4, 5,
@@ -110,13 +133,15 @@ namespace Leanity
 				0, 1, 3, 0, 3, 2
 			};
 
-			_mesh.vertices = _cubeVertices;
-			_mesh.triangles = triangles;
+			_workspaceMesh.vertices = _cubeVertices;
+			_workspaceMesh.triangles = triangles;
+
+			if (!_workspaceMesh) Debug.Log("Unable to create workspace mesh");
 		}
 
 		public void GenerateWorkspaceGridLines()
 		{
-			_gridLines.Clear();
+			_gridLines = new List<Vector3>();
 
 			GenerateGridOnQuad(0, 1, 5, 4); // Top
 			GenerateGridOnQuad(2, 3, 7, 6); // Bottom
@@ -151,8 +176,8 @@ namespace Leanity
 
 		private void DrawLines(Color color, Matrix4x4 matrix)
 		{
-			_mat.color = color;
-			_mat.SetPass(0);
+			_workspaceMat.color = color;
+			_workspaceMat.SetPass(0);
 
 			GL.PushMatrix();
 			GL.MultMatrix(matrix);
@@ -165,6 +190,42 @@ namespace Leanity
 			GL.End();
 
 			GL.PopMatrix();
+		}
+
+
+		private void LoadMeshes()
+		{
+			Debug.Log("Leanity: Loading hand meshes from resources");
+			_handMeshes = new Mesh[8];
+
+			_handMeshes[0] = null;
+			_handMeshes[1] = Resources.Load<Mesh>("extended_hand_left");
+			_handMeshes[2] = Resources.Load<Mesh>("grab_hand_left");
+			_handMeshes[3] = Resources.Load<Mesh>("pinch_hand_left");
+
+			_handMeshes[4] = null;
+			_handMeshes[5] = Resources.Load<Mesh>("extended_hand_right");
+			_handMeshes[6] = Resources.Load<Mesh>("grab_hand_right");
+			_handMeshes[7] = Resources.Load<Mesh>("pinch_hand_right");
+		}
+
+		private void DrawHand(HandData hand)
+		{
+			if (hand.Detected)
+			{
+				Mesh mesh = _handMeshes[(int)State + (hand.IsRight ? 4 : 0)];
+				if (mesh != null)
+				{
+					_handMat.SetPass(0);
+					var handPos = HandTracking.ToWorldCoordinates(hand.Position);
+					var handRot = HandTracking.ToWorldCoordinates(hand.Rotation) * Quaternion.Euler(180f, 0f, 0f);
+					Vector3 offset = new Vector3(0f, 0f, 0.02f);
+					offset = handRot * offset;
+
+					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale);
+					Graphics.DrawMeshNow(mesh, matrix);
+				}
+			}
 		}
 	}
 }
