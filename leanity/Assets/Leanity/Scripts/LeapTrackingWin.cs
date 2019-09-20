@@ -29,6 +29,7 @@ namespace Leanity
 			{
 				if (_controller == null)
 				{
+					Debug.Log("Creating new Leap Controller");
 					_controller = new Leap.Controller();
 				}
 			}
@@ -91,6 +92,17 @@ namespace Leanity
 			return LEAP_WORKSPACE;
 		}
 
+		protected override bool IsDeviceConnected()
+		{
+			return _controller.IsConnected;
+		}
+
+		protected override void ResetDevice()
+		{
+			_controller.StopConnection();
+			_controller.StartConnection();
+		}
+
 		#region Singleton
 		public static LeapTrackingWin SubInstance
 		{
@@ -106,6 +118,7 @@ namespace Leanity
 			{
 				if (_controller != null && _controller.IsConnected)
 				{
+					Debug.Log("Leanity: Stop Leap Controller");
 					_controller.StopConnection();
 					_subInstance = null;
 					GC.Collect();

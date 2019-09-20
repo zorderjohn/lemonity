@@ -71,6 +71,24 @@ namespace Leanity
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
+				GUILayout.Label("Status:", EditorStyles.boldLabel);
+				if (HandTracking.IsConnected())
+				{
+					GUILayout.Label("Leap is connected");
+				}
+				else
+				{
+					GUILayout.Label("Leap is not connected");
+					if (GUILayout.Button("Reset connection"))
+					{
+						HandTracking.Reset();
+					}
+				}
+			}
+
+			GUILayout.Space(4);
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
 				GUILayout.Label("Right Hand Data");
 				DrawHandData(rightHandData);
 

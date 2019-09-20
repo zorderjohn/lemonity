@@ -24,8 +24,20 @@ namespace Leanity
 			return Instance.UpdateTracking();
 		}
 
+		public static bool IsConnected()
+		{
+			return Instance.IsDeviceConnected();
+		}
+
+		public static void Reset()
+		{
+			Instance.ResetDevice();
+		}
+
 		public static Vector3 TransformPosition { get; set; }
+
 		public static Quaternion TransformRotation { get; set; }
+
 		public static float TransformScale { get; set; }
 
 		public static Vector3 CamToHandOffset()
@@ -75,6 +87,8 @@ namespace Leanity
 		protected abstract HandData GetRightHandData();
 		protected abstract HandData GetLeftHandData();
 		protected abstract Vector3 GetWorkspace();
+		protected abstract bool IsDeviceConnected();
+		protected abstract void ResetDevice();
 
 	}
 }
