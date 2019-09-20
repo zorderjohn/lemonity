@@ -42,6 +42,17 @@ namespace Leanity
 		static public void Update()
 		{
 			_lastUpdate = Time.realtimeSinceStartup;
+
+			if (Event.current != null && Event.current.type == EventType.MouseDown)
+			{
+				EditorController.EditorMotionController.StopInertia();
+			}
+
+			if (!Options.Enabled)
+			{
+				return;
+			}
+
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)
 			{

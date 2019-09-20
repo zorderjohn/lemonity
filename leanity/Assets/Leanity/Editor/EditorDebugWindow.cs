@@ -227,14 +227,6 @@ namespace Leanity
 
 		private void OnSceneGUI(SceneView sceneView)
 		{
-			var e = Event.current;
-			if (e != null && e.type == EventType.MouseDown)
-			{
-				EditorController.EditorMotionController.StopInertia();
-			}
-
-			Handles.color = Color.yellow;
-
 			if (sceneView == null)
 			{
 				return;
