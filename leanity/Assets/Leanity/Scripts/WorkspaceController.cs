@@ -35,7 +35,6 @@ namespace Leanity
 
 		public WorkspaceController(Vector3 size, MotionController motionController)
 		{
-			Debug.Log("Workspace Controller constructor");
 			_motionController = motionController;
 			ScaleWorkspace(size);
 			CreateMaterials();
@@ -194,7 +193,6 @@ namespace Leanity
 
 		private void LoadMeshes()
 		{
-			Debug.Log("Leanity: Loading hand meshes from resources");
 			_handMeshes = new Mesh[8];
 
 			_handMeshes[0] = null;
@@ -220,7 +218,7 @@ namespace Leanity
 					_handMat.SetPass(0);
 					var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 					var handRot = HandTracking.ToWorldCoordinates(hand.Rotation) * Quaternion.Euler(180f, 0f, 0f);
-					Vector3 offset = new Vector3(0f, 0f, 40f);
+					Vector3 offset = new Vector3(0f, 0f, 40f * Options.HandScale);
 					offset = handRot * offset;
 
 					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale * Options.HandScale);

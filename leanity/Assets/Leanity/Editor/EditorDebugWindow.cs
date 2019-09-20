@@ -319,7 +319,7 @@ namespace Leanity
 			{
 				handleColor.a = isIddle ? 0.3f : 0.8f;
 				Handles.color = handleColor;
-				Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.PosScale * .03f, EventType.Repaint);
+				Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.HandScale * Options.PosScale * .03f, EventType.Repaint);
 			}
 		}
 
