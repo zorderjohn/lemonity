@@ -64,8 +64,15 @@ namespace Leanity
 					Options.TrackingZOffset= GUILayout.HorizontalSlider(Options.TrackingZOffset, 0f, 2f);
 					Options.TrackingZOffset = EditorGUILayout.FloatField(Options.TrackingZOffset, GUILayout.Width(50));
 				}
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					EditorGUILayout.PrefixLabel("Hand Scale");
+					Options.HandScale= GUILayout.HorizontalSlider(Options.HandScale, 0f, 2f);
+					Options.HandScale = EditorGUILayout.FloatField(Options.HandScale, GUILayout.Width(50));
+				}
 
 				Options.GestureDebug = EditorGUILayout.Toggle("Gesture Debug", Options.GestureDebug);
+				Options.ShowHandGuides = EditorGUILayout.Toggle("Hand Guides", Options.ShowHandGuides);
 
 			}
 			GUILayout.Space(4);
@@ -232,62 +239,61 @@ namespace Leanity
 				return;
 			}
 
-			var leftDetected = HandTracking.LeftHandData.Detected;
-			var rightDetected = HandTracking.RightHandData.Detected;
-
-			Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
-
-			if (leftDetected)
+			if (Options.ShowHandGuides)
 			{
-				Handles.color = Color.red;
-				PaintHand(HandTracking.LeftHandData);
+				var leftDetected = HandTracking.LeftHandData.Detected;
+				var rightDetected = HandTracking.RightHandData.Detected;
+
+				Handles.zTest = UnityEngine.Rendering.CompareFunction.Less;
+
+				if (leftDetected)
+				{
+					Handles.color = Color.red;
+					PaintHandGuides(HandTracking.LeftHandData);
+				}
+
+				if (rightDetected)
+				{
+					Handles.color = Color.blue;
+					PaintHandGuides(HandTracking.RightHandData);
+				}
+
+				if (leftDetected && rightDetected && Options.Gesture == WorkingGesture.TwoHands)
+				{
+					PaintPivot();
+				}
 			}
 
-			if (rightDetected)
-			{
-				Handles.color = Color.blue;
-				PaintHand(HandTracking.RightHandData);
-			}
-
-			if (leftDetected && rightDetected && Options.Gesture == WorkingGesture.TwoHands)
-			{
-				PaintPivot();
-			}
 		}
 
-		private void PaintHand(HandData hand)
+		private void PaintHandGuides(HandData hand)
 		{
-			var handPos = HandTracking.ToWorldCoordinates(hand.Position);
-			var handRot = HandTracking.ToWorldCoordinates(hand.Rotation);
 			var cameraRot = HandTracking.ToWorldCoordinates(Quaternion.identity);
-			var motionController = EditorController.EditorMotionController;
-
-			bool holding = hand.IsRight ? motionController.RightGrab.IsHolding : motionController.LeftGrab.IsHolding;
-			if ( holding )
-			{
-				Handles.ConeHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), Options.PosScale * .025f, EventType.Repaint);
-			}
-			else
-			{
-				Handles.SphereHandleCap(1, handPos, handRot * Quaternion.Euler(90, 0f, 0f), Options.PosScale * .02f, EventType.Repaint);
-			}
 
 			float x = HandTracking.Workspace.x / 2f;
 			Vector3 v0, v1;
 			v0 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, hand.Position.z));
 
+			// Dotted line to the right/left
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.IsRight ? x : -x, hand.Position.y, hand.Position.z));
 			Handles.DrawWireDisc(v1, cameraRot * Vector3.right, Options.PosScale * 0.005f);
 			Handles.DrawDottedLine(v1, v0, 5);
 
+			// Dotted line to the back
 			float z = HandTracking.Workspace.z / 2f;
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, hand.Position.y, z));
 			Handles.DrawWireDisc(v1, cameraRot * Vector3.back, Options.PosScale * 0.005f);
 			Handles.DrawDottedLine(v1, v0, 5);
 
+			// Dotted line to the bottom
 			float y = HandTracking.Workspace.y / 2f;
 			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, -y, hand.Position.z));
-			Handles.DrawWireDisc(v1, cameraRot * Vector3.back, Options.PosScale * 0.005f);
+			Handles.DrawWireDisc(v1, cameraRot * Vector3.down, Options.PosScale * 0.005f);
+			Handles.DrawDottedLine(v1, v0, 5);
+
+			// Dotted line to the top
+			v1 = HandTracking.ToWorldCoordinates(new Vector3(hand.Position.x, y, hand.Position.z));
+			Handles.DrawWireDisc(v1, cameraRot * Vector3.up, Options.PosScale * 0.005f);
 			Handles.DrawDottedLine(v1, v0, 5);
 		}
 
@@ -299,11 +305,22 @@ namespace Leanity
 			var leftPos = HandTracking.ToWorldCoordinates(leftHand.Position);
 			var rightPos = HandTracking.ToWorldCoordinates(rightHand.Position);
 			var centerPos = (leftPos + rightPos) * 0.5f;
+			var motionController = EditorController.EditorMotionController;
 
-			Handles.color = Color.magenta;
+			bool isGrabbing = motionController.IsGrabbing;
+			bool isPinching = motionController.IsPinching;
+			bool isIddle = !isGrabbing && !isPinching;
+
+			var handleColor = Color.magenta;
+			Handles.color = handleColor;
 
 			Handles.DrawLine(leftPos, rightPos);
-			Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.PosScale * .03f, EventType.Repaint);
+			if (!isPinching)
+			{
+				handleColor.a = isIddle ? 0.3f : 0.8f;
+				Handles.color = handleColor;
+				Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.PosScale * .03f, EventType.Repaint);
+			}
 		}
 
 	}

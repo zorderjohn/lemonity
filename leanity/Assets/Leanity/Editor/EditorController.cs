@@ -148,7 +148,7 @@ namespace Leanity
 
 		private static void OnStateChange()
 		{
-			if (EditorMotionController.IsHolding)
+			if (EditorMotionController.IsGrabbing)
 			{
 				EditorWorkspaceController.State = WorkspaceState.Grab;
 			}

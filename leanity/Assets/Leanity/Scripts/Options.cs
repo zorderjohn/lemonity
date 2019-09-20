@@ -16,8 +16,11 @@ namespace Leanity
 		public static event Action OnOptionsLoad;
 		public static event Action OnOptionsChange;
 
+		#region General
+		public static bool Enabled { get; set; }
 		public static WorkingMode Mode { get; set; }
 		public static WorkingGesture Gesture { get; set; }
+		#endregion
 
 		#region Sensitivity
 		public static float PosScale { get; set; }
@@ -102,6 +105,8 @@ namespace Leanity
 		}
 
 		public static float TrackingZOffset { get; set; }
+		public static float HandScale { get; set; }
+		public static bool ShowHandGuides { get; set; }
 		#endregion
 
 		private static bool _dirty = false;
@@ -121,10 +126,10 @@ namespace Leanity
 			if (Dirty)
 			{
 				Dirty = false;
-				// Working gesture
-				PlayerPrefs.SetInt(_prefix + "Gesture", (int)Gesture);
 
-				// Working mode
+				// General
+				PlayerPrefs.SetInt(_prefix + "Enabled", Enabled ? 1 : 0);
+				PlayerPrefs.SetInt(_prefix + "Gesture", (int)Gesture);
 				PlayerPrefs.SetInt(_prefix + "Mode", (int)Mode);
 
 				// Sensitivity
@@ -171,7 +176,8 @@ namespace Leanity
 				PlayerPrefs.SetInt(_prefix + "GestureDebug", GestureDebug ? 1 : 0);
 				PlayerPrefs.SetFloat(_prefix + "MaxTransparency", _gridFade.MaxValue);
 				PlayerPrefs.SetFloat(_prefix + "TrackingZOffset", TrackingZOffset);
-
+				PlayerPrefs.SetFloat(_prefix + "HandScale", HandScale);
+				PlayerPrefs.SetInt(_prefix + "ShowHandGuides", ShowHandGuides ? 1 : 0);
 			}
 		}
 
@@ -179,10 +185,9 @@ namespace Leanity
 		{
 			if (!_init)
 			{
-				// Working gesture
+				// General
+				Enabled = PlayerPrefs.GetInt(_prefix + "Enabled", 1) == 1;
 				Gesture = (WorkingGesture)PlayerPrefs.GetInt(_prefix + "Gesture", (int)WorkingGesture.TwoHands);
-
-				// Working mode
 				Mode = (WorkingMode)PlayerPrefs.GetInt(_prefix + "Mode", (int)WorkingMode.Absolute);
 
 				// Sensitivity
@@ -220,11 +225,13 @@ namespace Leanity
 
 				// Filter
 				FilterFrequency = PlayerPrefs.GetFloat(_prefix + "FilterFrequency", 120f);
+
 				RotFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterMinCutoff", 0.2f);
-				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 1f);
+				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 5f);
 				RotFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterDcutoff", 1f);
-				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 0.5f);
-				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 4f);
+
+				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 0.7f);
+				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 8f);
 				PosFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterDcutoff", 1f);
 
 				// Debug
@@ -234,6 +241,8 @@ namespace Leanity
 				GestureDebug = PlayerPrefs.GetInt(_prefix + "GestureDebug", 1) == 1;
 				_gridFade.MaxValue = PlayerPrefs.GetFloat(_prefix + "MaxTransparency", .8f);
 				TrackingZOffset = PlayerPrefs.GetFloat(_prefix + "TrackingZOffset", 1f);
+				HandScale = PlayerPrefs.GetFloat(_prefix + "HandScale", 1f);
+				ShowHandGuides = PlayerPrefs.GetInt(_prefix + "ShowHandGuides", 1) == 1;
 
 				_init = true;
 				Dirty = false;

@@ -64,7 +64,7 @@ namespace Leanity
 		public PinchController LeftPinch { get; private set; }
 		public PinchController RightPinch { get; private set; }
 
-		public bool IsHolding { get; private set; } = false;
+		public bool IsGrabbing { get; private set; } = false;
 		public bool IsPinching { get; private set; } = false;
 
 		private bool _handsVisible = false;
@@ -191,24 +191,24 @@ namespace Leanity
 
 		private bool EventController()
 		{
-			bool holding = false;
+			bool grabbing = false;
 
 			if (_motionStyle != null && _motionStyle.RequiresTwoHands)
 			{
-				holding = LeftGrab.IsHolding && RightGrab.IsHolding;
+				grabbing = LeftGrab.IsHolding && RightGrab.IsHolding;
 			}
 			else
 			{
-				holding = LeftGrab.IsHolding || RightGrab.IsHolding;
+				grabbing = LeftGrab.IsHolding || RightGrab.IsHolding;
 			}
 
 			bool pinching = LeftPinch.IsHolding && RightPinch.IsHolding;
 
-			if (holding)
+			if (grabbing)
 			{
-				if (!IsHolding)
+				if (!IsGrabbing)
 				{
-					IsHolding = true;
+					IsGrabbing = true;
 					StartMoving();
 				}
 
@@ -217,9 +217,9 @@ namespace Leanity
 			}
 			else
 			{
-				if (IsHolding)
+				if (IsGrabbing)
 				{
-					IsHolding = false;
+					IsGrabbing = false;
 					StopMoving();
 				}
 

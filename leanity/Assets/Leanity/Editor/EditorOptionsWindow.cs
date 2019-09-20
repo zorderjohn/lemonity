@@ -22,6 +22,7 @@ namespace Leanity
 
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
+				Options.Enabled = EditorGUILayout.Toggle("Leanity Enabled", Options.Enabled);
 				GUILayout.Label("Working gesture", EditorStyles.boldLabel);
 				GUIContent[] gestures = new[]
 				{
@@ -30,14 +31,15 @@ namespace Leanity
 				};
 				Options.Gesture = (WorkingGesture)GUILayout.Toolbar((int)Options.Gesture, gestures);
 
-				GUILayout.Label("Working mode", EditorStyles.boldLabel);
+				/*
+				 * GUILayout.Label("Working mode", EditorStyles.boldLabel);
 				GUIContent[] modes = new[]
 				{
 					new GUIContent("Direct", "Movement of the hand changes position/rotation of the camera"),
 					new GUIContent("Speed", "Movement of the hand changes rotational and linear speed of the camera")
 				};
-				//Options.Mode = (WorkingMode)GUILayout.SelectionGrid((int)Options.Mode, modes, 2);
 				Options.Mode = (WorkingMode)GUILayout.Toolbar((int)Options.Mode, modes);
+				*/
 
 				var invertAxisText = new[] { "Move world", "Move camera" };
 				GUILayout.Space(4);

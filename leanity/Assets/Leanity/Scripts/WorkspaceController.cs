@@ -121,7 +121,6 @@ namespace Leanity
 
 		private void GenerateMesh()
 		{
-			Debug.Log("Generating workspace mesh  Hash: " + GetHashCode());
 			_workspaceMesh = new Mesh();
 
 
@@ -224,7 +223,7 @@ namespace Leanity
 					Vector3 offset = new Vector3(0f, 0f, 40f);
 					offset = handRot * offset;
 
-					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale);
+					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale * Options.HandScale);
 					Graphics.DrawMeshNow(mesh, matrix);
 				}
 			}
