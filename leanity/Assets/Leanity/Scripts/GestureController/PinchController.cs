@@ -29,7 +29,7 @@ namespace Leanity
 
 		public Quaternion HandDeltaRotation
 		{
-			get { return Quaternion.Inverse(HandInitialRotation) * _hand.Rotation; }
+			get { return _hand.Rotation * Quaternion.Inverse(HandInitialRotation); }
 		}
 
 		private HandData _hand;
