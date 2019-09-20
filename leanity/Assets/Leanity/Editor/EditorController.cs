@@ -18,7 +18,7 @@ namespace Leanity
 		static EditorController()
 		{
 			EditorMotionController = new MotionController();
-			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
+			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace, EditorMotionController);
 			EditorApplication.update += EditorUpdate;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			EditorMotionController.OnHandsVisible += OnHandsVisible;

@@ -29,14 +29,14 @@ namespace Leanity
 		};
 		private Mesh _workspaceMesh;
 		private Material _workspaceMat;
-
 		private Material _handMat;
-
 		private Mesh[] _handMeshes;
+		private MotionController _motionController;
 
-		public WorkspaceController(Vector3 size)
+		public WorkspaceController(Vector3 size, MotionController motionController)
 		{
 			Debug.Log("Workspace Controller constructor");
+			_motionController = motionController;
 			ScaleWorkspace(size);
 			CreateMaterials();
 			GenerateDrawingStuff();
@@ -213,19 +213,50 @@ namespace Leanity
 		{
 			if (hand.Detected)
 			{
-				Mesh mesh = _handMeshes[(int)State + (hand.IsRight ? 4 : 0)];
+				var handState = GetHandState(hand);
+
+				Mesh mesh = _handMeshes[(int)handState + (hand.IsRight ? 4 : 0)];
 				if (mesh != null)
 				{
 					_handMat.SetPass(0);
 					var handPos = HandTracking.ToWorldCoordinates(hand.Position);
 					var handRot = HandTracking.ToWorldCoordinates(hand.Rotation) * Quaternion.Euler(180f, 0f, 0f);
-					Vector3 offset = new Vector3(0f, 0f, 0.02f);
+					Vector3 offset = new Vector3(0f, 0f, 40f);
 					offset = handRot * offset;
 
 					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale);
 					Graphics.DrawMeshNow(mesh, matrix);
 				}
 			}
+		}
+
+		private WorkspaceState GetHandState (HandData hand)
+		{
+			WorkspaceState handState = WorkspaceState.Idle;
+			if (hand.IsRight)
+			{
+				if (_motionController.RightGrab.IsHolding)
+				{
+					handState = WorkspaceState.Grab;
+				}
+				else if (_motionController.RightPinch.IsHolding)
+				{
+					handState = WorkspaceState.Pinch;
+				}
+			}
+			else
+			{
+				if (_motionController.LeftGrab.IsHolding)
+				{
+					handState = WorkspaceState.Grab;
+				}
+				else if (_motionController.LeftPinch.IsHolding)
+				{
+					handState = WorkspaceState.Pinch;
+				}
+			}
+
+			return handState;
 		}
 	}
 }
