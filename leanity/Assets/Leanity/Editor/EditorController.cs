@@ -12,17 +12,18 @@ namespace Leanity
 		public static MotionController EditorMotionController { get; private set; }
 		public static WorkspaceController EditorWorkspaceController { get; private set; }
 		private static Mesh _mesh;
+		private static float _lastUpdate = 0f;
 
 
 		static EditorController()
 		{
 			EditorMotionController = new MotionController();
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace);
+			EditorApplication.update += EditorUpdate;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			EditorMotionController.OnHandsVisible += OnHandsVisible;
 			EditorMotionController.OnHandsInVisible += OnHandsInvisible;
 			EditorMotionController.OnStateChange += OnStateChange;
-
 		}
 
 		static private void OnSceneGUI(SceneView sceneView)
@@ -30,8 +31,17 @@ namespace Leanity
 			Update();
 		}
 
+		static public void EditorUpdate()
+		{
+			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f)
+			{
+				Update();
+			}
+		}
+
 		static public void Update()
 		{
+			_lastUpdate = Time.realtimeSinceStartup;
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)
 			{
