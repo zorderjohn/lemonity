@@ -29,7 +29,6 @@ namespace Leanity
 			{
 				if (_controller == null)
 				{
-					Debug.Log("Creating new Leap Controller");
 					_controller = new Leap.Controller();
 				}
 			}

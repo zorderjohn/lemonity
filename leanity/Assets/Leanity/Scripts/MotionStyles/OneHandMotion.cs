@@ -9,7 +9,7 @@ namespace Leanity
 		protected override void UpdateMotion()
 		{
 			bool absoluteMovement = true;
-			var grabInfo = GetDominantGrabController();
+			var grabInfo = GetDominantGrabController(latestHold: true);
 			Vector3 deltaMovement = grabInfo.HandDeltaPosition * Options.PosScale;
 			if (!InvertAxis)
 			{

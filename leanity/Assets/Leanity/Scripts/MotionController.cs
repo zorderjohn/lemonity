@@ -96,7 +96,7 @@ namespace Leanity
 			switch(_currentGesture)
 			{
 				case WorkingGesture.OneHand:
-					MotionStyle = new OneHandMotion();
+					MotionStyle = new OneHandMotionPivoted();
 					break;
 
 				case WorkingGesture.TwoHands:
