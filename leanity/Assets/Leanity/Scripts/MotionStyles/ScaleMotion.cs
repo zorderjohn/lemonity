@@ -13,6 +13,9 @@ namespace Leanity
 
 		protected override void StartMotion()
 		{
+			LeftGesture.Reset();
+			RightGesture.Reset();
+
 			_initialLogScale = MathHelper.LinearToLogScale(Scale);
 
 			_wcInitialPosition = Position;

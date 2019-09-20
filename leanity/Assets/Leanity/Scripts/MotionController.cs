@@ -96,13 +96,18 @@ namespace Leanity
 			switch(_currentGesture)
 			{
 				case WorkingGesture.OneHand:
-					MotionStyle = new OneHandMotionPivoted();
+					MotionStyle = new OneHandMotion();
 					break;
 
 				case WorkingGesture.TwoHands:
-				default:
 					MotionStyle = new TwoHandsMotion();
 					break;
+
+				case WorkingGesture.Hybrid:
+				default:
+					MotionStyle = new HybridMotion();
+					break;
+
 			}
 		}
 
@@ -277,11 +282,11 @@ namespace Leanity
 
 		private void StartPinching()
 		{
-			if (_scaleStyle.RequiresTwoHands)
+			/*if (_scaleStyle.RequiresTwoHands)
 			{
 				LeftPinch.Reset();
 				RightPinch.Reset();
-			}
+			}*/
 			_scaleStyle.Start();
 			OnStartPinch?.Invoke();
 			OnStateChange?.Invoke();

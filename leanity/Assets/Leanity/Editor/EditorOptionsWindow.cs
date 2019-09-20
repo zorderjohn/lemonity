@@ -26,8 +26,9 @@ namespace Leanity
 				GUILayout.Label("Working gesture", EditorStyles.boldLabel);
 				GUIContent[] gestures = new[]
 				{
-					new GUIContent("One Hand", "Movement of the hand changes position/rotation of the camera"),
-					new GUIContent("Two Hands", "Movement of the hand changes rotational and linear speed of the camera")
+					new GUIContent("One Hand", "Only one hand can move and rotate the camera"),
+					new GUIContent("Two Hands", "Two hands are used to move and rotate the camera"),
+					new GUIContent("Hybrid", "One or two hands can be used to rotate and move the camera")
 				};
 				Options.Gesture = (WorkingGesture)GUILayout.Toolbar((int)Options.Gesture, gestures);
 

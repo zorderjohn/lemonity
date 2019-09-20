@@ -22,6 +22,9 @@ namespace Leanity
 		protected override void StartMotion()
 		{
 			var grabInfo = GetDominantGrabController(latestHold: false);
+			LeftGesture.Reset();
+			RightGesture.Reset();
+
 			Vector3 wcCamInitialPos = grabInfo.ObjectInitialPosition;
 
 			// Middle point between hands
