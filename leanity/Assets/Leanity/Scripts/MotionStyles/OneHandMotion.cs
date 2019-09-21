@@ -10,6 +10,7 @@ namespace Leanity
 		Vector3 wcPivotToCam;
 		Vector3 hcCenterInitialPos;
 		Quaternion wcCamInitialRot;
+		Quaternion hcPitchDeltaRot;
 		Leanity.GestureController _gestureController;
 
 		public override bool RequiresTwoHands { get { return false; } }
@@ -59,7 +60,9 @@ namespace Leanity
 			Vector3 eulerDeltaRot = MathHelper.NormalizedEulerAngles(hcDeltaRot);
 			eulerDeltaRot.Scale(Options.AxisRotScale);
 			eulerDeltaRot *= Options.RotScale;
-			hcDeltaRot = Quaternion.Euler(eulerDeltaRot);
+
+			var hcYawDeltaRot = Quaternion.Euler(new Vector3(0f, eulerDeltaRot.y, 0f));
+			hcPitchDeltaRot = Quaternion.Euler(new Vector3(eulerDeltaRot.x, 0f, 0f));
 
 			// POSITION CALCULATION
 
@@ -71,12 +74,12 @@ namespace Leanity
 				ccDeltaTranslation *= -1f;
 			}
 
-			UpdatePose(hcDeltaRot, ccDeltaTranslation);
+			UpdatePose(hcYawDeltaRot, ccDeltaTranslation);
 
 			// Update Inertial data with relative position and rotation
 			float t = GetTime();
 			_inertialData.SetPosition(ccDeltaTranslation, t);
-			_inertialData.SetRotation(hcDeltaRot, t);
+			_inertialData.SetRotation(hcPitchDeltaRot, t);
 		}
 
 		public override bool InertialUpdate()
@@ -91,10 +94,10 @@ namespace Leanity
 			return _inertialData.IsMoving();
 		}
 
-		private void UpdatePose(Quaternion hcDeltaRot, Vector3 ccDeltaTranslation)
+		private void UpdatePose(Quaternion hcYawDeltaRot, Vector3 ccDeltaTranslation)
 		{
 			// Combine pitch and yaw rotations
-			Quaternion targetRotation = wcCamInitialRot * hcDeltaRot;
+			Quaternion targetRotation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
 
 			// Remove any roll rotation
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
@@ -103,7 +106,7 @@ namespace Leanity
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
 			// Effect of rotation around the pivot
-			Vector3 wcPivotedTranslation = Rotation * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
+			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
 
 			Position = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 		}
