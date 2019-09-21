@@ -322,7 +322,7 @@ namespace Leanity
 			var motionController = EditorController.EditorMotionController;
 
 			bool isGrabbing = motionController.IsGrabbing;
-			bool isPinching = motionController.IsPinching;
+			bool isPinching = motionController.IsDualPinching;
 			bool isIddle = !isGrabbing && !isPinching;
 
 			var handleColor = Color.magenta;

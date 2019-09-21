@@ -9,7 +9,6 @@ namespace Leanity
 		float Scale { get; set; }
 		GestureController LeftGesture { get; set; }
 		GestureController RightGesture { get; set; }
-		InertialObject InertialData { get; set; }
 		bool RequiresTwoHands { get; }
 		bool InvertAxis { get; set; }
 
@@ -31,7 +30,6 @@ namespace Leanity
 		public float Scale { get; set; }
 		public GestureController LeftGesture { get; set; }
 		public GestureController RightGesture { get; set; }
-		public InertialObject InertialData { get; set; }
 		public virtual bool RequiresTwoHands { get { return false; } }
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }

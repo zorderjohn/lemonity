@@ -26,7 +26,6 @@ namespace Leanity
 				_twoMotion.RightGesture = value;
 			}
 		}
-		public InertialObject InertialData { get; set; }
 
 		public bool RequiresTwoHands { get { return false; } }
 

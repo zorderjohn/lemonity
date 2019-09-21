@@ -22,7 +22,7 @@ namespace Leanity
 		{
 			get
 			{
-				return IsPinching ? _scaleStyle.Position : _motionStyle.Position;
+				return IsDualPinching ? _scaleStyle.Position : _motionStyle.Position;
 			}
 			set
 			{
@@ -35,7 +35,7 @@ namespace Leanity
 		{
 			get
 			{
-				return IsPinching ? _scaleStyle.Rotation : _motionStyle.Rotation;
+				return IsDualPinching ? _scaleStyle.Rotation : _motionStyle.Rotation;
 			}
 			set
 			{
@@ -65,7 +65,7 @@ namespace Leanity
 		public PinchController RightPinch { get; private set; }
 
 		public bool IsGrabbing { get; private set; } = false;
-		public bool IsPinching { get; private set; } = false;
+		public bool IsDualPinching { get; private set; } = false;
 
 		private bool _handsVisible = false;
 		private WorkingGesture _currentGesture;
@@ -152,7 +152,7 @@ namespace Leanity
 
 		public bool ScaleUpdate(float scale)
 		{
-			if (IsPinching)
+			if (IsDualPinching)
 			{
 				return true;
 			}
@@ -196,20 +196,20 @@ namespace Leanity
 
 		private bool EventController()
 		{
-			bool grabbing = false;
+			bool grabbingUpdate = false;
 
 			if (_motionStyle != null && _motionStyle.RequiresTwoHands)
 			{
-				grabbing = LeftGrab.IsHolding && RightGrab.IsHolding;
+				grabbingUpdate = LeftGrab.IsHolding && RightGrab.IsHolding;
 			}
 			else
 			{
-				grabbing = LeftGrab.IsHolding || RightGrab.IsHolding;
+				grabbingUpdate = LeftGrab.IsHolding || RightGrab.IsHolding;
 			}
 
-			bool pinching = LeftPinch.IsHolding && RightPinch.IsHolding;
+			bool dualPinchingUpdate = LeftPinch.IsHolding && RightPinch.IsHolding;
 
-			if (grabbing)
+			if (grabbingUpdate)
 			{
 				if (!IsGrabbing)
 				{
@@ -228,12 +228,12 @@ namespace Leanity
 					StopMoving();
 				}
 
-				if (IsPinching)
+				if (dualPinchingUpdate)
 				{
-					if (!pinching)
+					if (!IsDualPinching)
 					{
-						IsPinching = false;
-						StopPinching();
+						IsDualPinching = true;
+						StartPinching();
 					} else
 					{
 						_scaleStyle.Update();
@@ -242,10 +242,10 @@ namespace Leanity
 				}
 				else
 				{
-					if (pinching)
+					if (IsDualPinching)
 					{
-						IsPinching = true;
-						StartPinching();
+						IsDualPinching = false;
+						StopPinching();
 					}
 				}
 

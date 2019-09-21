@@ -153,7 +153,7 @@ namespace Leanity
 			{
 				EditorWorkspaceController.State = WorkspaceState.Grab;
 			}
-			else if (EditorMotionController.IsPinching)
+			else if (EditorMotionController.IsDualPinching)
 			{
 				EditorWorkspaceController.State = WorkspaceState.Pinch;
 			}
