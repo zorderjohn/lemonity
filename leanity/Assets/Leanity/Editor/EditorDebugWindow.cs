@@ -94,13 +94,22 @@ namespace Leanity
 			}
 
 			GUILayout.Space(4);
-			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			using (var verticalScope = new GUILayout.VerticalScope())
 			{
-				GUILayout.Label("Right Hand Data");
-				DrawHandData(rightHandData);
-
-				GUILayout.Label("Left Hand Data");
-				DrawHandData(leftHandData);
+				using (var horizontalScope = new GUILayout.HorizontalScope())
+				{
+					using (var verticalScope2 = new GUILayout.VerticalScope(EditorStyles.helpBox))
+					{
+						GUILayout.Label("Left Hand Data", EditorStyles.boldLabel);
+						DrawHandData(leftHandData);
+					}
+					GUILayout.Space(2);
+					using (var verticalScope2 = new GUILayout.VerticalScope(EditorStyles.helpBox))
+					{
+						GUILayout.Label("Right Hand Data", EditorStyles.boldLabel);
+						DrawHandData(rightHandData);
+					}
+				}
 			}
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
