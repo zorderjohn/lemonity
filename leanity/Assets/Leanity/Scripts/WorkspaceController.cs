@@ -113,7 +113,6 @@ namespace Leanity
 			}
 			else
 			{
-				Debug.LogWarning("Leanity: Workspace mesh is null. Hash:" + GetHashCode());
 				GenerateMesh();
 			}
 		}

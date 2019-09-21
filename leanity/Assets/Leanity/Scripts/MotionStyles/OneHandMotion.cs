@@ -4,13 +4,11 @@ namespace Leanity
 {
 	public class OneHandMotion : MotionStyleBase
 	{
-		Vector3 wcCamPivot;
-		Vector3 wcLeftInitialPos;
-		Vector3 wcRightInitialPos;
-		Vector3 wcPivotToCam;
-		Vector3 hcCenterInitialPos;
-		Quaternion wcCamInitialRot;
-		Quaternion hcPitchDeltaRot;
+		Vector3 _wcCamPivot;
+		Vector3 _wcPivotToCam;
+		Vector3 _hcCenterInitialPos;
+		Quaternion _wcCamInitialRot;
+		Quaternion _hcPitchDeltaRot;
 		Leanity.GestureController _gestureController;
 
 		public override bool RequiresTwoHands { get { return false; } }
@@ -27,16 +25,16 @@ namespace Leanity
 			Vector3 wcCamInitialPos = _gestureController.ObjectInitialPosition;
 
 			// Middle point between hands
-			hcCenterInitialPos = _gestureController.HandInitialPosition;
+			_hcCenterInitialPos = _gestureController.HandInitialPosition;
 
 			// Store camera initial rotation
-			wcCamInitialRot = _gestureController.ObjectInitialRotation;
+			_wcCamInitialRot = _gestureController.ObjectInitialRotation;
 
 			// Calculate camera rotation pivot
-			wcCamPivot = wcCamInitialPos + wcCamInitialRot * HandTracking.HandToCamCoordinates(hcCenterInitialPos);
+			_wcCamPivot = wcCamInitialPos + _wcCamInitialRot * HandTracking.HandToCamCoordinates(_hcCenterInitialPos);
 
 			// Vector from pivot to camera which will be rotated by the gesture
-			wcPivotToCam = wcCamInitialPos - wcCamPivot;
+			_wcPivotToCam = wcCamInitialPos - _wcCamPivot;
 		}
 
 		protected override void UpdateMotion()
@@ -62,7 +60,7 @@ namespace Leanity
 			eulerDeltaRot *= Options.RotScale;
 
 			var hcYawDeltaRot = Quaternion.Euler(new Vector3(0f, eulerDeltaRot.y, 0f));
-			hcPitchDeltaRot = Quaternion.Euler(new Vector3(eulerDeltaRot.x, 0f, 0f));
+			_hcPitchDeltaRot = Quaternion.Euler(new Vector3(eulerDeltaRot.x, 0f, 0f));
 
 			// POSITION CALCULATION
 
@@ -79,7 +77,7 @@ namespace Leanity
 			// Update Inertial data with relative position and rotation
 			float t = GetTime();
 			_inertialData.SetPosition(ccDeltaTranslation, t);
-			_inertialData.SetRotation(hcPitchDeltaRot, t);
+			_inertialData.SetRotation(_hcPitchDeltaRot, t);
 		}
 
 		public override bool InertialUpdate()
@@ -97,7 +95,7 @@ namespace Leanity
 		private void UpdatePose(Quaternion hcYawDeltaRot, Vector3 ccDeltaTranslation)
 		{
 			// Combine pitch and yaw rotations
-			Quaternion targetRotation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot;
+			Quaternion targetRotation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot;
 
 			// Remove any roll rotation
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
@@ -106,9 +104,9 @@ namespace Leanity
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
 			// Effect of rotation around the pivot
-			Vector3 wcPivotedTranslation = hcYawDeltaRot * wcCamInitialRot * hcPitchDeltaRot * Quaternion.Inverse(wcCamInitialRot) * wcPivotToCam;
+			Vector3 wcPivotedTranslation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
 
-			Position = wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
+			Position = _wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 		}
 
 		protected override void UpdateInertialData()
@@ -122,19 +120,6 @@ namespace Leanity
 
 		public override void DebugDraw()
 		{
-			wcLeftInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(LeftGesture.HandInitialPosition);
-			wcRightInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(RightGesture.HandInitialPosition);
-
-			Vector3 wcCamPivotFloor = wcCamPivot;
-			wcCamPivotFloor.y = 0f;
-			UnityEditor.Handles.color = Color.red;
-			UnityEditor.Handles.DrawLine(wcCamPivot, wcCamPivotFloor);
-
-			UnityEditor.Handles.color = Color.green;
-			UnityEditor.Handles.DrawLine(wcLeftInitialPos, wcRightInitialPos);
-
-			UnityEditor.Handles.color = Color.blue;
-			UnityEditor.Handles.DrawLine(wcCamPivot, wcCamPivot + wcPivotToCam);
 		}
 	}
 }
