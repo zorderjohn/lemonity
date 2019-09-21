@@ -282,11 +282,7 @@ namespace Leanity
 
 		private void StartPinching()
 		{
-			/*if (_scaleStyle.RequiresTwoHands)
-			{
-				LeftPinch.Reset();
-				RightPinch.Reset();
-			}*/
+			StopInertia();
 			_scaleStyle.Start();
 			OnStartPinch?.Invoke();
 			OnStateChange?.Invoke();
