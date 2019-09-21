@@ -78,6 +78,7 @@ namespace Leanity
 					camRot = EditorMotionController.Rotation;
 
 					sceneView.rotation = camRot;
+					sceneView.size = 1f + (Options.PosScale - 1f) * 0.1f;
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
