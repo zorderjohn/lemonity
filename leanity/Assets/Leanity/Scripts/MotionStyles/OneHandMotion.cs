@@ -77,7 +77,7 @@ namespace Leanity
 			// Update Inertial data with relative position and rotation
 			float t = GetTime();
 			_inertialData.SetPosition(ccDeltaTranslation, t);
-			_inertialData.SetRotation(_hcPitchDeltaRot, t);
+			_inertialData.SetRotation(hcYawDeltaRot, t);
 		}
 
 		public override bool InertialUpdate()

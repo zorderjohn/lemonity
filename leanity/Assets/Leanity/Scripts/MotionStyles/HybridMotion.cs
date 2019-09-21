@@ -61,10 +61,13 @@ namespace Leanity
 
 		public bool InertialUpdate()
 		{
-			return _currentMotion.InertialUpdate();
+			bool retValue = _currentMotion.InertialUpdate();
+			GetMotionData();
+
+			return retValue;
 		}
 
-		private void UpdateData()
+		private void SetMotionData()
 		{
 			_oneMotion.Position = Position;
 			_oneMotion.Rotation = Rotation;
@@ -75,6 +78,13 @@ namespace Leanity
 			_twoMotion.Scale = Scale;
 		}
 
+		private void GetMotionData()
+		{
+			Position = _currentMotion.Position;
+			Rotation = _currentMotion.Rotation;
+			Scale = _currentMotion.Scale;
+		}
+
 		private IMotionStyle ChooseCurrentMotion()
 		{
 			return LeftGesture.IsHolding && RightGesture.IsHolding ? _twoMotion : _oneMotion;
@@ -82,14 +92,14 @@ namespace Leanity
 
 		public void Start()
 		{
-			UpdateData();
+			SetMotionData();
 			_currentMotion = ChooseCurrentMotion();
 			_currentMotion.Start();
 		}
 
 		public void Update()
 		{
-			UpdateData();
+			SetMotionData();
 
 			var newMotion = ChooseCurrentMotion();
 			if (newMotion != _currentMotion)
@@ -100,9 +110,7 @@ namespace Leanity
 			else
 			{
 				_currentMotion.Update();
-				Position = _currentMotion.Position;
-				Rotation = _currentMotion.Rotation;
-				Scale = _currentMotion.Scale;
+				GetMotionData();
 			}
 		}
 
