@@ -139,7 +139,7 @@ namespace Leanity
 
 			GUILayout.BeginHorizontal();
 
-			GUILayout.Label(hand.Detected ? (hand.Position * 1000f).ToString() : "(--, --, --)");
+			GUILayout.Label(hand.Detected ? CustomVectorString(hand.Position) : "(--, --, --)");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Label("Pinch distance: " + (hand.Detected ? (hand.PinchDistance).ToString() : "--"));
@@ -147,6 +147,11 @@ namespace Leanity
 			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
 
 			GUI.enabled = true;
+		}
+
+		private string CustomVectorString(Vector3 v)
+		{
+			return "(" + v.x.ToString("0.###") + ", " + v.y.ToString("0.###") + ", " + v.z.ToString("0.###");
 		}
 
 		private void OnHandsVisible()
