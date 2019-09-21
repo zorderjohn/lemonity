@@ -18,6 +18,7 @@ namespace Leanity
 		bool InertialUpdate();
 		void LateFrameUpdate();
 		void StopInertia();
+		bool HasInertia { get; }
 
 		void OptionsChange();
 		void DebugDraw();
@@ -33,6 +34,13 @@ namespace Leanity
 		public virtual bool RequiresTwoHands { get { return false; } }
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
+		public bool HasInertia
+		{
+			get
+			{
+				return _inertialData.IsMoving;
+			}
+		}
 
 		protected InertialObject _inertialData;
 		protected float _lastFrameTime = 0f;
@@ -65,10 +73,11 @@ namespace Leanity
 
 		public virtual bool InertialUpdate()
 		{
-			_inertialData.DragAngularVelocity(Options.AngularDrag);
-			_inertialData.DragLinearVelocity(Options.LinearDrag);
+			float t = GetTime();
+			_inertialData.DragAngularVelocity(Options.AngularDrag, t);
+			_inertialData.DragLinearVelocity(Options.LinearDrag, t);
 
-			_inertialData.Update(GetTime());
+			_inertialData.Update(t);
 
 			Position = _inertialData.Position;
 			Rotation = _inertialData.Rotation;
@@ -76,7 +85,7 @@ namespace Leanity
 			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 
-			return _inertialData.IsMoving();
+			return _inertialData.IsMoving;
 		}
 
 		public void StopInertia()

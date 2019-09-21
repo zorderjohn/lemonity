@@ -30,6 +30,9 @@ namespace Leanity
 			get { return _lastRotationFrame.Rotation; }
 		}
 
+
+		public bool IsMoving { get; private set; }
+
 		private readonly int MIN_BUFFER_SIZE = 2;
 		private readonly int MAX_BUFFER_SIZE = 1000;
 
@@ -40,6 +43,7 @@ namespace Leanity
 		private RotationFrame _lastRotationFrame;
 
 		protected readonly float TERMINAL_SQR_VELOCITY = 0.01f;
+
 
 		private int _bufferLength = -1;
 		public int BufferLength
@@ -84,6 +88,7 @@ namespace Leanity
 			_rotBuffer.Clear();
 			LinearVelocity = Vector3.zero;
 			AngularVelocityEuler = Vector3.zero;
+			IsMoving = false;
 		}
 
 		public void DiscardFrames(int frames)
@@ -113,6 +118,7 @@ namespace Leanity
 
 				LinearVelocity = deltaTime <= 0f ? Vector3.zero : (lastPos.Position - oldPos.Position) / deltaTime;
 			}
+			UpdateMovementDetection();
 		}
 
 		public void CalculateAngularVelocity()
@@ -129,37 +135,42 @@ namespace Leanity
 				Quaternion deltaRotation = Quaternion.Inverse(oldRot.Rotation) * lastRot.Rotation;
 				AngularVelocityEuler = NormalizedEulerAngles(deltaRotation) * inverseDeltaTime;
 			}
+			UpdateMovementDetection();
 		}
 
-		public void DragLinearVelocity(float drag)
+		public void DragAngularVelocity(float drag, float time)
 		{
-			var newAngularVelocity = AngularVelocityEuler * drag;
+			float rotDeltaTime = time - _lastRotationFrame.Timestamp;
+			var newAngularVelocity = AngularVelocityEuler * Mathf.Clamp01(1f - rotDeltaTime * drag);
 			newAngularVelocity.z = 0f;
 			AngularVelocityEuler = newAngularVelocity;
+			UpdateMovementDetection();
 		}
 
-		public void DragAngularVelocity(float drag)
-		{
-			LinearVelocity *= drag;
-		}
-
-		public void Update(float time)
+		public void DragLinearVelocity(float drag, float time)
 		{
 			float posDeltaTime = time - _lastPositionFrame.Timestamp;
-			_lastPositionFrame.Position += LinearVelocity * posDeltaTime;
-			_lastPositionFrame.Timestamp = time;
-
-			float rotDeltaTime = time - _lastRotationFrame.Timestamp;
-			Quaternion deltaRotation = Quaternion.Euler(AngularVelocityEuler * rotDeltaTime);
-			Quaternion newOrientation = _lastRotationFrame.Rotation * deltaRotation;
-			_lastRotationFrame.Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
-			_lastRotationFrame.Timestamp = time;
+			LinearVelocity = LinearVelocity * Mathf.Clamp01(1f - posDeltaTime * drag);
+			UpdateMovementDetection();
 		}
 
-		public bool IsMoving()
+		public bool Update(float time)
 		{
-			return LinearVelocity.sqrMagnitude + AngularVelocityEuler.sqrMagnitude >= TERMINAL_SQR_VELOCITY;
+			if (IsMoving)
+			{
+				float posDeltaTime = time - _lastPositionFrame.Timestamp;
+				_lastPositionFrame.Position += LinearVelocity * posDeltaTime;
+				_lastPositionFrame.Timestamp = time;
+
+				float rotDeltaTime = time - _lastRotationFrame.Timestamp;
+				Quaternion deltaRotation = Quaternion.Euler(AngularVelocityEuler * rotDeltaTime);
+				Quaternion newOrientation = _lastRotationFrame.Rotation * deltaRotation;
+				_lastRotationFrame.Rotation = MathHelper.ClampRotationXZ(newOrientation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+				_lastRotationFrame.Timestamp = time;
+			}
+			return IsMoving;
 		}
+
 
 		private Vector3 NormalizedEulerAngles(Quaternion q)
 		{
@@ -180,6 +191,10 @@ namespace Leanity
 			return angle;
 		}
 
+		private void UpdateMovementDetection()
+		{
+			IsMoving = LinearVelocity.sqrMagnitude + AngularVelocityEuler.sqrMagnitude >= TERMINAL_SQR_VELOCITY;
+		}
 
 	}
 }

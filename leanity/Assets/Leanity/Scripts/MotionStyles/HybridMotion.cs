@@ -38,6 +38,13 @@ namespace Leanity
 			}
 		}
 
+		public bool HasInertia
+		{
+			get
+			{
+				return _currentMotion.HasInertia;
+			}
+		}
 		private IMotionStyle _oneMotion;
 		private IMotionStyle _twoMotion;
 

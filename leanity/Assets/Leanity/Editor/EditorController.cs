@@ -33,7 +33,8 @@ namespace Leanity
 
 		static public void EditorUpdate()
 		{
-			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f)
+			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f ||
+				Options.EnableInertia && EditorMotionController.MotionStyle.HasInertia)
 			{
 				Update();
 			}

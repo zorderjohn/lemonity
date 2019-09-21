@@ -104,14 +104,16 @@ namespace Leanity
 
 		public override bool InertialUpdate()
 		{
-			_inertialData.DragAngularVelocity(Options.AngularDrag);
-			_inertialData.DragLinearVelocity(Options.LinearDrag);
+			float t = GetTime();
+			_inertialData.DragAngularVelocity(Options.AngularDrag, t);
+			_inertialData.DragLinearVelocity(Options.LinearDrag, t);
 
-			_inertialData.Update(GetTime());
-
-			UpdatePose(_inertialData.Rotation, _inertialData.Position);
-
-			return _inertialData.IsMoving();
+			if (_inertialData.Update(t))
+			{
+				UpdatePose(_inertialData.Rotation, _inertialData.Position);
+				return true;
+			}
+			return false;
 		}
 
 		private void UpdatePose(Quaternion hcYawDeltaRot, Vector3 ccDeltaTranslation)
