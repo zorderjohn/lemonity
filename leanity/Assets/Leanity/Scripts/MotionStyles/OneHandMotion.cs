@@ -19,22 +19,26 @@ namespace Leanity
 
 		protected override void StartMotion()
 		{
-			_gestureController = GetDominantGrabController(latestHold: true);
-			_gestureController.Reset();
+			var newController = GetDominantGrabController(latestHold: true);
+			if (newController != null)
+			{
+				_gestureController = newController;
+				_gestureController.Reset();
 
-			Vector3 wcCamInitialPos = _gestureController.ObjectInitialPosition;
+				Vector3 wcCamInitialPos = _gestureController.ObjectInitialPosition;
 
-			// Middle point between hands
-			_hcCenterInitialPos = _gestureController.HandInitialPosition;
+				// Middle point between hands
+				_hcCenterInitialPos = _gestureController.HandInitialPosition;
 
-			// Store camera initial rotation
-			_wcCamInitialRot = _gestureController.ObjectInitialRotation;
+				// Store camera initial rotation
+				_wcCamInitialRot = _gestureController.ObjectInitialRotation;
 
-			// Calculate camera rotation pivot
-			_wcCamPivot = wcCamInitialPos + _wcCamInitialRot * HandTracking.HandToCamCoordinates(_hcCenterInitialPos);
+				// Calculate camera rotation pivot
+				_wcCamPivot = wcCamInitialPos + _wcCamInitialRot * HandTracking.HandToCamCoordinates(_hcCenterInitialPos);
 
-			// Vector from pivot to camera which will be rotated by the gesture
-			_wcPivotToCam = wcCamInitialPos - _wcCamPivot;
+				// Vector from pivot to camera which will be rotated by the gesture
+				_wcPivotToCam = wcCamInitialPos - _wcCamPivot;
+			}
 		}
 
 		protected override void UpdateMotion()

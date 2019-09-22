@@ -47,7 +47,10 @@ namespace Leanity
 		public float Scale
 		{
 			get { return _scaleStyle.Scale; }
-			set { _scaleStyle.Scale = value; }
+			set {
+				_scaleStyle.Scale = value;
+				_motionStyle.Scale = value;
+			}
 		}
 
 		public event Action OnHandsVisible;
@@ -87,8 +90,8 @@ namespace Leanity
 			// Always instantiate after Left and Right grabs
 			_currentGesture = Options.Gesture;
 			_scaleStyle = new ScaleMotion();
-			Scale = 0f;
 			LoadMotionStyle();
+			Scale = 0f;
 		}
 
 		private void LoadMotionStyle()
@@ -139,9 +142,12 @@ namespace Leanity
 
 				bool retValue = EventController();
 
-				HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
-				HandTracking.TransformRotation = Rotation;
-				HandTracking.TransformScale = Options.PosScale;
+				if (retValue)
+				{
+					HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
+					HandTracking.TransformRotation = Rotation;
+					HandTracking.TransformScale = Options.PosScale;
+				}
 
 				MotionStyle.LateFrameUpdate();
 				return retValue;
