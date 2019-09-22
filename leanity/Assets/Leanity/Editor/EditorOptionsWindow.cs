@@ -229,14 +229,14 @@ namespace Leanity
 					using (var horizontalScope = new GUILayout.HorizontalScope())
 					{
 						EditorGUILayout.PrefixLabel("Linear Drag");
-						Options.LinearDrag = GUILayout.HorizontalSlider(Options.LinearDrag, 0f, 1f);
+						Options.LinearDrag = GUILayout.HorizontalSlider(Options.LinearDrag, 0f, 10f);
 						Options.LinearDrag = EditorGUILayout.FloatField(Options.LinearDrag, GUILayout.Width(50));
 					}
 
 					using (var horizontalScope = new GUILayout.HorizontalScope())
 					{
 						EditorGUILayout.PrefixLabel("Angular Drag");
-						Options.AngularDrag = GUILayout.HorizontalSlider(Options.AngularDrag, 0f, 1f);
+						Options.AngularDrag = GUILayout.HorizontalSlider(Options.AngularDrag, 0f, 10f);
 						Options.AngularDrag = EditorGUILayout.FloatField(Options.AngularDrag, GUILayout.Width(50));
 					}
 					using (var horizontalScope = new GUILayout.HorizontalScope())
