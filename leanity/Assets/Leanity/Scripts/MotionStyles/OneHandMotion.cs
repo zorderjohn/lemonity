@@ -42,7 +42,7 @@ namespace Leanity
 			// Detect hand change
 			if (GetDominantGrabController(latestHold: true) != _gestureController)
 			{
-				StartMotion();
+				Start();
 			}
 			// ROTATION CALCULATION
 

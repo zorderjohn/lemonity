@@ -48,7 +48,9 @@ namespace Leanity
 		private IMotionStyle _oneMotion;
 		private IMotionStyle _twoMotion;
 
+		private IMotionStyle _lastMotion;
 		private IMotionStyle _currentMotion;
+		private float _motionChangeTimestamp = 0f;
 
 		public HybridMotion()
 		{
@@ -63,6 +65,7 @@ namespace Leanity
 			_twoMotion.OptionsChange();
 
 			_currentMotion = _oneMotion;
+			_lastMotion = _oneMotion;
 		}
 
 		public bool InertialUpdate()
@@ -110,8 +113,9 @@ namespace Leanity
 			var newMotion = ChooseCurrentMotion();
 			if (newMotion != _currentMotion)
 			{
+				_currentMotion.Stop();
 				newMotion.Start();
-				_currentMotion = newMotion;
+				SetNewMotion(newMotion);
 			}
 			else
 			{
@@ -123,6 +127,20 @@ namespace Leanity
 		public void Stop()
 		{
 			_currentMotion.Stop();
+			if (GetTime() - _motionChangeTimestamp < 0.5f)
+			{
+				_currentMotion = _lastMotion;
+				_currentMotion.Update();
+				_currentMotion.Stop();
+				Debug.Log("Restoring last motion");
+			}
+		}
+
+		private void SetNewMotion(IMotionStyle _motion)
+		{
+			_motionChangeTimestamp = GetTime();
+			_lastMotion = _currentMotion;
+			_currentMotion = _motion;
 		}
 
 		public void LateFrameUpdate()
@@ -145,6 +163,11 @@ namespace Leanity
 		public void DebugDraw()
 		{
 			_currentMotion.DebugDraw();
+		}
+
+		protected float GetTime()
+		{
+			return Time.realtimeSinceStartup;
 		}
 	}
 }
