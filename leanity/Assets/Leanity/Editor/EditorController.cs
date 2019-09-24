@@ -28,7 +28,7 @@ namespace Leanity
 
 		static private void OnSceneGUI(SceneView sceneView)
 		{
-			Update();
+			Update(true);
 		}
 
 		static public void EditorUpdate()
@@ -36,11 +36,11 @@ namespace Leanity
 			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f ||
 				Options.EnableInertia && EditorMotionController.MotionStyle.HasInertia)
 			{
-				Update();
+				Update(false);
 			}
 		}
 
-		static public void Update()
+		static public void Update(bool GUIUpdate)
 		{
 			_lastUpdate = Time.realtimeSinceStartup;
 
@@ -91,7 +91,7 @@ namespace Leanity
 				bool anyHandVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
 				if (anyHandVisible|| Options.GridVisible)
 				{
-					if (Options.GestureDebug)
+					if (GUIUpdate && Options.GestureDebug)
 					{
 						EditorMotionController.MotionStyle.DebugDraw();
 					}
