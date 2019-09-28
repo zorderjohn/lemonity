@@ -18,11 +18,11 @@ namespace Leanity
 
 		private LeapTrackingWin()
 		{
-			_rightHandData = new HandData(120);
-			_leftHandData = new HandData(120);
+			Options.Load();
+			_rightHandData = new HandData(120, Options.VelocityFrames);
+			_leftHandData = new HandData(120, Options.VelocityFrames);
 			Options.OnOptionsChange += FilterParameterUpdate;
 
-			Options.Load();
 			FilterParameterUpdate();
 
 			//try

@@ -215,14 +215,15 @@ namespace Leanity
 						EditorGUI.indentLevel--;
 					}
 				}
-				#endregion
 				GUILayout.Space(8);
+				#endregion
 			}
 
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				GUILayout.Label("Inertia", EditorStyles.boldLabel);
 				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
 				Options.EnableInertia = EditorGUILayout.Toggle("Enable Inertia", Options.EnableInertia);
 				if (Options.EnableInertia)
 				{
@@ -250,6 +251,25 @@ namespace Leanity
 						Options.DiscardFrames = EditorGUILayout.IntField(Options.DiscardFrames, GUILayout.Width(50));
 					}
 				}
+				EditorGUI.indentLevel--;
+			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				GUILayout.Label("Unwanted Gesture Heuristic", EditorStyles.boldLabel);
+				GUILayout.Space(4);
+				EditorGUI.indentLevel++;
+				Options.HeuristicEnabled= EditorGUILayout.Toggle("Enable Heuristic", Options.HeuristicEnabled);
+				if (Options.HeuristicEnabled)
+				{
+					using (var horizontalScope = new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.PrefixLabel("Safe zone radius");
+						Options.HeuristicRadius = GUILayout.HorizontalSlider(Options.HeuristicRadius, 0.1f, 1f);
+						Options.HeuristicRadius = EditorGUILayout.FloatField(Options.HeuristicRadius, GUILayout.Width(50));
+					}
+				}
+				EditorGUI.indentLevel--;
 			}
 
 			GUILayout.EndScrollView();

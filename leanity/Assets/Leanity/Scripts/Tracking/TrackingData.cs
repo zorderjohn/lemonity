@@ -15,7 +15,19 @@ namespace Leanity
 			set
 			{
 				_position = _positionFilter.Filter(value);
+				_inertialData.SetPosition(_position, Time.realtimeSinceStartup);
+				_inertialData.CalculateLinearVelocity();
 			}
+		}
+
+		public Vector3 LinearVelocity
+		{
+			get { return _inertialData.LinearVelocity; }
+		}
+
+		public Vector3 AngularVelocity
+		{
+			get { return _inertialData.AngularVelocityEuler; }
 		}
 
 		public Quaternion _rotation;
@@ -25,17 +37,21 @@ namespace Leanity
 			set
 			{
 				_rotation = _rotationFilter.Filter(value);
+				_inertialData.SetRotation(_rotation, Time.realtimeSinceStartup);
+				_inertialData.CalculateAngularVelocity();
 			}
 		}
 		public float PinchDistance { get; set; }
 
 		private OneEuroFilter<Quaternion> _rotationFilter;
 		private OneEuroFilter<Vector3> _positionFilter;
+		private InertialObject _inertialData;
 
-		public HandData(float filterFrequency)
+		public HandData(float filterFrequency, int inertialFrames)
 		{
 			_rotationFilter = new OneEuroFilter<Quaternion>(filterFrequency);
 			_positionFilter = new OneEuroFilter<Vector3>(filterFrequency);
+			_inertialData = new InertialObject(inertialFrames);
 		}
 
 		public void SetRotationFilterParams(float frequency, float minCutOff, float beta, float dCutOff)

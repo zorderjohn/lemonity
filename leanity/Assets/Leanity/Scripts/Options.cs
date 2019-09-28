@@ -109,6 +109,11 @@ namespace Leanity
 		public static bool ShowHandGuides { get; set; }
 		#endregion
 
+		#region FreezeHeuristic
+		public static bool HeuristicEnabled { get; set; }
+		public static float HeuristicRadius { get; set; }
+		#endregion
+
 		private static bool _dirty = false;
 		public static bool Dirty
 		{
@@ -178,6 +183,10 @@ namespace Leanity
 				PlayerPrefs.SetFloat(_prefix + "TrackingZOffset", TrackingZOffset);
 				PlayerPrefs.SetFloat(_prefix + "HandScale", HandScale);
 				PlayerPrefs.SetInt(_prefix + "ShowHandGuides", ShowHandGuides ? 1 : 0);
+
+				// Freeze Heuristic
+				PlayerPrefs.SetInt(_prefix + "HeuristicEnable", HeuristicEnabled ? 1 : 0);
+				PlayerPrefs.SetFloat(_prefix + "HeuristicRadius", HeuristicRadius);
 			}
 		}
 
@@ -243,6 +252,10 @@ namespace Leanity
 				TrackingZOffset = PlayerPrefs.GetFloat(_prefix + "TrackingZOffset", 1f);
 				HandScale = PlayerPrefs.GetFloat(_prefix + "HandScale", 1f);
 				ShowHandGuides = PlayerPrefs.GetInt(_prefix + "ShowHandGuides", 1) == 1;
+
+				// Freeze Heuristic
+				HeuristicEnabled = PlayerPrefs.GetInt(_prefix + "HeuristicEnabled", 1) == 1;
+				HeuristicRadius = PlayerPrefs.GetFloat(_prefix + "HeuristicRadius", 0.2f);
 
 				_init = true;
 				Dirty = false;

@@ -13,13 +13,19 @@ namespace Leanity
 		private static Texture _leftHandTexture;
 		private static Texture _rightHandGrabTexture;
 		private static Texture _leftHandGrabTexture;
-		private readonly float _workspaceWidth = 0.5f;
-		private readonly float _workspaceDepth = 0.5f;
+		private static float _workspaceWidth = 0.5f;
+		private static float _workspaceDepth = 0.5f;
+		private static float _workspaceRatio = 1f;
 		private static bool _handsVisible = false;
 
 		void OnEnable()
 		{
 			LoadResources();
+			Options.Load();
+			_workspaceDepth = HandTracking.Workspace.z;
+			_workspaceWidth = HandTracking.Workspace.x;
+			_workspaceRatio = _workspaceWidth / _workspaceDepth;
+
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 			EditorController.EditorMotionController.OnHandsVisible += OnHandsVisible;
 			EditorController.EditorMotionController.OnHandsInVisible += OnHandsInVisible;
@@ -114,14 +120,21 @@ namespace Leanity
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				Rect r = GUILayoutUtility.GetAspectRect(1f);
+				Rect r = GUILayoutUtility.GetAspectRect(_workspaceRatio);
 
 				EditorGUI.IndentedRect(r);
 
 				EditorGUI.DrawRect(r, Color.white);
+
+				if (Options.HeuristicEnabled)
+				{
+					//Draw heuristic safe zone
+					Handles.color = Color.grey;
+					Handles.DrawPolyLine(GenerateHeuristicCircle(r));
+				}
+
 				DrawHandPosition(rightHandData, r);
 				DrawHandPosition(leftHandData, r);
-
 			}
 
 			GUILayout.EndScrollView();
@@ -335,6 +348,25 @@ namespace Leanity
 				Handles.color = handleColor;
 				Handles.ConeHandleCap(1, centerPos, Quaternion.Euler(90f, 0f, 0f), Options.HandScale * Options.PosScale * .03f, EventType.Repaint);
 			}
+		}
+
+		private Vector3[] GenerateHeuristicCircle(Rect r)
+		{
+			int numPoints = 37;
+			float radius = Options.HeuristicRadius;
+			var heuristicCircle = new Vector3[numPoints];
+
+			float angleIncrement = 2 * Mathf.PI / (numPoints - 1);
+			for (int i = 0; i < numPoints; i++)
+			{
+				float px = radius * Mathf.Cos(i * angleIncrement);
+				float py = radius * Mathf.Sin(i * angleIncrement);
+				Vector3 localVector = new Vector3(px, 0f, py);
+
+				heuristicCircle[i] = GetRectCoords(localVector, r);
+			}
+
+			return heuristicCircle;
 		}
 
 	}

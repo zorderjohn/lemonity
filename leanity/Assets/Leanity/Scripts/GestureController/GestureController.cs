@@ -86,8 +86,15 @@ namespace Leanity
 			{
 				if (hand.Detected && newHoldingUpdate)
 				{
-					IsHolding = true;
-					StartHolding();
+					if (HeuristicCondition())
+					{
+						IsHolding = true;
+						StartHolding();
+					} else
+					{
+						Debug.LogWarning("Heuristic activated");
+					}
+
 				}
 			}
 		}
@@ -102,5 +109,21 @@ namespace Leanity
 		}
 
 		protected abstract bool HoldingTest();
+
+		protected bool HeuristicCondition()
+		{
+			if (!Options.HeuristicEnabled)
+			{
+				return true;
+			}
+
+			Vector3 handToCenter = -_hand.Position;
+			float distanceToCenter = handToCenter.magnitude;
+			Vector3 handVelocity = _hand.LinearVelocity;
+			float handSpeed = handVelocity.magnitude;
+			float dotProd = Vector3.Dot(handToCenter, handVelocity);
+
+			return (distanceToCenter < Options.HeuristicRadius) || (handSpeed > 0.001f && dotProd > 0f);
+		}
 	}
 }
