@@ -218,8 +218,8 @@ namespace Leanity
 		private Vector2 GetRectCoords(Vector3 worldCoords, Rect r)
 		{
 			Vector2 coords = new Vector2(r.x, r.y);
-			coords.x += (worldCoords.x / _workspaceWidth) * r.width + r.width * 0.5f;
-			coords.y += -(worldCoords.z / _workspaceDepth) * r.height + r.height * 0.5f;
+			coords.x +=  Mathf.Clamp(worldCoords.x / _workspaceWidth, -.5f, .5f) * r.width + r.width * 0.5f;
+			coords.y += -Mathf.Clamp(worldCoords.z / _workspaceDepth, -.5f, .5f) * r.height + r.height * 0.5f;
 			return coords;
 		}
 
