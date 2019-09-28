@@ -7,8 +7,8 @@ namespace Leanity
 		Vector3 Position { get; set; }
 		Quaternion Rotation { get; set; }
 		float Scale { get; set; }
-		GestureController LeftGesture { get; set; }
-		GestureController RightGesture { get; set; }
+		IGestureController LeftGesture { get; set; }
+		IGestureController RightGesture { get; set; }
 		bool RequiresTwoHands { get; }
 		bool InvertAxis { get; set; }
 
@@ -29,8 +29,8 @@ namespace Leanity
 		public Vector3 Position { get; set; }
 		public Quaternion Rotation { get; set; }
 		public float Scale { get; set; }
-		public GestureController LeftGesture { get; set; }
-		public GestureController RightGesture { get; set; }
+		public IGestureController LeftGesture { get; set; }
+		public IGestureController RightGesture { get; set; }
 		public virtual bool RequiresTwoHands { get { return false; } }
 		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
@@ -116,7 +116,7 @@ namespace Leanity
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 		}
 
-		protected GestureController GetDominantGrabController(bool latestHold = true)
+		protected IGestureController GetDominantGrabController(bool latestHold = true)
 		{
 			if (LeftGesture.IsHolding && RightGesture.IsHolding)
 			{

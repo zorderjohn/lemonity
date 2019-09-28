@@ -8,7 +8,7 @@ namespace Leanity
 		public Quaternion Rotation { get; set; }
 		public float Scale { get; set; }
 
-		public GestureController LeftGesture
+		public IGestureController LeftGesture
 		{
 			get { return _oneMotion.LeftGesture; }
 			set
@@ -17,7 +17,7 @@ namespace Leanity
 				_twoMotion.LeftGesture = value;
 			}
 		}
-		public GestureController RightGesture
+		public IGestureController RightGesture
 		{
 			get { return _oneMotion.RightGesture; }
 			set

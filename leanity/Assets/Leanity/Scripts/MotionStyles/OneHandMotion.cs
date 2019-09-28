@@ -9,7 +9,7 @@ namespace Leanity
 		Vector3 _hcCenterInitialPos;
 		Quaternion _wcCamInitialRot;
 		Quaternion _hcPitchDeltaRot;
-		Leanity.GestureController _gestureController;
+		Leanity.IGestureController _gestureController;
 
 		public override bool RequiresTwoHands { get { return false; } }
 
