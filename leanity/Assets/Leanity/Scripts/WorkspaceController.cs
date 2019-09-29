@@ -38,6 +38,7 @@ namespace Leanity
 
 		public WorkspaceController(Vector3 size, MotionController motionController)
 		{
+			Options.Load();
 			_motionController = motionController;
 			ScaleWorkspace(size);
 			CreateMaterials();
@@ -46,6 +47,7 @@ namespace Leanity
 
 			_gridFadeEditor.OutTime = 2f;
 
+			OnOptionsChange();
 			Options.OnOptionsChange += OnOptionsChange;
 		}
 
