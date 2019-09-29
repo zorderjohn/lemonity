@@ -213,7 +213,7 @@ namespace Leanity
 				grabbingUpdate = LeftGrab.IsHolding || RightGrab.IsHolding;
 			}
 
-			bool dualPinchingUpdate = LeftPinch.IsHolding && RightPinch.IsHolding;
+			bool dualPinchingUpdate = Options.PinchEnabled && LeftPinch.IsHolding && RightPinch.IsHolding;
 
 			if (grabbingUpdate)
 			{

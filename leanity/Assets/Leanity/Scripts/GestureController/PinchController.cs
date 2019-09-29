@@ -8,6 +8,11 @@ namespace Leanity
 		{
 			return _hand.PinchDistance < Options.PinchMinThreshold;
 		}
+
+		protected override bool ReleaseTest()
+		{
+			return _hand.PinchDistance > Options.PinchMaxThreshold;
+		}
 	}
 
 }

@@ -73,18 +73,19 @@ namespace Leanity
 			_hand = hand;
 			_latestObjectPosition = objectPosition;
 			_latestObjectRotation = objectRotation;
-			bool newHoldingUpdate = HoldingTest();
+			bool holdingReported = HoldingTest();
+			bool releaseReported = ReleaseTest();
 
 			if (IsHolding)
 			{
-				if (!hand.Detected || !newHoldingUpdate)
+				if (!hand.Detected || releaseReported)
 				{
 					IsHolding = false;
 				}
 			}
 			else
 			{
-				if (hand.Detected && newHoldingUpdate)
+				if (hand.Detected && holdingReported)
 				{
 					if (HeuristicCondition())
 					{
@@ -109,6 +110,7 @@ namespace Leanity
 		}
 
 		protected abstract bool HoldingTest();
+		protected abstract bool ReleaseTest();
 
 		protected bool HeuristicCondition()
 		{

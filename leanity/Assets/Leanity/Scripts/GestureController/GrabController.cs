@@ -8,6 +8,11 @@ namespace Leanity
 		{
 			return _hand.GrabValue >= Options.GrabMaxThreshold;
 		}
+
+		protected override bool ReleaseTest()
+		{
+			return _hand.GrabValue < Options.GrabMinThreshold;
+		}
 	}
 
 }

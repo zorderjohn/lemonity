@@ -156,7 +156,9 @@ namespace Leanity
 			GUILayout.EndHorizontal();
 
 			GUILayout.Label("Pinch distance: " + (hand.Detected ? (hand.PinchDistance).ToString() : "--"));
-			Rect rProgressBar = GUILayoutUtility.GetRect(50, 100, 20, 20);
+
+			Rect rProgressBar = GUILayoutUtility.GetRect(50, 1000, 15, 15);
+
 			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
 
 			GUI.enabled = true;
