@@ -35,11 +35,11 @@ namespace Leanity
 		#endregion
 
 		#region Interaction
-		public static float GrabMinThreshold { get; set; }
-		public static float GrabMaxThreshold { get; set; }
-		public static bool GrabEnabled { get; set; }
-		public static bool InvertAxis { get; set; }
-		public static bool PinchEnabled { get; set; }
+		public static float GrabMinThreshold  { get; set; }
+		public static float GrabMaxThreshold  { get; set; }
+		public static bool  GrabEnabled       { get; set; }
+		public static bool  InvertAxis        { get; set; }
+		public static bool  PinchEnabled      { get; set; }
 		public static float PinchMinThreshold { get; set; }
 		public static float PinchMaxThreshold { get; set; }
 		#endregion
@@ -53,18 +53,18 @@ namespace Leanity
 		#endregion
 
 		#region Filter
-		public static float FilterFrequency { get; set; }
+		public static float FilterFrequency    { get; set; }
 		public static float RotFilterMinCutoff { get; set; }
-		public static float RotFilterBeta { get; set; }
-		public static float RotFilterDcutoff { get; set; }
+		public static float RotFilterBeta      { get; set; }
+		public static float RotFilterDcutoff   { get; set; }
 		public static float PosFilterMinCutoff { get; set; }
-		public static float PosFilterBeta { get; set; }
-		public static float PosFilterDcutoff { get; set; }
+		public static float PosFilterBeta      { get; set; }
+		public static float PosFilterDcutoff   { get; set; }
 		#endregion
 
 		#region Debug
-		public static Color GridColor     { get { return new Color(0f, 1f, 0f); } }
-		public static Color GrabGridColor {	get { return Color.red;             } }
+		public static Color GridColor     { get { return Color.green; } }
+		public static Color GrabGridColor {	get { return Color.red;   } }
 		public static int NumGridLines    { get; set; }
 		public static bool ShowGrid       { get; set; }
 		public static bool ShowWorkspace  { get; set; }

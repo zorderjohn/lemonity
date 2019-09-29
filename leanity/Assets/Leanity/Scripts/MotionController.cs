@@ -5,6 +5,8 @@ namespace Leanity
 {
 	public class MotionController
 	{
+		private enum State { Idle, Grabbing, Pinching }
+
 		private IMotionStyle _scaleStyle;
 		private IMotionStyle _motionStyle;
 
@@ -67,11 +69,12 @@ namespace Leanity
 		public PinchController LeftPinch { get; private set; }
 		public PinchController RightPinch { get; private set; }
 
-		public bool IsGrabbing { get; private set; } = false;
-		public bool IsDualPinching { get; private set; } = false;
+		public bool IsGrabbing { get { return _state == State.Grabbing; } }
+		public bool IsDualPinching { get { return _state == State.Pinching; } }
 
 		private bool _handsVisible = false;
 		private WorkingGesture _currentGesture;
+		private State _state = State.Idle;
 
 		private float _initialScale;
 
@@ -215,50 +218,68 @@ namespace Leanity
 
 			bool dualPinchingUpdate = Options.PinchEnabled && LeftPinch.IsHolding && RightPinch.IsHolding;
 
-			if (grabbingUpdate)
+			switch (_state)
 			{
-				if (!IsGrabbing)
-				{
-					IsGrabbing = true;
-					StartMoving();
-				}
-
-				MotionStyle.Update();
-				return true;
-			}
-			else
-			{
-				if (IsGrabbing)
-				{
-					IsGrabbing = false;
-					StopMoving();
-				}
-
-				if (dualPinchingUpdate)
-				{
-					if (!IsDualPinching)
+				case State.Idle:
+					if (grabbingUpdate)
 					{
-						IsDualPinching = true;
+						_state = State.Grabbing;
+						StartMoving();
+					}
+					else if (dualPinchingUpdate)
+					{
+						_state = State.Pinching;
 						StartPinching();
-					} else
+					}
+					else
+					{
+						if (Options.EnableInertia)
+						{
+							return MotionStyle.InertialUpdate();
+						}
+					}
+					break;
+
+				case State.Grabbing:
+					if (grabbingUpdate)
+					{
+						MotionStyle.Update();
+						return true;
+					}
+					else
+					{
+						StopMoving();
+
+						if (dualPinchingUpdate)
+						{
+							_state = State.Pinching;
+							StartPinching();
+						}
+						else
+						{
+							_state = State.Idle;
+						}
+					}
+					break;
+
+				case State.Pinching:
+					if (grabbingUpdate)
+					{
+						StopPinching();
+						_state = State.Grabbing;
+						StartMoving();
+					}
+					else if (!dualPinchingUpdate)
+					{
+						StopPinching();
+						_state = State.Idle;
+					}
+					else
 					{
 						_scaleStyle.Update();
 						return true;
 					}
-				}
-				else
-				{
-					if (IsDualPinching)
-					{
-						IsDualPinching = false;
-						StopPinching();
-					}
-				}
-
-				if (Options.EnableInertia)
-				{
-					return MotionStyle.InertialUpdate();
-				}
+					break;
 			}
 
 			return false;
@@ -266,6 +287,7 @@ namespace Leanity
 
 		private void StartMoving()
 		{
+			Debug.Log("MC: StartMoving");
 			if (MotionStyle != null)
 			{
 				if (MotionStyle.RequiresTwoHands)
@@ -281,6 +303,7 @@ namespace Leanity
 
 		private void StopMoving()
 		{
+			Debug.Log("MC: StopMoving");
 			MotionStyle?.Stop();
 			OnEndGrab?.Invoke();
 			OnStateChange?.Invoke();
@@ -288,6 +311,7 @@ namespace Leanity
 
 		private void StartPinching()
 		{
+			Debug.Log("MC: StartPinching");
 			StopInertia();
 			_scaleStyle.Start();
 			OnStartPinch?.Invoke();
@@ -296,6 +320,7 @@ namespace Leanity
 
 		private void StopPinching()
 		{
+			Debug.Log("MC: StopPinching");
 			OnEndPinch?.Invoke();
 			OnStateChange?.Invoke();
 		}
