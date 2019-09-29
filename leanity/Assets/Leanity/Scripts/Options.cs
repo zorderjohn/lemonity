@@ -63,46 +63,14 @@ namespace Leanity
 		#endregion
 
 		#region Debug
-		public static Color GridColor
-		{
-			get { return new Color(0f, 1f, 0f); }
-		}
+		public static Color GridColor     { get { return new Color(0f, 1f, 0f); } }
+		public static Color GrabGridColor {	get { return Color.red;             } }
+		public static int NumGridLines    { get; set; }
+		public static bool ShowGrid       { get; set; }
+		public static bool ShowWorkspace  { get; set; }
+		public static bool GestureDebug   { get; set; }
 
-		public static Color GrabGridColor
-		{
-			get { return Color.red; }
-		}
-		public static int NumGridLines { get; set; }
-		public static bool ShowGrid { get; set; }
-		public static bool ShowWorkspace { get; set; }
-		public static bool GestureDebug { get; set; }
-
-		private static ValueFade _gridFade = new ValueFade();
-		public static void GridFadeIn()
-		{
-			_gridFade.FadeIn();
-		}
-
-		public static void GridFadeOut()
-		{
-			_gridFade.FadeOut();
-		}
-
-		public static float GridTransparency
-		{
-			get { return _gridFade.Value; }
-		}
-
-		public static bool GridVisible
-		{
-			get { return _gridFade.Value > _gridFade.MinValue; }
-		}
-
-		public static float MaxGridTransparency
-		{
-			get { return _gridFade.MaxValue; }
-			set { _gridFade.MaxValue = value; }
-		}
+		public static float MaxGridTransparency { get; set; }
 
 		public static float TrackingZOffset { get; set; }
 		public static float HandScale { get; set; }
@@ -179,7 +147,7 @@ namespace Leanity
 				PlayerPrefs.SetInt(_prefix + "ShowGrid", ShowGrid ? 1 : 0);
 				PlayerPrefs.SetInt(_prefix + "ShowWorkspace", ShowWorkspace ? 1 : 0);
 				PlayerPrefs.SetInt(_prefix + "GestureDebug", GestureDebug ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "MaxTransparency", _gridFade.MaxValue);
+				PlayerPrefs.SetFloat(_prefix + "MaxTransparency", MaxGridTransparency);
 				PlayerPrefs.SetFloat(_prefix + "TrackingZOffset", TrackingZOffset);
 				PlayerPrefs.SetFloat(_prefix + "HandScale", HandScale);
 				PlayerPrefs.SetInt(_prefix + "ShowHandGuides", ShowHandGuides ? 1 : 0);
@@ -248,7 +216,7 @@ namespace Leanity
 				ShowGrid = PlayerPrefs.GetInt(_prefix + "ShowGrid", 1) == 1;
 				ShowWorkspace = PlayerPrefs.GetInt(_prefix + "ShowWorkspace", 1) == 1;
 				GestureDebug = PlayerPrefs.GetInt(_prefix + "GestureDebug", 1) == 1;
-				_gridFade.MaxValue = PlayerPrefs.GetFloat(_prefix + "MaxTransparency", .8f);
+				MaxGridTransparency = PlayerPrefs.GetFloat(_prefix + "MaxTransparency", .8f);
 				TrackingZOffset = PlayerPrefs.GetFloat(_prefix + "TrackingZOffset", 1f);
 				HandScale = PlayerPrefs.GetFloat(_prefix + "HandScale", 1f);
 				ShowHandGuides = PlayerPrefs.GetInt(_prefix + "ShowHandGuides", 1) == 1;

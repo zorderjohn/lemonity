@@ -50,6 +50,8 @@ namespace Leanity
 
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
+				EditorGUI.BeginChangeCheck();
+
 				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
 				Options.ShowWorkspace = EditorGUILayout.Toggle("Show Workspace", Options.ShowWorkspace);
 				using (var horizontalScope = new GUILayout.HorizontalScope())
@@ -75,6 +77,11 @@ namespace Leanity
 					EditorGUILayout.PrefixLabel("Hand Scale");
 					Options.HandScale= GUILayout.HorizontalSlider(Options.HandScale, 0f, 2f);
 					Options.HandScale = EditorGUILayout.FloatField(Options.HandScale, GUILayout.Width(50));
+				}
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					EditorController.EditorWorkspaceController.GridFadeInEditor();
 				}
 
 				Options.GestureDebug = EditorGUILayout.Toggle("Gesture Debug", Options.GestureDebug);
@@ -172,11 +179,10 @@ namespace Leanity
 		private void OnHandsVisible()
 		{
 			SceneView.RepaintAll();
-			Options.GridFadeIn();
 		}
+
 		private void OnHandsInVisible()
 		{
-			Options.GridFadeOut();
 		}
 
 		private void DrawHandPosition(HandData hand, Rect r)

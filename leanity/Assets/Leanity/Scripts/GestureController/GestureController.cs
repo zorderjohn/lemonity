@@ -93,7 +93,7 @@ namespace Leanity
 						StartHolding();
 					} else
 					{
-						Debug.LogWarning("Heuristic activated");
+						//Debug.LogWarning("Heuristic activated");
 					}
 
 				}

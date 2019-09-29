@@ -25,13 +25,16 @@ namespace Leanity
 			new Vector3(-1f,  1f,  1f), // 4
 			new Vector3(-1f,  1f, -1f), // 5
 			new Vector3(-1f, -1f,  1f), // 6
-			new Vector3(-1f, -1f, -1f) // 7
+			new Vector3(-1f, -1f, -1f)  // 7
 		};
 		private Mesh _workspaceMesh;
 		private Material _workspaceMat;
 		private Material _handMat;
 		private Mesh[] _handMeshes;
 		private MotionController _motionController;
+
+		private ValueFade _gridFade = new ValueFade();
+		private ValueFade _gridFadeEditor = new ValueFade();
 
 		public WorkspaceController(Vector3 size, MotionController motionController)
 		{
@@ -41,7 +44,64 @@ namespace Leanity
 			GenerateDrawingStuff();
 			LoadMeshes();
 
-			Options.OnOptionsChange += GenerateDrawingStuff;
+			_gridFadeEditor.OutTime = 2f;
+
+			Options.OnOptionsChange += OnOptionsChange;
+		}
+
+		public void Draw(Vector3 position, Quaternion rotation, Vector3 scale)
+		{
+			if (_workspaceMat != null)
+			{
+				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
+
+				if (Options.ShowWorkspace)
+				{
+					DrawMesh(GridTransparency, matrix);
+				}
+
+				if (Options.ShowGrid)
+				{
+					Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
+					color.a = GridTransparency;
+					DrawLines(color, matrix);
+				}
+
+				DrawHand(HandTracking.LeftHandData);
+				DrawHand(HandTracking.RightHandData);
+			}
+		}
+
+		public void GridFadeIn()
+		{
+			_gridFade.FadeIn();
+		}
+
+		public void GridFadeOut()
+		{
+			_gridFade.FadeOut();
+		}
+
+		public void GridFadeInEditor()
+		{
+			_gridFadeEditor.FadeIn();
+			_gridFadeEditor.FadeOutAfterTime(2f, 2f);
+		}
+
+		public float GridTransparency
+		{
+			get { return Mathf.Max(_gridFade.Value, _gridFadeEditor.Value); }
+		}
+
+		public bool GridVisible
+		{
+			get { return GridTransparency > _gridFade.MinValue; }
+		}
+
+		private void OnOptionsChange()
+		{
+			GenerateDrawingStuff();
+			_gridFade.MaxValue = Options.MaxGridTransparency;
 		}
 
 		private void CreateMaterials()
@@ -80,27 +140,15 @@ namespace Leanity
 			GenerateWorkspaceGridLines();
 		}
 
-		public void Draw(float alpha, Vector3 position, Quaternion rotation, Vector3 scale)
+		private void GenerateWorkspaceGridLines()
 		{
-			if (_workspaceMat != null)
-			{
-				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
+			_gridLines = new List<Vector3>();
 
-				if (Options.ShowWorkspace)
-				{
-					DrawMesh(alpha, matrix);
-				}
-
-				if (Options.ShowGrid)
-				{
-					Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
-					color.a = alpha;
-					DrawLines(color, matrix);
-				}
-
-				DrawHand(HandTracking.LeftHandData);
-				DrawHand(HandTracking.RightHandData);
-			}
+			GenerateGridOnQuad(0, 1, 5, 4); // Top
+			GenerateGridOnQuad(2, 3, 7, 6); // Bottom
+			GenerateGridOnQuad(0, 2, 6, 4); // Front
+			GenerateGridOnQuad(4, 5, 7, 6); // Left
+			GenerateGridOnQuad(0, 1, 3, 2); // Right
 		}
 
 		private void DrawMesh(float alpha, Matrix4x4 matrix)
@@ -134,17 +182,6 @@ namespace Leanity
 			_workspaceMesh.triangles = triangles;
 
 			if (!_workspaceMesh) Debug.Log("Unable to create workspace mesh");
-		}
-
-		public void GenerateWorkspaceGridLines()
-		{
-			_gridLines = new List<Vector3>();
-
-			GenerateGridOnQuad(0, 1, 5, 4); // Top
-			GenerateGridOnQuad(2, 3, 7, 6); // Bottom
-			GenerateGridOnQuad(0, 2, 6, 4); // Front
-			GenerateGridOnQuad(4, 5, 7, 6); // Left
-			GenerateGridOnQuad(0, 1, 3, 2); // Right
 		}
 
 		// Clockwise vertices

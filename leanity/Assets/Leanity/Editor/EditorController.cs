@@ -89,7 +89,7 @@ namespace Leanity
 				}
 
 				bool anyHandVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
-				if (anyHandVisible|| Options.GridVisible)
+				if (anyHandVisible || EditorWorkspaceController.GridVisible)
 				{
 					if (GUIUpdate && Options.GestureDebug)
 					{
@@ -109,7 +109,7 @@ namespace Leanity
 				var position = camPos;
 				var scale = Options.AxisRotScale * Options.PosScale;
 				var rotation = camRot;
-				EditorWorkspaceController.Draw(Options.GridTransparency, position, rotation, scale);
+				EditorWorkspaceController.Draw(position, rotation, scale);
 			}
 		}
 
@@ -141,11 +141,13 @@ namespace Leanity
 
 		private static void OnHandsVisible()
 		{
+			EditorWorkspaceController.GridFadeIn();
 		}
 
 		private static void OnHandsInvisible()
 		{
 			EditorWorkspaceController.State = WorkspaceState.Hide;
+			EditorWorkspaceController.GridFadeOut();
 		}
 
 		private static void OnStateChange()

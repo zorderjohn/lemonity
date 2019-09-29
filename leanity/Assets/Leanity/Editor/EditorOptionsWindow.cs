@@ -59,10 +59,15 @@ namespace Leanity
 				{
 					EditorGUILayout.PrefixLabel("World scale");
 					// Use logaritmic scale starting from 0
+					EditorGUI.BeginChangeCheck();
 					float sliderValue = MathHelper.LinearToLogScale(Options.PosScale);
 					sliderValue = GUILayout.HorizontalSlider(sliderValue, 0f, 10f);
 					Options.PosScale = MathHelper.LogToLinearScale(sliderValue);
 					Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
+					if (EditorGUI.EndChangeCheck())
+					{
+						EditorController.EditorWorkspaceController.GridFadeInEditor();
+					}
 				}
 
 				using (var horizontalScope = new GUILayout.HorizontalScope())
