@@ -102,6 +102,7 @@ namespace Leanity
 		{
 			GenerateDrawingStuff();
 			_gridFade.MaxValue = Options.MaxGridTransparency;
+			_gridFadeEditor.MaxValue = Options.MaxGridTransparency;
 		}
 
 		private void CreateMaterials()
