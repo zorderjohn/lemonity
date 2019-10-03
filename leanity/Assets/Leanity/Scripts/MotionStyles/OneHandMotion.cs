@@ -115,15 +115,6 @@ namespace Leanity
 			Position = _wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 		}
 
-		protected override void UpdateInertialData()
-		{
-			// Debugging
-			_inertialData.CalculateAngularVelocity();
-			_inertialData.CalculateLinearVelocity();
-			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
-		}
-
 		public override void DebugDraw()
 		{
 		}
