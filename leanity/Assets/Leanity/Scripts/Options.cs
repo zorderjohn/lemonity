@@ -198,7 +198,7 @@ namespace Leanity
 				AngularDrag = PlayerPrefs.GetFloat(_prefix + "AngularDrag", .95f);
 				LinearDrag = PlayerPrefs.GetFloat(_prefix + "LinearDrag", .95f);
 				VelocityFrames = PlayerPrefs.GetInt(_prefix + "VelocityFrames", 5);
-				DiscardFrames = PlayerPrefs.GetInt(_prefix + "DiscardFrames", 5);
+				DiscardFrames = PlayerPrefs.GetInt(_prefix + "DiscardFrames", 1);
 
 				// Filter
 				FilterFrequency = PlayerPrefs.GetFloat(_prefix + "FilterFrequency", 120f);
