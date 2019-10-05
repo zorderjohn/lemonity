@@ -107,13 +107,13 @@ namespace Leanity
 			Quaternion targetRotation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot;
 
 			// Remove any roll rotation
-			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchLimitAngle, Options.RollLimit);
 
 			// Gesture translation in world coordinates
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
 			// Effect of rotation around the pivot
-			Vector3 wcPivotedTranslation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
+			Vector3 wcPivotedTranslation = Rotation * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
 
 			Position = _wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 		}

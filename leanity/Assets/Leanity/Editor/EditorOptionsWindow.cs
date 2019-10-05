@@ -172,12 +172,18 @@ namespace Leanity
 				GUILayout.Label("Camera", EditorStyles.boldLabel);
 				GUILayout.Space(4);
 				EditorGUI.indentLevel++;
+
+				Options.PitchLimit = EditorGUILayout.Toggle("Pitch limitation", Options.PitchLimit);
+				GUI.enabled = Options.PitchLimit;
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
-					EditorGUILayout.PrefixLabel("Pitch limit");
-					Options.PitchLimit = GUILayout.HorizontalSlider(Options.PitchLimit, 0f, 90f);
-					Options.PitchLimit = EditorGUILayout.FloatField(Options.PitchLimit, GUILayout.Width(50));
+					EditorGUILayout.PrefixLabel("Pitch Angle limit");
+					Options.PitchLimitAngle = GUILayout.HorizontalSlider(Options.PitchLimitAngle, 0f, 90f);
+					Options.PitchLimitAngle = EditorGUILayout.FloatField(Options.PitchLimitAngle, GUILayout.Width(50));
 				}
+				GUI.enabled = true;
+
+				Options.RollLimit = EditorGUILayout.Toggle("Roll limitation", Options.RollLimit);
 
 				EditorGUI.indentLevel--;
 

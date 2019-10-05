@@ -31,7 +31,9 @@ namespace Leanity
 		#endregion
 
 		#region Camera
-		public static float PitchLimit { get; set; }
+		public static float PitchLimitAngle { get; set; }
+		public static bool PitchLimit { get; set; }
+		public static bool RollLimit  { get; set; }
 		#endregion
 
 		#region Interaction
@@ -115,7 +117,9 @@ namespace Leanity
 				PlayerPrefs.SetInt(_prefix + "AutoPosScaleOnLoad", AutoPosScaleOnLoad ? 1 : 0);
 
 				// Camera
-				PlayerPrefs.SetFloat(_prefix + "PitchLimit", PitchLimit);
+				PlayerPrefs.SetFloat(_prefix + "PitchLimitAngle", PitchLimitAngle);
+				PlayerPrefs.SetInt(_prefix + "PitchLimit", PitchLimit ? 1 : 0);
+				PlayerPrefs.SetInt(_prefix + "RollLimit", RollLimit ? 1 : 0);
 
 				// Interaction
 				PlayerPrefs.SetInt(_prefix + "GrabEnabled", GrabEnabled ? 1 : 0);
@@ -181,7 +185,9 @@ namespace Leanity
 				AutoPosScaleOnLoad = PlayerPrefs.GetInt(_prefix + "AutoPosScaleOnLoad", 1) == 1;
 
 				// Camera
-				PitchLimit = PlayerPrefs.GetFloat(_prefix + "PitchLimit", 75f);
+				PitchLimitAngle = PlayerPrefs.GetFloat(_prefix + "PitchLimitAngle", 75f);
+				PitchLimit = PlayerPrefs.GetInt(_prefix + "PitchLimit", 1) == 1;
+				RollLimit = PlayerPrefs.GetInt(_prefix + "RollLimit", 1) == 1;
 
 				// Interaction
 				GrabEnabled = PlayerPrefs.GetInt(_prefix + "GrabEnabled", 1) == 1;

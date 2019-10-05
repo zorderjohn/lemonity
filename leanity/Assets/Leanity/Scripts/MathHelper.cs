@@ -12,25 +12,58 @@ public static class MathHelper
 		return euler;
 	}
 
+	/// <summary>
+	/// Return angle (in degrees) between -180 and 180
+	/// </summary>
+	/// <param name="angle">Angle in degrees</param>
+	/// <returns></returns>
 	public static float NormalizeAngle(float angle)
 	{
-		if (angle > 180f)
-		{
-			return angle - 360f;
-		}
-		return angle;
+		return angle <= 180f ? angle: angle - 360f;
 	}
 
-	public static Vector3 ClampEulerRotationXZ(Vector3 euler, float xMin, float xMax, float zMin, float zMax)
+	public static Vector3 ClampEulerRotationXZ(Vector3 euler, bool pitchLimit, float pitchMaxAngle, bool rollLimit)
 	{
-		euler.x = Mathf.Clamp(NormalizeAngle(euler.x), xMin, xMax);
-		euler.z = Mathf.Clamp(NormalizeAngle(euler.z), zMin, zMax);
+		//Unity order: ZXY
+		string dbgStr = euler.ToString();
+		float normalizedZ = NormalizeAngle(euler.z);
+		float normalizedX = NormalizeAngle(euler.x);
+		bool flippedZ = Mathf.Abs(normalizedZ) > 90f;
+
+		if (rollLimit)
+		{
+			euler.z = flippedZ ? 180f : 0f;
+		}
+		if (pitchLimit)
+		{
+			if (flippedZ)
+			{
+				euler.x = normalizedX > 0 ? pitchMaxAngle : -pitchMaxAngle;
+				if (rollLimit)
+				{
+					euler.z = 0f;
+					euler.y -= 180f;
+				}
+			} else
+			{
+				euler.x = Mathf.Clamp(normalizedX, -pitchMaxAngle, pitchMaxAngle);
+			}
+		}
+		//	euler.x = Mathf.Clamp(NormalizeAngle(euler.x), xMin, xMax);
+		//	euler.z = Mathf.Clamp(NormalizeAngle(euler.z), zMin, zMax);
+
+		dbgStr += " --> " + euler.ToString();
+		Debug.Log(dbgStr);
 		return euler;
 	}
 
-	public static Quaternion ClampRotationXZ(Quaternion rot, float xMin, float xMax, float zMin, float zMax)
+	public static Quaternion ClampRotationXZ(Quaternion rot, bool pitchLimit, float pitchMaxAngle, bool rollLimit)
 	{
-		return Quaternion.Euler(ClampEulerRotationXZ(rot.eulerAngles, xMin, xMax, zMin, zMax));
+		if (!pitchLimit && !rollLimit)
+		{
+			return rot;
+		}
+		return Quaternion.Euler(ClampEulerRotationXZ(rot.eulerAngles, pitchLimit, pitchMaxAngle, rollLimit));
 	}
 
 
