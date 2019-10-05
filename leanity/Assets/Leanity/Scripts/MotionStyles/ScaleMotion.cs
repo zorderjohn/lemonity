@@ -40,5 +40,14 @@ namespace Leanity
 
 			Position = _wcInitialPosition + Rotation * deltaVector;
 		}
+
+		public override bool InertialMovement()
+		{
+			return false;
+		}
+
+		protected override void UpdateInertialData()
+		{
+		}
 	}
 }

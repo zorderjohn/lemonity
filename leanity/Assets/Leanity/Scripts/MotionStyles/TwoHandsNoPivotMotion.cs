@@ -50,5 +50,15 @@ namespace Leanity
 
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, -Options.PitchLimit, Options.PitchLimit, 0f, 0f);
 		}
+
+		protected override void UpdateInertialData()
+		{
+			UpdateInertialDataSimple();
+		}
+
+		public override bool InertialMovement()
+		{
+			return InertialMovementSimple();
+		}
 	}
 }

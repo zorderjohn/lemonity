@@ -68,9 +68,9 @@ namespace Leanity
 			_lastMotion = _oneMotion;
 		}
 
-		public bool InertialUpdate()
+		public bool InertialMovement()
 		{
-			bool retValue = _currentMotion.InertialUpdate();
+			bool retValue = _currentMotion.InertialMovement();
 			GetMotionData();
 
 			return retValue;

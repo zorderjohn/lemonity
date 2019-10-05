@@ -41,5 +41,15 @@ namespace Leanity
 			// Not camera
 			//transform.rotation = deltaRot * initialObjectRot;
 		}
+
+		protected override void UpdateInertialData()
+		{
+			UpdateInertialDataSimple();
+		}
+
+		public override bool InertialMovement()
+		{
+			return InertialMovementSimple();
+		}
 	}
 }

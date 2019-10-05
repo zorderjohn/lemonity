@@ -15,7 +15,7 @@ namespace Leanity
 		void Start();
 		void Update();
 		void Stop();
-		bool InertialUpdate();
+		bool InertialMovement();
 		void LateFrameUpdate();
 		void StopInertia();
 		bool HasInertia { get; }
@@ -62,6 +62,9 @@ namespace Leanity
 		{
 			UpdateMotion();
 			UpdateInertialData();
+
+			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
+			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 		}
 
 		public void Stop()
@@ -69,27 +72,33 @@ namespace Leanity
 			_inertialData.DiscardFrames(Options.DiscardFrames);
 			_inertialData.CalculateAngularVelocity();
 			_inertialData.CalculateLinearVelocity();
+			Debug.Log("Stop: _inertial movement: " + (_inertialData.IsMoving ? " yes " : " no"));
 		}
 
-		public virtual bool InertialUpdate()
+		public abstract bool InertialMovement();
+
+		public bool InertialMovementSimple()
 		{
 			float t = GetTime();
 			_inertialData.DragAngularVelocity(Options.AngularDrag, t);
 			_inertialData.DragLinearVelocity(Options.LinearDrag, t);
 
-			_inertialData.Update(t);
-
-			Position = _inertialData.Position;
-			Rotation = _inertialData.Rotation;
+			if (_inertialData.Update(t))
+			{
+				Position = _inertialData.Position;
+				Rotation = _inertialData.Rotation;
+			}
 
 			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
 			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
+			GraphDbg.Log("moving", _inertialData.IsMoving ? 1f : 0f);
 
 			return _inertialData.IsMoving;
 		}
 
 		public void StopInertia()
 		{
+			Debug.LogWarning("STOP INERTIA");
 			_inertialData.Clear();
 		}
 
@@ -103,7 +112,9 @@ namespace Leanity
 
 		protected abstract void UpdateMotion();
 
-		protected virtual void UpdateInertialData()
+		protected abstract void UpdateInertialData();
+
+		protected void UpdateInertialDataSimple()
 		{
 			float t = GetTime();
 			_inertialData.SetPosition(Position, t);
@@ -111,9 +122,7 @@ namespace Leanity
 
 			// Debugging
 			_inertialData.CalculateAngularVelocity();
-
-			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
+			_inertialData.CalculateLinearVelocity();
 		}
 
 		protected IGestureController GetDominantGrabController(bool latestHold = true)

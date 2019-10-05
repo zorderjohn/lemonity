@@ -235,7 +235,8 @@ namespace Leanity
 					{
 						if (Options.EnableInertia)
 						{
-							return MotionStyle.InertialUpdate();
+							bool inertialMoving = MotionStyle.InertialMovement();
+							return inertialMoving;
 						}
 					}
 					break;

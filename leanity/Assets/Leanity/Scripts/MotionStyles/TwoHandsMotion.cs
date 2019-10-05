@@ -99,17 +99,19 @@ namespace Leanity
 			float t = GetTime();
 			_inertialData.SetPosition(ccDeltaTranslation, t);
 			_inertialData.SetRotation(hcYawDeltaRot, t);
-
 		}
 
-		public override bool InertialUpdate()
+		public override bool InertialMovement()
 		{
 			float t = GetTime();
 			_inertialData.DragAngularVelocity(Options.AngularDrag, t);
 			_inertialData.DragLinearVelocity(Options.LinearDrag, t);
 
+
 			if (_inertialData.Update(t))
 			{
+				GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
+				GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 				UpdatePose(_inertialData.Rotation, _inertialData.Position);
 				return true;
 			}
@@ -138,8 +140,6 @@ namespace Leanity
 			// Debugging
 			_inertialData.CalculateAngularVelocity();
 			_inertialData.CalculateLinearVelocity();
-			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 		}
 
 		public override void DebugDraw()
