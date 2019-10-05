@@ -75,32 +75,40 @@ public class GraphDbgInspector : Editor {
 
 			float xDivider = 1;
 			float yDivider = 1;
-			if (maxData.x-minData.x>0)
-				xDivider = maxData.x-minData.x;
+			if (maxData.x - minData.x > 0)
+			{
+				xDivider = maxData.x - minData.x;
+			}
 			if (!args.fitX)
+			{
 				xDivider = Mathf.Max(xDivider, args.logLimit);
-			if (maxData.y-minData.y>0)
-				yDivider = maxData.y-minData.y;
+			}
+			if (maxData.y - minData.y > 0)
+			{
+				yDivider = maxData.y - minData.y;
+			}
 			bool isIncludeZero = true;
 			if (isIncludeZero)
 			{
 				minData.y = Mathf.Min(minData.y, -yDivider*0.1f);
 				maxData.y = Mathf.Max(maxData.y, yDivider*0.1f);
-				if (maxData.y-minData.y>0)
-					yDivider = maxData.y-minData.y;
-				if (minData.y<=0 && maxData.y>=0)
+				if (maxData.y - minData.y > 0)
 				{
-					float yZero = (1-((0-minData.y)/yDivider))*r.height+r.y;
+					yDivider = maxData.y - minData.y;
+				}
+				if (minData.y <= 0 && maxData.y >= 0)
+				{
+					float yZero = (1 - ((0 - minData.y) / yDivider)) * r.height + r.y;
 					Handles.color = Color.black;
-					Handles.DrawLine(new Vector2(r.x, yZero), new Vector2(r.width+r.x, yZero));
+					Handles.DrawLine(new Vector2(r.x, yZero), new Vector2(r.width + r.x, yZero));
 				}
 			}
 			//			xDivider = Mathf.Max(r.width*0.5f, xDivider);
 			for (int i=0; i<lines.Length; i++)
 			{
 				Vector3 v = lines[i];
-				v.x = ((v.x-minData.x)/xDivider)*r.width+r.x;
-				v.y = (1-((v.y-minData.y)/yDivider))*r.height+r.y;
+				v.x = ((v.x - minData.x) / xDivider) * r.width + r.x;
+				v.y = Mathf.Clamp01(1 - ((v.y - minData.y) / yDivider)) * r.height + r.y;
 				lines[i] = v;
 			}
 			Handles.color = Color.green;
