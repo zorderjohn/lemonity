@@ -2,6 +2,7 @@
 using UnityEditor;
 using System;
 using UnityEditor.IMGUI.Controls;
+using System.Collections.Generic;
 
 namespace Leanity
 {
@@ -9,10 +10,9 @@ namespace Leanity
 	public class EditorDebugWindow : EditorWindow, IDisposable
 	{
 		private static Vector2 _scrollPosition;
-		private static Texture _rightHandTexture;
-		private static Texture _leftHandTexture;
-		private static Texture _rightHandGrabTexture;
-		private static Texture _leftHandGrabTexture;
+
+		static Dictionary<MotionController.State, Texture> _leftTextures;
+		static Dictionary<MotionController.State, Texture> _rightTextures;
 
 		private static float _workspaceWidth = 0.5f;
 		private static float _workspaceDepth = 0.5f;
@@ -195,28 +195,23 @@ namespace Leanity
 			{
 				Rect rImage = new Rect(r);
 				Texture handTexture;
-				GrabController grabController;
 				var motionController = EditorController.EditorMotionController;
-				if (hand.IsRight)
-				{
-					grabController = motionController.RightGrab;
-					handTexture = grabController.IsHolding ? _rightHandGrabTexture : _rightHandTexture;
-				}
-				else
-				{
-					grabController = motionController.LeftGrab;
-					handTexture = grabController.IsHolding ? _leftHandGrabTexture : _leftHandTexture;
-				}
+				var handState = motionController.GetHandState(hand.IsRight);
+
+				IGestureController gestureController = motionController.GetCurrentGestureController(hand.IsRight);
+
+				handTexture = hand.IsRight ? _rightTextures[handState] : _leftTextures[handState];
+
 				rImage.width = handTexture.width;
 				rImage.height = handTexture.height;
 
 				var handRectCoords = GetRectCoords(hand.Position, r);
-				var handInitialRectCoords = GetRectCoords(grabController.HandInitialPosition, r);
+				var handInitialRectCoords = GetRectCoords(gestureController.HandInitialPosition, r);
 
 				rImage.x = (int)(handRectCoords.x - rImage.width / 2);
 				rImage.y = (int)(handRectCoords.y - rImage.height / 2);
 
-				if (grabController.IsHolding)
+				if (gestureController.IsHolding)
 				{
 					Handles.color = Color.red;
 					Handles.DrawLine(handInitialRectCoords, handRectCoords);
@@ -258,12 +253,23 @@ namespace Leanity
 
 		private static void LoadResources()
 		{
-			if (_rightHandTexture == null)
+			if (_leftTextures == null)
 			{
-				_rightHandTexture = Resources.Load<Texture>("RightHand.png");
-				_leftHandTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHand.png");
-				_rightHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/RightHandGrab.png");
-				_leftHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHandGrab.png");
+				_leftTextures = new Dictionary<MotionController.State, Texture>()
+				{
+					{MotionController.State.Hiding, null },
+					{MotionController.State.Idle, Resources.Load<Texture>("LeftHand")},
+					{MotionController.State.Grabbing, Resources.Load<Texture>("LeftHandClosed")},
+					{MotionController.State.Pinching, Resources.Load<Texture>("LeftHandPinch")}
+				};
+
+				_rightTextures = new Dictionary<MotionController.State, Texture>()
+				{
+					{MotionController.State.Hiding, null },
+					{MotionController.State.Idle, Resources.Load<Texture>("RightHand")},
+					{MotionController.State.Grabbing, Resources.Load<Texture>("RightHandClosed")},
+					{MotionController.State.Pinching, Resources.Load<Texture>("RightHandPinch")}
+				};
 			}
 		}
 		public void Awake()

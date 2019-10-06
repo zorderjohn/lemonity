@@ -143,24 +143,11 @@ namespace Leanity
 
 		private static void OnHandsInvisible()
 		{
-			EditorWorkspaceController.State = WorkspaceState.Hide;
 			EditorWorkspaceController.GridFadeOut();
 		}
 
 		private static void OnStateChange()
 		{
-			if (EditorMotionController.IsGrabbing)
-			{
-				EditorWorkspaceController.State = WorkspaceState.Grab;
-			}
-			else if (EditorMotionController.IsDualPinching)
-			{
-				EditorWorkspaceController.State = WorkspaceState.Pinch;
-			}
-			else
-			{
-				EditorWorkspaceController.State = WorkspaceState.Idle;
-			}
 		}
 	}
 }

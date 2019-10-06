@@ -201,6 +201,32 @@ namespace Leanity
 			return handState;
 		}
 
+		public IGestureController GetCurrentGestureController(bool isRightHand)
+		{
+			if (isRightHand)
+			{
+				if (RightGrab.IsHolding)
+				{
+					return RightGrab;
+				}
+				else
+				{
+					return RightPinch;
+				}
+			} else
+			{
+				if (LeftGrab.IsHolding)
+				{
+					return LeftGrab;
+				}
+				else
+				{
+					return LeftPinch;
+				}
+			}
+
+		}
+
 		private void InitMotionStyle()
 		{
 			_motionStyle.LeftGesture = LeftGrab;

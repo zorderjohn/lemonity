@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Leanity
 {
-	public enum WorkspaceState { Hide = 0, Idle = 1, Grab = 2, Pinch = 3};
-
 	public class WorkspaceController
 	{
 		private static readonly string _workspaceShaderStr = "UI/Unlit/Transparent";
@@ -23,7 +21,9 @@ namespace Leanity
 		private Mesh _workspaceMesh;
 		private Material _workspaceMat;
 		private Material _handMat;
-		private Mesh[] _handMeshes;
+		private Dictionary<MotionController.State, Mesh> _leftMeshes;
+		private Dictionary<MotionController.State, Mesh> _rightMeshes;
+
 		private MotionController _motionController;
 
 		private ValueFade _gridFade = new ValueFade();
@@ -226,17 +226,21 @@ namespace Leanity
 
 		private void LoadMeshes()
 		{
-			_handMeshes = new Mesh[8];
+			_leftMeshes = new Dictionary<MotionController.State, Mesh>()
+			{
+				{MotionController.State.Hiding, null },
+				{MotionController.State.Idle, Resources.Load<Mesh>("extended_hand_left")},
+				{MotionController.State.Grabbing, Resources.Load<Mesh>("grab_hand_left")},
+				{MotionController.State.Pinching, Resources.Load<Mesh>("pinch_hand_left")}
+			};
 
-			_handMeshes[0] = null;
-			_handMeshes[1] = Resources.Load<Mesh>("extended_hand_left");
-			_handMeshes[2] = Resources.Load<Mesh>("grab_hand_left");
-			_handMeshes[3] = Resources.Load<Mesh>("pinch_hand_left");
-
-			_handMeshes[4] = null;
-			_handMeshes[5] = Resources.Load<Mesh>("extended_hand_right");
-			_handMeshes[6] = Resources.Load<Mesh>("grab_hand_right");
-			_handMeshes[7] = Resources.Load<Mesh>("pinch_hand_right");
+			_rightMeshes = new Dictionary<MotionController.State, Mesh>()
+			{
+				{MotionController.State.Hiding, null },
+				{MotionController.State.Idle, Resources.Load<Mesh>("extended_hand_right")},
+				{MotionController.State.Grabbing, Resources.Load<Mesh>("grab_hand_right")},
+				{MotionController.State.Pinching, Resources.Load<Mesh>("pinch_hand_right")}
+			};
 		}
 
 		private void DrawHand(HandData hand)
@@ -244,10 +248,8 @@ namespace Leanity
 			if (hand.Detected)
 			{
 				var handState = _motionController.GetHandState(hand.IsRight);
+				Mesh mesh = hand.IsRight ? _rightMeshes[handState] : _leftMeshes[handState];
 
-				int meshId = (int)handState + (hand.IsRight ? 4 : 0);
-
-				Mesh mesh = _handMeshes[meshId];
 				if (mesh != null)
 				{
 					_handMat.SetPass(0);
