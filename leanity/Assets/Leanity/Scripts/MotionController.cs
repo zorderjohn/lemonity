@@ -5,7 +5,7 @@ namespace Leanity
 {
 	public class MotionController
 	{
-		private enum State { Idle, Grabbing, Pinching }
+		public enum State { Hiding = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
 
 		private IMotionStyle _scaleStyle;
 		private IMotionStyle _motionStyle;
@@ -69,12 +69,12 @@ namespace Leanity
 		public PinchController LeftPinch { get; private set; }
 		public PinchController RightPinch { get; private set; }
 
-		public bool IsGrabbing { get { return _state == State.Grabbing; } }
-		public bool IsDualPinching { get { return _state == State.Pinching; } }
+		public State MotionState { get; private set; }
 
-		private bool _handsVisible = false;
+		public bool IsGrabbing => MotionState == State.Grabbing;
+		public bool IsDualPinching => MotionState == State.Pinching;
+
 		private WorkingGesture _currentGesture;
-		private State _state = State.Idle;
 
 		private float _initialScale;
 
@@ -141,16 +141,11 @@ namespace Leanity
 				LeftPinch.Update(HandTracking.LeftHandData, Position, Rotation);
 				RightPinch.Update(HandTracking.RightHandData, Position, Rotation);
 
-				HandDetectedEvent();
-
 				bool retValue = EventController();
 
-				if (retValue)
-				{
-					HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
-					HandTracking.TransformRotation = Rotation;
-					HandTracking.TransformScale = Options.PosScale;
-				}
+				HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
+				HandTracking.TransformRotation = Rotation;
+				HandTracking.TransformScale = Options.PosScale;
 
 				MotionStyle.LateFrameUpdate();
 				return retValue;
@@ -177,6 +172,35 @@ namespace Leanity
 			MotionStyle?.StopInertia();
 		}
 
+		public State GetHandState(bool isRightHand)
+		{
+			State handState = State.Idle;
+			if (isRightHand)
+			{
+				if (RightGrab.IsHolding)
+				{
+					handState = State.Grabbing;
+				}
+				else if (RightPinch.IsHolding)
+				{
+					handState = State.Pinching;
+				}
+			}
+			else
+			{
+				if (LeftGrab.IsHolding)
+				{
+					handState = State.Grabbing;
+				}
+				else if (LeftPinch.IsHolding)
+				{
+					handState = State.Pinching;
+				}
+			}
+
+			return handState;
+		}
+
 		private void InitMotionStyle()
 		{
 			_motionStyle.LeftGesture = LeftGrab;
@@ -185,22 +209,6 @@ namespace Leanity
 
 			_scaleStyle.LeftGesture = LeftPinch;
 			_scaleStyle.RightGesture = RightPinch;
-		}
-
-		private void HandDetectedEvent()
-		{
-			bool handsDetected = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
-			if (!_handsVisible && handsDetected)
-			{
-				OnHandsVisible?.Invoke();
-				OnStateChange?.Invoke();
-			}
-			else if (_handsVisible && !handsDetected)
-			{
-				OnHandsInVisible?.Invoke();
-				OnStateChange?.Invoke();
-			}
-			_handsVisible = handsDetected;
 		}
 
 		private bool EventController()
@@ -218,18 +226,37 @@ namespace Leanity
 
 			bool dualPinchingUpdate = Options.PinchEnabled && LeftPinch.IsHolding && RightPinch.IsHolding;
 
-			switch (_state)
+			bool isHiding = !HandTracking.LeftHandData.Detected && !HandTracking.RightHandData.Detected;
+
+			switch (MotionState)
 			{
+				case State.Hiding:
+					if (!isHiding)
+					{
+						MotionState = State.Idle;
+						OnHandsVisible?.Invoke();
+						OnStateChange?.Invoke();
+					}
+					break;
+
 				case State.Idle:
+					if (isHiding)
+					{
+						MotionState = State.Hiding;
+						OnHandsInVisible?.Invoke();
+						OnStateChange?.Invoke();
+					}
 					if (grabbingUpdate)
 					{
-						_state = State.Grabbing;
+						MotionState = State.Grabbing;
 						StartMoving();
+						OnStateChange?.Invoke();
 					}
 					else if (dualPinchingUpdate)
 					{
-						_state = State.Pinching;
+						MotionState = State.Pinching;
 						StartPinching();
+						OnStateChange?.Invoke();
 					}
 					else
 					{
@@ -253,12 +280,14 @@ namespace Leanity
 
 						if (dualPinchingUpdate)
 						{
-							_state = State.Pinching;
+							MotionState = State.Pinching;
 							StartPinching();
+							OnStateChange?.Invoke();
 						}
 						else
 						{
-							_state = State.Idle;
+							MotionState = State.Idle;
+							OnStateChange?.Invoke();
 						}
 					}
 					break;
@@ -267,13 +296,15 @@ namespace Leanity
 					if (grabbingUpdate)
 					{
 						StopPinching();
-						_state = State.Grabbing;
+						MotionState = State.Grabbing;
 						StartMoving();
+						OnStateChange?.Invoke();
 					}
 					else if (!dualPinchingUpdate)
 					{
 						StopPinching();
-						_state = State.Idle;
+						MotionState = State.Idle;
+						OnStateChange?.Invoke();
 					}
 					else
 					{

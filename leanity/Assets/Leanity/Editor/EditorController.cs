@@ -104,13 +104,10 @@ namespace Leanity
 
 		private static void DrawWorkspace(Vector3 camPos, Quaternion camRot)
 		{
-			if (Options.ShowWorkspace)
-			{
-				var position = camPos;
-				var scale = Options.AxisRotScale * Options.PosScale;
-				var rotation = camRot;
-				EditorWorkspaceController.Draw(position, rotation, scale);
-			}
+			var position = camPos;
+			var scale = Options.AxisRotScale * Options.PosScale;
+			var rotation = camRot;
+			EditorWorkspaceController.Draw(position, rotation, scale);
 		}
 
 		private static void OnSceneChange()

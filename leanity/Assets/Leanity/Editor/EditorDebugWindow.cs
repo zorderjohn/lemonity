@@ -13,6 +13,7 @@ namespace Leanity
 		private static Texture _leftHandTexture;
 		private static Texture _rightHandGrabTexture;
 		private static Texture _leftHandGrabTexture;
+
 		private static float _workspaceWidth = 0.5f;
 		private static float _workspaceDepth = 0.5f;
 		private static float _workspaceRatio = 1f;
@@ -52,17 +53,19 @@ namespace Leanity
 			{
 				EditorGUI.BeginChangeCheck();
 
-				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
 				Options.ShowWorkspace = EditorGUILayout.Toggle("Show Workspace", Options.ShowWorkspace);
+				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
+				GUI.enabled = Options.ShowGrid;
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
-					EditorGUILayout.PrefixLabel("Grid Lines");
-					Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 1f, 20f);
+					EditorGUILayout.PrefixLabel("Grid Divisions");
+					Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 0f, 20f);
 					Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines, GUILayout.Width(50));
 				}
+				GUI.enabled = Options.ShowGrid | Options.ShowWorkspace;
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
-					EditorGUILayout.PrefixLabel("Grid Transparency");
+					EditorGUILayout.PrefixLabel("Grid/Workspace Transparency");
 					Options.MaxGridTransparency = GUILayout.HorizontalSlider(Options.MaxGridTransparency, 0f, 1f);
 					Options.MaxGridTransparency = EditorGUILayout.FloatField(Options.MaxGridTransparency, GUILayout.Width(50));
 				}
@@ -72,6 +75,7 @@ namespace Leanity
 					Options.TrackingZOffset= GUILayout.HorizontalSlider(Options.TrackingZOffset, 0f, 2f);
 					Options.TrackingZOffset = EditorGUILayout.FloatField(Options.TrackingZOffset, GUILayout.Width(50));
 				}
+				GUI.enabled = true;
 				using (var horizontalScope = new GUILayout.HorizontalScope())
 				{
 					EditorGUILayout.PrefixLabel("Hand Scale");
@@ -256,7 +260,7 @@ namespace Leanity
 		{
 			if (_rightHandTexture == null)
 			{
-				_rightHandTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/RightHand.png");
+				_rightHandTexture = Resources.Load<Texture>("RightHand.png");
 				_leftHandTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHand.png");
 				_rightHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/RightHandGrab.png");
 				_leftHandGrabTexture = (Texture)EditorGUIUtility.Load("Assets/Leanity/Editor/Resources/LeftHandGrab.png");

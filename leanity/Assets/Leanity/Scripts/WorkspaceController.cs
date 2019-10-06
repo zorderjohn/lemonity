@@ -7,13 +7,6 @@ namespace Leanity
 
 	public class WorkspaceController
 	{
-		private WorkspaceState _state;
-		public WorkspaceState State
-		{
-			get { return _state; }
-			set { _state = value; }
-		}
-
 		private static readonly string _workspaceShaderStr = "UI/Unlit/Transparent";
 		private List<Vector3> _gridLines;
 		private Vector3[] _cubeVertices =
@@ -64,7 +57,8 @@ namespace Leanity
 
 				if (Options.ShowGrid)
 				{
-					Color color = _state == WorkspaceState.Idle ? Options.GridColor : Options.GrabGridColor;
+					bool isIddle = _motionController.MotionState == MotionController.State.Idle;
+					Color color = isIddle ? Options.GridColor : Options.GrabGridColor;
 					color.a = GridTransparency;
 					DrawLines(color, matrix);
 				}
@@ -249,9 +243,11 @@ namespace Leanity
 		{
 			if (hand.Detected)
 			{
-				var handState = GetHandState(hand);
+				var handState = _motionController.GetHandState(hand.IsRight);
 
-				Mesh mesh = _handMeshes[(int)handState + (hand.IsRight ? 4 : 0)];
+				int meshId = (int)handState + (hand.IsRight ? 4 : 0);
+
+				Mesh mesh = _handMeshes[meshId];
 				if (mesh != null)
 				{
 					_handMat.SetPass(0);
@@ -266,33 +262,6 @@ namespace Leanity
 			}
 		}
 
-		private WorkspaceState GetHandState (HandData hand)
-		{
-			WorkspaceState handState = WorkspaceState.Idle;
-			if (hand.IsRight)
-			{
-				if (_motionController.RightGrab.IsHolding)
-				{
-					handState = WorkspaceState.Grab;
-				}
-				else if (_motionController.RightPinch.IsHolding)
-				{
-					handState = WorkspaceState.Pinch;
-				}
-			}
-			else
-			{
-				if (_motionController.LeftGrab.IsHolding)
-				{
-					handState = WorkspaceState.Grab;
-				}
-				else if (_motionController.LeftPinch.IsHolding)
-				{
-					handState = WorkspaceState.Pinch;
-				}
-			}
 
-			return handState;
-		}
 	}
 }
