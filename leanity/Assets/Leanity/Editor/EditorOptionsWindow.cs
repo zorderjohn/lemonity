@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using System;
+using System.Globalization;
 
 namespace Leanity
 {
@@ -9,8 +10,7 @@ namespace Leanity
 	public class EditorOptionsWindow : EditorWindow, IDisposable
 	{
 		private static Vector2 _scrollPosition;
-		private static Texture _rightHandTexture;
-		private static Texture _leftHandTexture;
+		private static Texture _logoTexture;
 
 		AnimBool _showSensitivity = new AnimBool(true);
 		AnimBool _showGestures = new AnimBool();
@@ -23,14 +23,22 @@ namespace Leanity
 
 		public void OnGUI()
 		{
+			// Style definition
 			var foldoutStyle = EditorStyles.foldout;
 			foldoutStyle.fontStyle = FontStyle.Bold;
 			foldoutStyle.fontSize = 14;
+
+			int foldoutSpace = 4;
 
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
+				_logoTexture = _logoTexture ?? Resources.Load<Texture>("logo");
+				Rect rImage = GUILayoutUtility.GetRect(50, 1000, 50, 50);
+				GUI.DrawTexture(rImage, _logoTexture, ScaleMode.ScaleToFit);
+
+
 				Options.Enabled = EditorGUILayout.Toggle("Leanity Enabled", Options.Enabled);
 				GUILayout.Label("Working gesture", EditorStyles.boldLabel);
 				GUIContent[] gestures = new[]
@@ -77,7 +85,8 @@ namespace Leanity
 							float sliderValue = MathHelper.LinearToLogScale(Options.PosScale);
 							sliderValue = GUILayout.HorizontalSlider(sliderValue, 0f, 10f);
 							Options.PosScale = MathHelper.LogToLinearScale(sliderValue);
-							Options.PosScale = EditorGUILayout.FloatField(Options.PosScale, GUILayout.Width(50));
+							//Options.PosScale = CustomFloatField(Options.PosScale);
+							Options.PosScale = CustomFloatField(Options.PosScale);
 							if (EditorGUI.EndChangeCheck())
 							{
 								EditorController.EditorWorkspaceController.GridFadeInEditor();
@@ -88,14 +97,14 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Rotation factor");
 							Options.RotScale = GUILayout.HorizontalSlider(Options.RotScale, 0f, 5f);
-							Options.RotScale = EditorGUILayout.FloatField(Options.RotScale, GUILayout.Width(50));
+							Options.RotScale = CustomFloatField(Options.RotScale);
 						}
 
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Zoom speed");
 							Options.ZoomScale = GUILayout.HorizontalSlider(Options.ZoomScale, 0f, 3f);
-							Options.ZoomScale = EditorGUILayout.FloatField(Options.ZoomScale, GUILayout.Width(50));
+							Options.ZoomScale = CustomFloatField(Options.ZoomScale);
 						}
 
 						float xRange = HandTracking.Workspace.x * Options.PosScale;
@@ -104,8 +113,8 @@ namespace Leanity
 						Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);
 
 						EditorGUI.indentLevel--;
-						GUILayout.Space(8);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 
 			}
@@ -128,7 +137,7 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Min Threshold");
 							Options.GrabMinThreshold = GUILayout.HorizontalSlider(Options.GrabMinThreshold, 0f, 1f);
-							Options.GrabMinThreshold = EditorGUILayout.FloatField(Options.GrabMinThreshold, GUILayout.Width(50));
+							Options.GrabMinThreshold = CustomFloatField(Options.GrabMinThreshold);
 
 							if (Options.GrabMinThreshold > Options.GrabMaxThreshold)
 							{
@@ -139,7 +148,7 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Max Threshold");
 							Options.GrabMaxThreshold = GUILayout.HorizontalSlider(Options.GrabMaxThreshold, 0f, 1f);
-							Options.GrabMaxThreshold = EditorGUILayout.FloatField(Options.GrabMaxThreshold, GUILayout.Width(50));
+							Options.GrabMaxThreshold = CustomFloatField(Options.GrabMaxThreshold);
 
 							if (Options.GrabMaxThreshold < Options.GrabMinThreshold)
 							{
@@ -156,7 +165,7 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Min Threshold");
 							Options.PinchMinThreshold = GUILayout.HorizontalSlider(Options.PinchMinThreshold, 0f, 100f);
-							Options.PinchMinThreshold = EditorGUILayout.FloatField(Options.PinchMinThreshold, GUILayout.Width(50));
+							Options.PinchMinThreshold = CustomFloatField(Options.PinchMinThreshold);
 
 							if (Options.PinchMinThreshold > Options.PinchMaxThreshold)
 							{
@@ -167,7 +176,7 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Max Threshold");
 							Options.PinchMaxThreshold = GUILayout.HorizontalSlider(Options.PinchMaxThreshold, 0f, 100f);
-							Options.PinchMaxThreshold = EditorGUILayout.FloatField(Options.PinchMaxThreshold, GUILayout.Width(50));
+							Options.PinchMaxThreshold = CustomFloatField(Options.PinchMaxThreshold);
 
 							if (Options.PinchMaxThreshold < Options.PinchMinThreshold)
 							{
@@ -175,8 +184,8 @@ namespace Leanity
 							}
 						}
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -199,15 +208,15 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Pitch Angle limit");
 							Options.PitchLimitAngle = GUILayout.HorizontalSlider(Options.PitchLimitAngle, 0f, 90f);
-							Options.PitchLimitAngle = EditorGUILayout.FloatField(Options.PitchLimitAngle, GUILayout.Width(50));
+							Options.PitchLimitAngle = CustomFloatField(Options.PitchLimitAngle);
 						}
 						GUI.enabled = true;
 
 						Options.RollLimit = EditorGUILayout.Toggle("Roll limitation", Options.RollLimit);
 
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -215,7 +224,7 @@ namespace Leanity
 			#region Filters
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Configure filters", true, foldoutStyle);
+				_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Filters", true, foldoutStyle);
 
 				GUIContent[] filterOptions = new[]
 				{
@@ -248,8 +257,8 @@ namespace Leanity
 						EditorGUI.indentLevel--;
 
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -270,28 +279,28 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Linear Drag");
 							Options.LinearDrag = GUILayout.HorizontalSlider(Options.LinearDrag, 0f, 10f);
-							Options.LinearDrag = EditorGUILayout.FloatField(Options.LinearDrag, GUILayout.Width(50));
+							Options.LinearDrag = CustomFloatField(Options.LinearDrag);
 						}
 
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Angular Drag");
 							Options.AngularDrag = GUILayout.HorizontalSlider(Options.AngularDrag, 0f, 10f);
-							Options.AngularDrag = EditorGUILayout.FloatField(Options.AngularDrag, GUILayout.Width(50));
+							Options.AngularDrag = CustomFloatField(Options.AngularDrag);
 						}
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Velocity Frames");
-							Options.VelocityFrames = EditorGUILayout.IntField(Options.VelocityFrames, GUILayout.Width(50));
+							Options.VelocityFrames = EditorGUILayout.IntField(Options.VelocityFrames);
 						}
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Discard Frames");
-							Options.DiscardFrames = EditorGUILayout.IntField(Options.DiscardFrames, GUILayout.Width(50));
+							Options.DiscardFrames = EditorGUILayout.IntField(Options.DiscardFrames);
 						}
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -312,11 +321,11 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Safe zone radius");
 							Options.HeuristicRadius = GUILayout.HorizontalSlider(Options.HeuristicRadius, 0.1f, 1f);
-							Options.HeuristicRadius = EditorGUILayout.FloatField(Options.HeuristicRadius, GUILayout.Width(50));
+							Options.HeuristicRadius = CustomFloatField(Options.HeuristicRadius);
 						}
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -342,27 +351,27 @@ namespace Leanity
 						{
 							EditorGUILayout.PrefixLabel("Grid Divisions");
 							Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 0f, 20f);
-							Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines, GUILayout.Width(50));
+							Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines);
 						}
 						GUI.enabled = Options.ShowGrid | Options.ShowWorkspace;
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Grid/Workspace Transparency");
 							Options.MaxGridTransparency = GUILayout.HorizontalSlider(Options.MaxGridTransparency, 0f, 1f);
-							Options.MaxGridTransparency = EditorGUILayout.FloatField(Options.MaxGridTransparency, GUILayout.Width(50));
+							Options.MaxGridTransparency = CustomFloatField(Options.MaxGridTransparency);
 						}
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Grid Z Offset");
 							Options.TrackingZOffset = GUILayout.HorizontalSlider(Options.TrackingZOffset, 0f, 2f);
-							Options.TrackingZOffset = EditorGUILayout.FloatField(Options.TrackingZOffset, GUILayout.Width(50));
+							Options.TrackingZOffset = CustomFloatField(Options.TrackingZOffset);
 						}
 						GUI.enabled = true;
 						using (var horizontalScope = new GUILayout.HorizontalScope())
 						{
 							EditorGUILayout.PrefixLabel("Hand Scale");
 							Options.HandScale = GUILayout.HorizontalSlider(Options.HandScale, 0f, 2f);
-							Options.HandScale = EditorGUILayout.FloatField(Options.HandScale, GUILayout.Width(50));
+							Options.HandScale = CustomFloatField(Options.HandScale);
 						}
 
 						if (EditorGUI.EndChangeCheck())
@@ -374,8 +383,8 @@ namespace Leanity
 						Options.ShowHandGuides = EditorGUILayout.Toggle("Hand Guides", Options.ShowHandGuides);
 
 						EditorGUI.indentLevel--;
-						GUILayout.Space(4);
 					}
+					GUILayout.Space(foldoutSpace);
 				}
 			}
 			#endregion
@@ -418,6 +427,26 @@ namespace Leanity
 		{
 			Options.Load();
 			_showSensitivity.target = true;
+			_logoTexture = Resources.Load<Texture>("logo");
+		}
+
+		private static float CustomFloatField(float value)
+		{
+			string floatString = value.ToString("0.00");
+
+
+			string input = EditorGUILayout.TextField(floatString, GUILayout.Width(70));
+
+			if (input != floatString)
+			{
+				float inputValue;
+				if (float.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out inputValue))
+				{
+					value = inputValue;
+				}
+			}
+
+			return value;
 		}
 
 	}

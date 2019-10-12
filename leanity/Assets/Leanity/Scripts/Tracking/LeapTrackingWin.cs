@@ -19,23 +19,16 @@ namespace Leanity
 		private LeapTrackingWin()
 		{
 			Options.Load();
-			_rightHandData = new HandData(120, Options.VelocityFrames);
-			_leftHandData = new HandData(120, Options.VelocityFrames);
+			_rightHandData = new HandData(Options.FilterFrequency, Options.VelocityFrames);
+			_leftHandData = new HandData(Options.FilterFrequency, Options.VelocityFrames);
 			Options.OnOptionsChange += FilterParameterUpdate;
 
 			FilterParameterUpdate();
 
-			//try
-			//{
-				if (_controller == null)
-				{
-					_controller = new Leap.Controller();
-				}
-		//	}
-		//	catch (Exception ex)
-			//{
-			//	Debug.LogError(ex.ToString());
-			//}
+			if (_controller == null)
+			{
+				_controller = new Leap.Controller();
+			}
 		}
 
 		private void FilterParameterUpdate()

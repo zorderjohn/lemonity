@@ -6166,7 +6166,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 434050, guid: b8800faccef09f047b9aab74ce0d163d, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -40.39203
+      value: -39.8
       objectReference: {fileID: 0}
     - target: {fileID: 434050, guid: b8800faccef09f047b9aab74ce0d163d, type: 2}
       propertyPath: m_LocalPosition.y
@@ -6174,7 +6174,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 434050, guid: b8800faccef09f047b9aab74ce0d163d, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 11.868835
+      value: 11.8
       objectReference: {fileID: 0}
     - target: {fileID: 434050, guid: b8800faccef09f047b9aab74ce0d163d, type: 2}
       propertyPath: m_LocalRotation.x
@@ -6330,6 +6330,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 456606, guid: 94ed46bc24edf404d866285038f24641,
     type: 2}
   m_PrefabInternal: {fileID: 1428083024}
+--- !u!1 &1470973656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1470973659}
+  - component: {fileID: 1470973658}
+  - component: {fileID: 1470973657}
+  m_Layer: 0
+  m_Name: Debug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1470973657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1470973656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b567ea2796625444ab52872fe364b6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graphName: angularVel
+  autoMinMax: 0
+  maxValue: 500
+  minValue: 0.26401126
+--- !u!114 &1470973658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1470973656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b567ea2796625444ab52872fe364b6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graphName: vel
+  autoMinMax: 0
+  maxValue: 5000
+  minValue: 0
+--- !u!4 &1470973659
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1470973656}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 580.00415, y: 459.48175, z: 551.78796}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1473961005
 GameObject:
   m_ObjectHideFlags: 0
