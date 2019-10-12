@@ -112,7 +112,7 @@ namespace Leanity
 		protected abstract bool HoldingTest();
 		protected abstract bool ReleaseTest();
 
-		protected bool HeuristicCondition()
+		protected virtual bool HeuristicCondition()
 		{
 			if (!Options.HeuristicEnabled)
 			{
@@ -123,18 +123,21 @@ namespace Leanity
 			float distanceToCenter = handToCenter.magnitude;
 			Vector3 handVelocity = _hand.LinearVelocity;
 			float handSpeed = handVelocity.magnitude;
-			float dotProd = Vector3.Dot(handToCenter, handVelocity);
+			float dotProd = Vector3.Dot(handToCenter.normalized, handVelocity.normalized);
 
 			bool isNear = distanceToCenter < Options.HeuristicRadius;
 			bool isMoving = handSpeed > 0.1f;
 			bool isApproaching = dotProd > 0f;
 			bool isOk = isNear || (isMoving && isApproaching);
-			Debug.Log(
-				( isOk ? "<<<OK>>>  " : "") +
-				$"Distance = {distanceToCenter}({isNear}) " +
-				$"HandSpeed = {handSpeed}({isMoving}) " +
-				$"DotProd = {dotProd}({isApproaching})"
-			);
+			if (isOk)
+			{
+				Debug.Log(
+					(isOk ? "<<<OK>>>  " : "") +
+					$"Distance = {distanceToCenter}({isNear}) " +
+					$"HandSpeed = {handSpeed}({isMoving}) " +
+					$"DotProd = {dotProd}({isApproaching})"
+				);
+			}
 			return isOk;
 		}
 	}

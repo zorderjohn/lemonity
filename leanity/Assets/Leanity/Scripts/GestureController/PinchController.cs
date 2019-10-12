@@ -13,6 +13,11 @@ namespace Leanity
 		{
 			return _hand.PinchDistance > Options.PinchMaxThreshold;
 		}
+
+		protected override bool HeuristicCondition()
+		{
+			return true;
+		}
 	}
 
 }
