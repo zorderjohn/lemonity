@@ -98,7 +98,7 @@ namespace Leanity
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				//GUILayout.Label("Grab Gesture", EditorStyles.boldLabel);
-				_showGrabGesture = EditorGUILayout.Foldout(_showGrabGesture, "Grab Gesture", EditorStyles.foldout);
+				_showGrabGesture = EditorGUILayout.Foldout(_showGrabGesture, "Grab Gesture", true, EditorStyles.foldout);
 				GUILayout.Space(4);
 				EditorGUI.indentLevel++;
 				if (_showGrabGesture)

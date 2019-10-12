@@ -72,7 +72,6 @@ namespace Leanity
 			_inertialData.DiscardFrames(Options.DiscardFrames);
 			_inertialData.CalculateAngularVelocity();
 			_inertialData.CalculateLinearVelocity();
-			Debug.Log("Stop: _inertial movement: " + (_inertialData.IsMoving ? " yes " : " no"));
 		}
 
 		public abstract bool InertialMovement();
@@ -98,7 +97,6 @@ namespace Leanity
 
 		public void StopInertia()
 		{
-			Debug.LogWarning("STOP INERTIA");
 			_inertialData.Clear();
 		}
 

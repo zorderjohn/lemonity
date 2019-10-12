@@ -125,7 +125,17 @@ namespace Leanity
 			float handSpeed = handVelocity.magnitude;
 			float dotProd = Vector3.Dot(handToCenter, handVelocity);
 
-			return (distanceToCenter < Options.HeuristicRadius) || (handSpeed > 0.001f && dotProd > 0f);
+			bool isNear = distanceToCenter < Options.HeuristicRadius;
+			bool isMoving = handSpeed > 0.1f;
+			bool isApproaching = dotProd > 0f;
+			bool isOk = isNear || (isMoving && isApproaching);
+			Debug.Log(
+				( isOk ? "<<<OK>>>  " : "") +
+				$"Distance = {distanceToCenter}({isNear}) " +
+				$"HandSpeed = {handSpeed}({isMoving}) " +
+				$"DotProd = {dotProd}({isApproaching})"
+			);
+			return isOk;
 		}
 	}
 }

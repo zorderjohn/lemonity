@@ -25,7 +25,6 @@ public static class MathHelper
 	public static Vector3 ClampEulerRotationXZ(Vector3 euler, bool pitchLimit, float pitchMaxAngle, bool rollLimit)
 	{
 		//Unity order: ZXY
-		string dbgStr = euler.ToString();
 		float normalizedZ = NormalizeAngle(euler.z);
 		float normalizedX = NormalizeAngle(euler.x);
 		bool flippedZ = Mathf.Abs(normalizedZ) > 90f;
@@ -49,11 +48,7 @@ public static class MathHelper
 				euler.x = Mathf.Clamp(normalizedX, -pitchMaxAngle, pitchMaxAngle);
 			}
 		}
-		//	euler.x = Mathf.Clamp(NormalizeAngle(euler.x), xMin, xMax);
-		//	euler.z = Mathf.Clamp(NormalizeAngle(euler.z), zMin, zMax);
 
-		dbgStr += " --> " + euler.ToString();
-		Debug.Log(dbgStr);
 		return euler;
 	}
 

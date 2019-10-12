@@ -345,7 +345,6 @@ namespace Leanity
 
 		private void StartMoving()
 		{
-			Debug.Log("MC: StartMoving");
 			if (MotionStyle != null)
 			{
 				if (MotionStyle.RequiresTwoHands)
@@ -361,7 +360,6 @@ namespace Leanity
 
 		private void StopMoving()
 		{
-			Debug.Log("MC: StopMoving");
 			MotionStyle?.Stop();
 			OnEndGrab?.Invoke();
 			OnStateChange?.Invoke();
@@ -369,7 +367,6 @@ namespace Leanity
 
 		private void StartPinching()
 		{
-			Debug.Log("MC: StartPinching");
 			StopInertia();
 			_scaleStyle.Start();
 			OnStartPinch?.Invoke();
@@ -378,7 +375,6 @@ namespace Leanity
 
 		private void StopPinching()
 		{
-			Debug.Log("MC: StopPinching");
 			OnEndPinch?.Invoke();
 			OnStateChange?.Invoke();
 		}
