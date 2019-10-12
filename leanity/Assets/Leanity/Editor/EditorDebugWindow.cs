@@ -49,49 +49,7 @@ namespace Leanity
 			var rightHandData = HandTracking.RightHandData;
 			var leftHandData = HandTracking.LeftHandData;
 
-			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
-			{
-				EditorGUI.BeginChangeCheck();
 
-				Options.ShowWorkspace = EditorGUILayout.Toggle("Show Workspace", Options.ShowWorkspace);
-				Options.ShowGrid = EditorGUILayout.Toggle("Show Grid", Options.ShowGrid);
-				GUI.enabled = Options.ShowGrid;
-				using (var horizontalScope = new GUILayout.HorizontalScope())
-				{
-					EditorGUILayout.PrefixLabel("Grid Divisions");
-					Options.NumGridLines = (int)GUILayout.HorizontalSlider(Options.NumGridLines, 0f, 20f);
-					Options.NumGridLines = EditorGUILayout.IntField(Options.NumGridLines, GUILayout.Width(50));
-				}
-				GUI.enabled = Options.ShowGrid | Options.ShowWorkspace;
-				using (var horizontalScope = new GUILayout.HorizontalScope())
-				{
-					EditorGUILayout.PrefixLabel("Grid/Workspace Transparency");
-					Options.MaxGridTransparency = GUILayout.HorizontalSlider(Options.MaxGridTransparency, 0f, 1f);
-					Options.MaxGridTransparency = EditorGUILayout.FloatField(Options.MaxGridTransparency, GUILayout.Width(50));
-				}
-				using (var horizontalScope = new GUILayout.HorizontalScope())
-				{
-					EditorGUILayout.PrefixLabel("Grid Z Offset");
-					Options.TrackingZOffset= GUILayout.HorizontalSlider(Options.TrackingZOffset, 0f, 2f);
-					Options.TrackingZOffset = EditorGUILayout.FloatField(Options.TrackingZOffset, GUILayout.Width(50));
-				}
-				GUI.enabled = true;
-				using (var horizontalScope = new GUILayout.HorizontalScope())
-				{
-					EditorGUILayout.PrefixLabel("Hand Scale");
-					Options.HandScale= GUILayout.HorizontalSlider(Options.HandScale, 0f, 2f);
-					Options.HandScale = EditorGUILayout.FloatField(Options.HandScale, GUILayout.Width(50));
-				}
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					EditorController.EditorWorkspaceController.GridFadeInEditor();
-				}
-
-				Options.GestureDebug = EditorGUILayout.Toggle("Gesture Debug", Options.GestureDebug);
-				Options.ShowHandGuides = EditorGUILayout.Toggle("Hand Guides", Options.ShowHandGuides);
-
-			}
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
