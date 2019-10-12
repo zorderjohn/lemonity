@@ -103,62 +103,62 @@ namespace Leanity
 				Dirty = false;
 
 				// General
-				PlayerPrefs.SetInt(_prefix + "Enabled", Enabled ? 1 : 0);
-				PlayerPrefs.SetInt(_prefix + "Gesture", (int)Gesture);
-				PlayerPrefs.SetInt(_prefix + "Mode", (int)Mode);
+				SaveValue("Enabled", Enabled);
+				SaveValue("Gesture", (int)Gesture);
+				SaveValue("Mode", (int)Mode);
 
 				// Sensitivity
-				PlayerPrefs.SetFloat(_prefix + "PosScale", PosScale);
-				PlayerPrefs.SetFloat(_prefix + "RotScale", RotScale);
-				PlayerPrefs.SetFloat(_prefix + "ZoomScale", ZoomScale);
-				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleX", AxisRotScale.x);
-				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleY", AxisRotScale.y);
-				PlayerPrefs.SetFloat(_prefix + "AxisRotScaleZ", AxisRotScale.z);
-				PlayerPrefs.SetInt(_prefix + "AutoPosScaleOnLoad", AutoPosScaleOnLoad ? 1 : 0);
+				SaveValue("PosScale", PosScale);
+				SaveValue("RotScale", RotScale);
+				SaveValue("ZoomScale", ZoomScale);
+				SaveValue("AxisRotScaleX", AxisRotScale.x);
+				SaveValue("AxisRotScaleY", AxisRotScale.y);
+				SaveValue("AxisRotScaleZ", AxisRotScale.z);
+				SaveValue("AutoPosScaleOnLoad", AutoPosScaleOnLoad);
 
 				// Camera
-				PlayerPrefs.SetFloat(_prefix + "PitchLimitAngle", PitchLimitAngle);
-				PlayerPrefs.SetInt(_prefix + "PitchLimit", PitchLimit ? 1 : 0);
-				PlayerPrefs.SetInt(_prefix + "RollLimit", RollLimit ? 1 : 0);
+				SaveValue("PitchLimitAngle", PitchLimitAngle);
+				SaveValue("PitchLimit", PitchLimit);
+				SaveValue("RollLimit", RollLimit);
 
 				// Interaction
-				PlayerPrefs.SetInt(_prefix + "GrabEnabled", GrabEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "GrabMinThreshold", GrabMinThreshold);
-				PlayerPrefs.SetFloat(_prefix + "GrabMaxThreshold", GrabMaxThreshold);
-				PlayerPrefs.SetInt(_prefix + "InvertAxis", InvertAxis ? 1 : 0);
-				PlayerPrefs.SetInt(_prefix + "PinchEnabled", PinchEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "PinchMinThreshold", PinchMinThreshold);
-				PlayerPrefs.SetFloat(_prefix + "PinchMaxThreshold", PinchMaxThreshold);
+				SaveValue("GrabEnabled", GrabEnabled);
+				SaveValue("GrabMinThreshold", GrabMinThreshold);
+				SaveValue("GrabMaxThreshold", GrabMaxThreshold);
+				SaveValue("InvertAxis", InvertAxis);
+				SaveValue("PinchEnabled", PinchEnabled);
+				SaveValue("PinchMinThreshold", PinchMinThreshold);
+				SaveValue("PinchMaxThreshold", PinchMaxThreshold);
 
 				// Inertia
-				PlayerPrefs.SetInt(_prefix + "EnableInertia", EnableInertia ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "AngularDrag", AngularDrag);
-				PlayerPrefs.SetFloat(_prefix + "LinearDrag", LinearDrag);
-				PlayerPrefs.SetInt(_prefix + "VelocityFrames", VelocityFrames);
-				PlayerPrefs.SetInt(_prefix + "DiscardFrames", DiscardFrames);
+				SaveValue("EnableInertia", EnableInertia);
+				SaveValue("AngularDrag", AngularDrag);
+				SaveValue("LinearDrag", LinearDrag);
+				SaveValue("VelocityFrames", VelocityFrames);
+				SaveValue("DiscardFrames", DiscardFrames);
 
 				// Filter
-				PlayerPrefs.SetFloat(_prefix + "FilterFrequency", FilterFrequency);
-				PlayerPrefs.SetFloat(_prefix + "RotFilterMinCutoff", RotFilterMinCutoff);
-				PlayerPrefs.SetFloat(_prefix + "RotFilterBeta", RotFilterBeta);
-				PlayerPrefs.SetFloat(_prefix + "RotFilterDcutoff", RotFilterDcutoff);
-				PlayerPrefs.SetFloat(_prefix + "PosFilterMinCutoff", PosFilterMinCutoff);
-				PlayerPrefs.SetFloat(_prefix + "PosFilterBeta", PosFilterBeta);
-				PlayerPrefs.SetFloat(_prefix + "PosFilterDcutoff", PosFilterDcutoff);
+				SaveValue("FilterFrequency", FilterFrequency);
+				SaveValue("RotFilterMinCutoff", RotFilterMinCutoff);
+				SaveValue("RotFilterBeta", RotFilterBeta);
+				SaveValue("RotFilterDcutoff", RotFilterDcutoff);
+				SaveValue("PosFilterMinCutoff", PosFilterMinCutoff);
+				SaveValue("PosFilterBeta", PosFilterBeta);
+				SaveValue("PosFilterDcutoff", PosFilterDcutoff);
 
 				// Debug
-				PlayerPrefs.SetInt(_prefix + "NumGridLines", NumGridLines);
-				PlayerPrefs.SetInt(_prefix + "ShowGrid", ShowGrid ? 1 : 0);
-				PlayerPrefs.SetInt(_prefix + "ShowWorkspace", ShowWorkspace ? 1 : 0);
-				PlayerPrefs.SetInt(_prefix + "GestureDebug", GestureDebug ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "MaxTransparency", MaxGridTransparency);
-				PlayerPrefs.SetFloat(_prefix + "TrackingZOffset", TrackingZOffset);
-				PlayerPrefs.SetFloat(_prefix + "HandScale", HandScale);
-				PlayerPrefs.SetInt(_prefix + "ShowHandGuides", ShowHandGuides ? 1 : 0);
+				SaveValue("NumGridLines", NumGridLines);
+				SaveValue("ShowGrid", ShowGrid);
+				SaveValue("ShowWorkspace", ShowWorkspace);
+				SaveValue("GestureDebug", GestureDebug);
+				SaveValue("MaxTransparency", MaxGridTransparency);
+				SaveValue("TrackingZOffset", TrackingZOffset);
+				SaveValue("HandScale", HandScale);
+				SaveValue("ShowHandGuides", ShowHandGuides);
 
 				// Freeze Heuristic
-				PlayerPrefs.SetInt(_prefix + "HeuristicEnable", HeuristicEnabled ? 1 : 0);
-				PlayerPrefs.SetFloat(_prefix + "HeuristicRadius", HeuristicRadius);
+				SaveValue("HeuristicEnable", HeuristicEnabled);
+				SaveValue("HeuristicRadius", HeuristicRadius);
 			}
 		}
 
@@ -167,69 +167,69 @@ namespace Leanity
 			if (!_init)
 			{
 				// General
-				Enabled = PlayerPrefs.GetInt(_prefix + "Enabled", 1) == 1;
-				Gesture = (WorkingGesture)PlayerPrefs.GetInt(_prefix + "Gesture", (int)WorkingGesture.TwoHands);
-				Mode = (WorkingMode)PlayerPrefs.GetInt(_prefix + "Mode", (int)WorkingMode.Absolute);
+				Enabled = Load("Enabled", true);
+				Gesture = (WorkingGesture)LoadValue("Gesture", (int)WorkingGesture.TwoHands);
+				Mode = (WorkingMode)LoadValue("Mode", (int)WorkingMode.Absolute);
 
 				// Sensitivity
-				PosScale = PlayerPrefs.GetFloat(_prefix + "PosScale", 1f);
-				RotScale = PlayerPrefs.GetFloat(_prefix + "RotScale", 1f);
-				ZoomScale = PlayerPrefs.GetFloat(_prefix + "ZoomScale", 1f);
+				PosScale = Load("PosScale", 1f);
+				RotScale = Load("RotScale", 1f);
+				ZoomScale = Load("ZoomScale", 1f);
 
 				Vector3 axisRotScale = new Vector3();
-				axisRotScale.x = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleX", 1f);
-				axisRotScale.y = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleY", 1f);
-				axisRotScale.z = PlayerPrefs.GetFloat(_prefix + "AxisRotScaleZ", 1f);
+				axisRotScale.x = Load("AxisRotScaleX", 1f);
+				axisRotScale.y = Load("AxisRotScaleY", 1f);
+				axisRotScale.z = Load("AxisRotScaleZ", 1f);
 				AxisRotScale = axisRotScale;
 
-				AutoPosScaleOnLoad = PlayerPrefs.GetInt(_prefix + "AutoPosScaleOnLoad", 1) == 1;
+				AutoPosScaleOnLoad = Load("AutoPosScaleOnLoad", true);
 
 				// Camera
-				PitchLimitAngle = PlayerPrefs.GetFloat(_prefix + "PitchLimitAngle", 75f);
-				PitchLimit = PlayerPrefs.GetInt(_prefix + "PitchLimit", 1) == 1;
-				RollLimit = PlayerPrefs.GetInt(_prefix + "RollLimit", 1) == 1;
+				PitchLimitAngle = Load("PitchLimitAngle", 75f);
+				PitchLimit = Load("PitchLimit", true);
+				RollLimit = Load("RollLimit", true);
 
 				// Interaction
-				GrabEnabled = PlayerPrefs.GetInt(_prefix + "GrabEnabled", 1) == 1;
-				GrabMinThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMinThreshold", 0.5f);
-				GrabMaxThreshold = PlayerPrefs.GetFloat(_prefix + "GrabMaxThreshold", 0.6f);
-				InvertAxis = PlayerPrefs.GetInt(_prefix + "InvertAxis", 0) == 1;
+				GrabEnabled = Load("GrabEnabled", true);
+				GrabMinThreshold = Load("GrabMinThreshold", 0.5f);
+				GrabMaxThreshold = Load("GrabMaxThreshold", 0.6f);
+				InvertAxis = Load("InvertAxis", false);
 
-				PinchEnabled = PlayerPrefs.GetInt(_prefix + "PinchEnabled", 1) == 1;
-				PinchMinThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMinThreshold", 22f);
-				PinchMaxThreshold = PlayerPrefs.GetFloat(_prefix + "PinchMaxThreshold", 40f);
+				PinchEnabled = Load("PinchEnabled", true);
+				PinchMinThreshold = Load("PinchMinThreshold", 22f);
+				PinchMaxThreshold = Load("PinchMaxThreshold", 40f);
 
 				// Inertia
-				EnableInertia = PlayerPrefs.GetInt(_prefix + "EnableInertia", 1) == 1;
-				AngularDrag = PlayerPrefs.GetFloat(_prefix + "AngularDrag", .95f);
-				LinearDrag = PlayerPrefs.GetFloat(_prefix + "LinearDrag", .95f);
-				VelocityFrames = PlayerPrefs.GetInt(_prefix + "VelocityFrames", 5);
-				DiscardFrames = PlayerPrefs.GetInt(_prefix + "DiscardFrames", 1);
+				EnableInertia = Load("EnableInertia", true);
+				AngularDrag = Load("AngularDrag", .95f);
+				LinearDrag = Load("LinearDrag", .95f);
+				VelocityFrames = LoadValue("VelocityFrames", 5);
+				DiscardFrames = LoadValue("DiscardFrames", 1);
 
 				// Filter
-				FilterFrequency = PlayerPrefs.GetFloat(_prefix + "FilterFrequency", 120f);
+				FilterFrequency = Load("FilterFrequency", 120f);
 
-				RotFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterMinCutoff", 0.2f);
-				RotFilterBeta = PlayerPrefs.GetFloat(_prefix + "RotFilterBeta", 5f);
-				RotFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "RotFilterDcutoff", 1f);
+				RotFilterMinCutoff = Load("RotFilterMinCutoff", 0.2f);
+				RotFilterBeta = Load("RotFilterBeta", 5f);
+				RotFilterDcutoff = Load("RotFilterDcutoff", 1f);
 
-				PosFilterMinCutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterMinCutoff", 0.7f);
-				PosFilterBeta = PlayerPrefs.GetFloat(_prefix + "PosFilterBeta", 8f);
-				PosFilterDcutoff = PlayerPrefs.GetFloat(_prefix + "PosFilterDcutoff", 1f);
+				PosFilterMinCutoff = Load("PosFilterMinCutoff", 0.7f);
+				PosFilterBeta = Load("PosFilterBeta", 8f);
+				PosFilterDcutoff = Load("PosFilterDcutoff", 1f);
 
 				// Debug
-				NumGridLines = PlayerPrefs.GetInt(_prefix + "NumGridLines", 6);
-				ShowGrid = PlayerPrefs.GetInt(_prefix + "ShowGrid", 1) == 1;
-				ShowWorkspace = PlayerPrefs.GetInt(_prefix + "ShowWorkspace", 1) == 1;
-				GestureDebug = PlayerPrefs.GetInt(_prefix + "GestureDebug", 1) == 1;
-				MaxGridTransparency = PlayerPrefs.GetFloat(_prefix + "MaxTransparency", .8f);
-				TrackingZOffset = PlayerPrefs.GetFloat(_prefix + "TrackingZOffset", 1f);
-				HandScale = PlayerPrefs.GetFloat(_prefix + "HandScale", 1f);
-				ShowHandGuides = PlayerPrefs.GetInt(_prefix + "ShowHandGuides", 1) == 1;
+				NumGridLines = LoadValue("NumGridLines", 6);
+				ShowGrid = Load("ShowGrid", true);
+				ShowWorkspace = Load("ShowWorkspace", true);
+				GestureDebug = Load("GestureDebug", true);
+				MaxGridTransparency = Load("MaxTransparency", .8f);
+				TrackingZOffset = Load("TrackingZOffset", 1f);
+				HandScale = Load("HandScale", 1f);
+				ShowHandGuides = Load("ShowHandGuides", true);
 
 				// Freeze Heuristic
-				HeuristicEnabled = PlayerPrefs.GetInt(_prefix + "HeuristicEnabled", 1) == 1;
-				HeuristicRadius = PlayerPrefs.GetFloat(_prefix + "HeuristicRadius", 0.2f);
+				HeuristicEnabled = Load("HeuristicEnabled", true);
+				HeuristicRadius = Load("HeuristicRadius", 0.2f);
 
 				_init = true;
 				Dirty = false;
@@ -243,6 +243,36 @@ namespace Leanity
 					OnOptionsChange.Invoke();
 				}
 			}
+		}
+
+		private static bool Load(string name, bool defaultValue)
+		{
+			return PlayerPrefs.GetInt(_prefix + name, defaultValue ? 1 : 0) == 1;
+		}
+
+		private static int LoadValue(string name, int defaultValue)
+		{
+			return PlayerPrefs.GetInt(_prefix + name, defaultValue);
+		}
+
+		private static float Load(string name, float defaultValue)
+		{
+			return PlayerPrefs.GetFloat(_prefix + name, defaultValue);
+		}
+
+		private static void SaveValue(string name, bool value)
+		{
+			PlayerPrefs.SetInt(_prefix + name, value ? 1 : 0);
+		}
+
+		private static void SaveValue(string name, int value)
+		{
+			PlayerPrefs.SetInt(_prefix + name, value);
+		}
+
+		private static void SaveValue(string name, float value)
+		{
+			PlayerPrefs.SetFloat(_prefix + name, value);
 		}
 	}
 }
