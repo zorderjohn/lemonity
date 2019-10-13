@@ -14,9 +14,9 @@ namespace Leanity
 			return _hand.PinchDistance > Options.PinchMaxThreshold;
 		}
 
-		protected override bool HeuristicCondition()
+		protected override HeuristicState HeuristicCondition()
 		{
-			return true;
+			return HeuristicState.AllowAll;
 		}
 	}
 

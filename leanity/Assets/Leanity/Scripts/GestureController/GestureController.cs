@@ -59,6 +59,9 @@ namespace Leanity
 		protected Vector3 _latestObjectPosition;
 		protected Quaternion _latestObjectRotation;
 
+		protected enum HeuristicState { AllowAll, OnlyRotation, DenyAll };
+		protected HeuristicState _heuristic = HeuristicState.AllowAll;
+
 
 		public void Reset()
 		{
@@ -73,50 +76,81 @@ namespace Leanity
 			_hand = hand;
 			_latestObjectPosition = objectPosition;
 			_latestObjectRotation = objectRotation;
-			bool holdingReported = HoldingTest();
-			bool releaseReported = ReleaseTest();
+			bool holdingTest = HoldingTest();
+			bool releaseTest = ReleaseTest();
 
 			if (IsHolding)
 			{
-				if (!hand.Detected || releaseReported)
+				if (!hand.Detected || releaseTest)
 				{
 					IsHolding = false;
+				}
+				else
+				{
+					Holding();
 				}
 			}
 			else
 			{
-				if (hand.Detected && holdingReported)
+				if (hand.Detected && holdingTest)
 				{
-					if (HeuristicCondition())
-					{
-						IsHolding = true;
-						StartHolding();
-					} else
-					{
-						//Debug.LogWarning("Heuristic activated");
-					}
-
+					IsHolding = true;
+					StartHolding();
 				}
 			}
 		}
 
 		protected void StartHolding()
 		{
+			_heuristic = HeuristicCondition();
+			SetInitialRotation();
+			SetInitialPosition();
+		}
+
+		protected void Holding()
+		{
+			if (_heuristic == HeuristicState.AllowAll)
+			{
+				return;
+			}
+			_heuristic = HeuristicCondition();
+			switch (_heuristic)
+			{
+				case HeuristicState.AllowAll:
+					break;
+				case HeuristicState.OnlyRotation:
+					SetInitialPosition();
+					break;
+				case HeuristicState.DenyAll:
+					SetInitialPosition();
+					SetInitialRotation();
+					break;
+			}
+		}
+
+
+		protected void SetInitialPosition()
+		{
+			StartTime = Time.time;
+			ObjectInitialPosition = _latestObjectPosition;
+			ObjectInitialRotation = _latestObjectRotation;
+		}
+
+		protected void SetInitialRotation()
+		{
 			StartTime = Time.time;
 			HandInitialPosition = _hand.Position;
 			HandInitialRotation = _hand.Rotation;
-			ObjectInitialPosition = _latestObjectPosition;
-			ObjectInitialRotation = _latestObjectRotation;
 		}
 
 		protected abstract bool HoldingTest();
 		protected abstract bool ReleaseTest();
 
-		protected virtual bool HeuristicCondition()
+		protected virtual HeuristicState HeuristicCondition()
 		{
 			if (!Options.HeuristicEnabled)
 			{
-				return true;
+				return HeuristicState.AllowAll;
 			}
 
 			Vector3 handToCenter = -_hand.Position;
@@ -124,6 +158,9 @@ namespace Leanity
 			Vector3 handVelocity = _hand.LinearVelocity;
 			float handSpeed = handVelocity.magnitude;
 			float dotProd = Vector3.Dot(handToCenter.normalized, handVelocity.normalized);
+
+			Vector3 handAngularVelocity = _hand.AngularVelocity;
+			float handAngularSpeed = handAngularVelocity.magnitude;
 
 			bool isNear = distanceToCenter < Options.HeuristicRadius;
 			bool isMoving = handSpeed > 0.1f;
@@ -134,11 +171,13 @@ namespace Leanity
 				Debug.Log(
 					(isOk ? "<<<OK>>>  " : "") +
 					$"Distance = {distanceToCenter}({isNear}) " +
-					$"HandSpeed = {handSpeed}({isMoving}) " +
+					$"Linear Speed = {handSpeed}({isMoving}) " +
+					$"Angular Speed = {handAngularSpeed}(?) " +
 					$"DotProd = {dotProd}({isApproaching})"
 				);
+				return HeuristicState.AllowAll;
 			}
-			return isOk;
+			return HeuristicState.DenyAll;
 		}
 	}
 }
