@@ -128,7 +128,7 @@ namespace Leanity
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
 
 			// Effect of rotation around the pivot
-			Vector3 wcPivotedTranslation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
+			Vector3 wcPivotedTranslation = Rotation * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
 
 			Position = _wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
 		}
