@@ -6,7 +6,7 @@ using System;
 
 namespace Leanity
 {
-	public enum WorkingGesture { OneHand = 0, TwoHands, Hybrid}
+	public enum WorkingGesture { OneHand = 0, TwoHands, Hybrid, Orbit}
 	public enum WorkingMode { Absolute = 0, Relative}
 
 	[Serializable]

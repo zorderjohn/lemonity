@@ -114,6 +114,10 @@ namespace Leanity
 					MotionStyle = new HybridMotion();
 					break;
 
+				case WorkingGesture.Orbit:
+					MotionStyle = new OrbitMotion();
+					break;
+
 			}
 		}
 

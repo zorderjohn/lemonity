@@ -5,8 +5,6 @@ namespace Leanity
 	public class TwoHandsMotion : MotionStyleBase
 	{
 		private Vector3 _wcCamPivot;
-		private Vector3 _wcLeftInitialPos;
-		private Vector3 _wcRightInitialPos;
 		private Vector3 _wcPivotToCam;
 		private Vector3 _hcCenterInitialPos;
 		private Vector3 _hcGestureInitialRotation;
@@ -144,8 +142,8 @@ namespace Leanity
 
 		public override void DebugDraw()
 		{
-			_wcLeftInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(LeftGesture.HandInitialPosition);
-			_wcRightInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(RightGesture.HandInitialPosition);
+			var wcLeftInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(LeftGesture.HandInitialPosition);
+			var wcRightInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(RightGesture.HandInitialPosition);
 
 			Vector3 wcCamPivotFloor = _wcCamPivot;
 			wcCamPivotFloor.y = 0f;
@@ -153,7 +151,7 @@ namespace Leanity
 			UnityEditor.Handles.DrawLine(_wcCamPivot, wcCamPivotFloor);
 
 			UnityEditor.Handles.color = Color.green;
-			UnityEditor.Handles.DrawLine(_wcLeftInitialPos, _wcRightInitialPos);
+			UnityEditor.Handles.DrawLine(wcLeftInitialPos, wcRightInitialPos);
 
 			UnityEditor.Handles.color = Color.blue;
 			UnityEditor.Handles.DrawLine(_wcCamPivot, _wcCamPivot + _wcPivotToCam);
