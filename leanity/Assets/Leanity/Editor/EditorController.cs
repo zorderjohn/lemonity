@@ -49,7 +49,7 @@ namespace Leanity
 				EditorController.EditorMotionController.StopInertia();
 			}
 
-			if (!Options.Enabled)
+			if (Options.Gesture == WorkingGesture.Disabled)
 			{
 				return;
 			}

@@ -6,7 +6,7 @@ using System;
 
 namespace Leanity
 {
-	public enum WorkingGesture { OneHand = 0, TwoHands, Hybrid, Orbit}
+	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit}
 	public enum WorkingMode { Absolute = 0, Relative}
 
 	[Serializable]
@@ -17,7 +17,6 @@ namespace Leanity
 		public static event Action OnOptionsChange;
 
 		#region General
-		public static bool Enabled { get; set; }
 		public static WorkingMode Mode { get; set; }
 		public static WorkingGesture Gesture { get; set; }
 		#endregion
@@ -103,7 +102,6 @@ namespace Leanity
 				Dirty = false;
 
 				// General
-				SaveValue("Enabled", Enabled);
 				SaveValue("Gesture", (int)Gesture);
 				SaveValue("Mode", (int)Mode);
 
@@ -167,7 +165,6 @@ namespace Leanity
 			if (!_init)
 			{
 				// General
-				Enabled = Load("Enabled", true);
 				Gesture = (WorkingGesture)LoadValue("Gesture", (int)WorkingGesture.TwoHands);
 				Mode = (WorkingMode)LoadValue("Mode", (int)WorkingMode.Absolute);
 
