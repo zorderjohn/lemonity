@@ -122,7 +122,7 @@ namespace Leanity
 			Quaternion targetRotation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot;
 
 			// Remove any roll rotation
-			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchLimitAngle, Options.RollLimit);
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 
 			// Gesture translation in world coordinates
 			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;

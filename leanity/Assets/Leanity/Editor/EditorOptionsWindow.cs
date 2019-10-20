@@ -185,7 +185,10 @@ namespace Leanity
 
 						Options.PitchLimit = EditorGUILayout.Toggle("Pitch limitation", Options.PitchLimit);
 						GUI.enabled = Options.PitchLimit;
-						Options.PitchLimitAngle = CustomFloatField(Options.PitchLimitAngle, "Pitch Angle Limit", 0f, 90f);
+						Options.PitchMinAngleLimit = CustomFloatField(Options.PitchMinAngleLimit, "Min pitch limit", 0f, 90f);
+						if (Options.PitchMinAngleLimit > Options.PitchMaxAngleLimit) { Options.PitchMaxAngleLimit = Options.PitchMinAngleLimit; }
+						Options.PitchMaxAngleLimit = CustomFloatField(Options.PitchMaxAngleLimit, "Max pitch limit", 0f, 90f);
+						if (Options.PitchMaxAngleLimit < Options.PitchMinAngleLimit) { Options.PitchMinAngleLimit = Options.PitchMaxAngleLimit; }
 						GUI.enabled = true;
 
 						Options.RollLimit = EditorGUILayout.Toggle("Roll limitation", Options.RollLimit);

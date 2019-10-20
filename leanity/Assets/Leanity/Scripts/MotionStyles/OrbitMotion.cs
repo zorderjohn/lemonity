@@ -98,7 +98,7 @@ namespace Leanity
 			Quaternion targetRotation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot;
 
 			// Remove any roll rotation
-			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchLimitAngle, Options.RollLimit);
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 
 			// Effect of rotation around the pivot
 			var wcPivotToCam = _wcPivotToCamNormalized * Mathf.Max(0f, (_wcPivotToCamLength + ccDeltaTranslation.z));

@@ -30,9 +30,10 @@ namespace Leanity
 		#endregion
 
 		#region Camera
-		public static float PitchLimitAngle { get; set; }
-		public static bool  PitchLimit      { get; set; }
-		public static bool  RollLimit       { get; set; }
+		public static float PitchMaxAngleLimit { get; set; }
+		public static float PitchMinAngleLimit { get; set; }
+		public static bool  PitchLimit         { get; set; }
+		public static bool  RollLimit          { get; set; }
 		#endregion
 
 		#region Interaction
@@ -116,7 +117,8 @@ namespace Leanity
 				SaveValue("AutoPosScaleOnLoad", AutoPosScaleOnLoad);
 
 				// Camera
-				SaveValue("PitchLimitAngle", PitchLimitAngle);
+				SaveValue("PitchMinAngleLimit", PitchMinAngleLimit);
+				SaveValue("PitchMaxAngleLimit", PitchMaxAngleLimit);
 				SaveValue("PitchLimit", PitchLimit);
 				SaveValue("RollLimit", RollLimit);
 
@@ -184,7 +186,8 @@ namespace Leanity
 				AutoPosScaleOnLoad = Load("AutoPosScaleOnLoad", true);
 
 				// Camera
-				PitchLimitAngle = Load("PitchLimitAngle", 75f);
+				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);
+				PitchMaxAngleLimit = Load("PitchMaxAngleLimit", 90f);
 				PitchLimit = Load("PitchLimit", true);
 				RollLimit = Load("RollLimit", true);
 

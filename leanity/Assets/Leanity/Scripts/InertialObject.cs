@@ -165,7 +165,7 @@ namespace Leanity
 				float rotDeltaTime = time - _lastRotationFrame.Timestamp;
 				Quaternion deltaRotation = Quaternion.Euler(AngularVelocityEuler * rotDeltaTime);
 				Quaternion newOrientation = _lastRotationFrame.Rotation * deltaRotation;
-				_lastRotationFrame.Rotation = MathHelper.ClampRotationXZ(newOrientation, Options.PitchLimit, Options.PitchLimitAngle, Options.RollLimit);
+				_lastRotationFrame.Rotation = MathHelper.ClampRotationXZ(newOrientation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 				_lastRotationFrame.Timestamp = time;
 			}
 			return IsMoving;
