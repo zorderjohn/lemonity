@@ -7,7 +7,7 @@ using System;
 namespace Leanity
 {
 	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit}
-	public enum WorkingMode { Absolute = 0, Relative}
+	public enum WorkingMode    { Absolute = 0, Relative}
 
 	[Serializable]
 	public static class Options
@@ -17,22 +17,22 @@ namespace Leanity
 		public static event Action OnOptionsChange;
 
 		#region General
-		public static WorkingMode Mode { get; set; }
+		public static WorkingMode    Mode    { get; set; }
 		public static WorkingGesture Gesture { get; set; }
 		#endregion
 
 		#region Sensitivity
-		public static float PosScale { get; set; }
-		public static bool AutoPosScaleOnLoad { get; set; }
-		public static float RotScale { get; set; }
-		public static float ZoomScale { get; set; }
-		public static Vector3 AxisRotScale { get; set; }
+		public static float   PosScale           { get; set; }
+		public static bool    AutoPosScaleOnLoad { get; set; }
+		public static float   RotScale           { get; set; }
+		public static float   ZoomScale          { get; set; }
+		public static Vector3 AxisRotScale       { get; set; }
 		#endregion
 
 		#region Camera
 		public static float PitchLimitAngle { get; set; }
-		public static bool PitchLimit { get; set; }
-		public static bool RollLimit  { get; set; }
+		public static bool  PitchLimit      { get; set; }
+		public static bool  RollLimit       { get; set; }
 		#endregion
 
 		#region Interaction
@@ -46,11 +46,12 @@ namespace Leanity
 		#endregion
 
 		#region Inertia
-		public static bool EnableInertia { get; set; }
-		public static float AngularDrag { get; set; }
-		public static float LinearDrag { get; set; }
-		public static int VelocityFrames { get; set; }
-		public static int DiscardFrames { get; set; }
+		public static bool  EnableInertia     { get; set; }
+		public static float AngularDrag       { get; set; }
+		public static float LinearDrag        { get; set; }
+		public static int   VelocityFrames    { get; set; }
+		public static int   DiscardFrames     { get; set; }
+		public static bool  StopIfNotVisible  { get; set; }
 		#endregion
 
 		#region Filter
@@ -63,19 +64,19 @@ namespace Leanity
 		public static float PosFilterDcutoff   { get; set; }
 		#endregion
 
-		#region Debug
+		#region Visuals
 		public static Color GridColor     { get { return Color.green; } }
 		public static Color GrabGridColor {	get { return Color.red;   } }
-		public static int NumGridLines    { get; set; }
-		public static bool ShowGrid       { get; set; }
-		public static bool ShowWorkspace  { get; set; }
-		public static bool GestureDebug   { get; set; }
+		public static int   NumGridLines  { get; set; }
+		public static bool  ShowGrid      { get; set; }
+		public static bool  ShowWorkspace { get; set; }
+		public static bool  GestureDebug  { get; set; }
 
 		public static float MaxGridTransparency { get; set; }
 
 		public static float TrackingZOffset { get; set; }
-		public static float HandScale { get; set; }
-		public static bool ShowHandGuides { get; set; }
+		public static float HandScale       { get; set; }
+		public static bool  ShowHandGuides  { get; set; }
 		#endregion
 
 		#region FreezeHeuristic
@@ -144,7 +145,7 @@ namespace Leanity
 				SaveValue("PosFilterBeta", PosFilterBeta);
 				SaveValue("PosFilterDcutoff", PosFilterDcutoff);
 
-				// Debug
+				// Visuals
 				SaveValue("NumGridLines", NumGridLines);
 				SaveValue("ShowGrid", ShowGrid);
 				SaveValue("ShowWorkspace", ShowWorkspace);
@@ -153,6 +154,7 @@ namespace Leanity
 				SaveValue("TrackingZOffset", TrackingZOffset);
 				SaveValue("HandScale", HandScale);
 				SaveValue("ShowHandGuides", ShowHandGuides);
+				SaveValue("StopIfNotVisible", StopIfNotVisible);
 
 				// Freeze Heuristic
 				SaveValue("HeuristicEnable", HeuristicEnabled);
@@ -165,8 +167,8 @@ namespace Leanity
 			if (!_init)
 			{
 				// General
-				Gesture = (WorkingGesture)LoadValue("Gesture", (int)WorkingGesture.TwoHands);
-				Mode = (WorkingMode)LoadValue("Mode", (int)WorkingMode.Absolute);
+				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.TwoHands);
+				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Absolute);
 
 				// Sensitivity
 				PosScale = Load("PosScale", 1f);
@@ -200,8 +202,9 @@ namespace Leanity
 				EnableInertia = Load("EnableInertia", true);
 				AngularDrag = Load("AngularDrag", .95f);
 				LinearDrag = Load("LinearDrag", .95f);
-				VelocityFrames = LoadValue("VelocityFrames", 5);
-				DiscardFrames = LoadValue("DiscardFrames", 1);
+				VelocityFrames = Load("VelocityFrames", 5);
+				DiscardFrames = Load("DiscardFrames", 1);
+				StopIfNotVisible = Load("StopIfNotVisible", true);
 
 				// Filter
 				FilterFrequency = Load("FilterFrequency", 120f);
@@ -214,8 +217,8 @@ namespace Leanity
 				PosFilterBeta = Load("PosFilterBeta", 8f);
 				PosFilterDcutoff = Load("PosFilterDcutoff", 1f);
 
-				// Debug
-				NumGridLines = LoadValue("NumGridLines", 6);
+				// Visuals
+				NumGridLines = Load("NumGridLines", 6);
 				ShowGrid = Load("ShowGrid", true);
 				ShowWorkspace = Load("ShowWorkspace", true);
 				GestureDebug = Load("GestureDebug", true);
@@ -247,7 +250,7 @@ namespace Leanity
 			return PlayerPrefs.GetInt(_prefix + name, defaultValue ? 1 : 0) == 1;
 		}
 
-		private static int LoadValue(string name, int defaultValue)
+		private static int Load(string name, int defaultValue)
 		{
 			return PlayerPrefs.GetInt(_prefix + name, defaultValue);
 		}

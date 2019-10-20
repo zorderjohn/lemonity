@@ -228,7 +228,7 @@ namespace Leanity
 		{
 			_leftMeshes = new Dictionary<MotionController.State, Mesh>()
 			{
-				{MotionController.State.Hiding, null },
+				{MotionController.State.Hided, null },
 				{MotionController.State.Idle, Resources.Load<Mesh>("extended_hand_left")},
 				{MotionController.State.Grabbing, Resources.Load<Mesh>("grab_hand_left")},
 				{MotionController.State.Pinching, Resources.Load<Mesh>("pinch_hand_left")}
@@ -236,7 +236,7 @@ namespace Leanity
 
 			_rightMeshes = new Dictionary<MotionController.State, Mesh>()
 			{
-				{MotionController.State.Hiding, null },
+				{MotionController.State.Hided, null },
 				{MotionController.State.Idle, Resources.Load<Mesh>("extended_hand_right")},
 				{MotionController.State.Grabbing, Resources.Load<Mesh>("grab_hand_right")},
 				{MotionController.State.Pinching, Resources.Load<Mesh>("pinch_hand_right")}

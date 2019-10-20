@@ -63,8 +63,9 @@ namespace Leanity
 		protected HandData _hand;
 		protected Vector3 _latestObjectPosition;
 		protected Quaternion _latestObjectRotation;
-
-
+		private const float _maxAngularSpeed = 100f;
+		private const float _maxHandSpeed = 0.1f;
+		private const float _minDotProd = 0f;
 
 		public void Reset()
 		{
@@ -172,9 +173,9 @@ namespace Leanity
 			float handAngularSpeed = handAngularVelocity.magnitude;
 
 			bool isNear = distanceToCenter < Options.HeuristicRadius;
-			bool isMoving = handSpeed > 0.1f;
-			bool notTooFast = handAngularSpeed < 150f;
-			bool isApproaching = dotProd > 0f;
+			bool isMoving = handSpeed > _maxHandSpeed;
+			bool notTooFast = handAngularSpeed < _maxAngularSpeed;
+			bool isApproaching = dotProd > _minDotProd;
 			bool isOk = notTooFast && ( isNear || (isMoving && isApproaching) );
 			if (isOk)
 			{

@@ -147,22 +147,23 @@ namespace Leanity
 						GUILayout.Label("Grab gesture", EditorStyles.boldLabel);
 						EditorGUI.indentLevel++;
 
-						Options.GrabMinThreshold = CustomFloatField(Options.GrabMinThreshold, "Min Threshold", 0f, 1f);
-						if (Options.GrabMinThreshold > Options.GrabMaxThreshold) { Options.GrabMaxThreshold = Options.GrabMinThreshold; }
-
-						Options.GrabMaxThreshold = CustomFloatField(Options.GrabMaxThreshold, "Max Threshold", 0f, 1f);
+						Options.GrabMaxThreshold = CustomFloatField(Options.GrabMaxThreshold, "Start Threshold", 0f, 1f);
 						if (Options.GrabMaxThreshold < Options.GrabMinThreshold) { Options.GrabMinThreshold = Options.GrabMaxThreshold; }
+
+						Options.GrabMinThreshold = CustomFloatField(Options.GrabMinThreshold, "Stop Threshold", 0f, 1f);
+						if (Options.GrabMinThreshold > Options.GrabMaxThreshold) { Options.GrabMaxThreshold = Options.GrabMinThreshold; }
 						EditorGUI.indentLevel--;
 
 						GUILayout.Label("Pinch gesture", EditorStyles.boldLabel);
 
 						GUILayout.Space(4);
 						EditorGUI.indentLevel++;
-						Options.PinchMinThreshold = CustomFloatField(Options.PinchMinThreshold, "Min Threshold", 0f, 100f);
-						if (Options.PinchMinThreshold > Options.PinchMaxThreshold) { Options.PinchMaxThreshold = Options.PinchMinThreshold; }
 
-						Options.PinchMaxThreshold = CustomFloatField(Options.PinchMaxThreshold, "Max Threshold", 0f, 100f);
+						Options.PinchMaxThreshold = CustomFloatField(Options.PinchMaxThreshold, "Start Threshold", 0f, 100f);
 						if (Options.PinchMaxThreshold < Options.PinchMinThreshold) { Options.PinchMinThreshold = Options.PinchMaxThreshold; }
+
+						Options.PinchMinThreshold = CustomFloatField(Options.PinchMinThreshold, "Stop Threshold", 0f, 100f);
+						if (Options.PinchMinThreshold > Options.PinchMaxThreshold) { Options.PinchMaxThreshold = Options.PinchMinThreshold; }
 						EditorGUI.indentLevel--;
 					}
 					GUILayout.Space(foldoutSpace);
@@ -245,6 +246,7 @@ namespace Leanity
 						GUILayout.Space(4);
 						EditorGUI.indentLevel++;
 						Options.EnableInertia = EditorGUILayout.Toggle("Enable Inertia", Options.EnableInertia);
+						Options.StopIfNotVisible = EditorGUILayout.Toggle("Stop if hands hidden", Options.StopIfNotVisible);
 						Options.LinearDrag = CustomFloatField(Options.LinearDrag, "Linear Drag", 0f, 10f);
 						Options.AngularDrag = CustomFloatField(Options.AngularDrag, "Angular Drag", 0f, 10f);
 						// Options.VelocityFrames = CustomIntField(Options.VelocityFrames, "Velocity Frames", 2, 10);

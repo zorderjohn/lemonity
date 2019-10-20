@@ -5,7 +5,7 @@ namespace Leanity
 {
 	public class MotionController
 	{
-		public enum State { Hiding = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
+		public enum State { Hided = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
 
 		private IMotionStyle _scaleStyle;
 		private IMotionStyle _motionStyle;
@@ -260,19 +260,24 @@ namespace Leanity
 
 			switch (MotionState)
 			{
-				case State.Hiding:
+				case State.Hided:
 					if (!isHiding)
 					{
 						MotionState = State.Idle;
 						OnHandsVisible?.Invoke();
 						OnStateChange?.Invoke();
 					}
+					if (!Options.StopIfNotVisible && Options.EnableInertia)
+					{
+						bool inertialMoving = MotionStyle.InertialMovement();
+						return inertialMoving;
+					}
 					break;
 
 				case State.Idle:
 					if (isHiding)
 					{
-						MotionState = State.Hiding;
+						MotionState = State.Hided;
 						OnHandsInVisible?.Invoke();
 						OnStateChange?.Invoke();
 					}
