@@ -13,6 +13,7 @@ namespace Leanity
 		private HandData _rightHandData;
 		private HandData _leftHandData;
 		private long _frameId = 0;
+		private float _lastConnectionTest = 0;
 		private static readonly Vector3 LEAP_WORKSPACE = new Vector3(0.6f, 0.5f, 0.4f);
 		private static readonly float LEAP_MM_TO_M = 0.001f;
 
@@ -28,6 +29,8 @@ namespace Leanity
 			if (_controller == null)
 			{
 				_controller = new Leap.Controller();
+
+				_lastConnectionTest = Time.realtimeSinceStartup;
 			}
 		}
 
@@ -64,6 +67,13 @@ namespace Leanity
 						}
 					}
 					return true;
+				}
+			} else
+			{
+				if (Time.realtimeSinceStartup - _lastConnectionTest > 5f && _controller != null && !_controller.IsConnected)
+				{
+					_lastConnectionTest = Time.realtimeSinceStartup;
+					_controller.StartConnection();
 				}
 			}
 			return false;
