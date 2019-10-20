@@ -134,20 +134,18 @@ namespace Leanity
 
 							float xRange = HandTracking.Workspace.x * Options.PosScale;
 							string strScale = Options.PosScale.ToString("0.0");
-							string strWidth = xRange.ToString("0.##");
+							string strWidth = xRange.ToString("0.#");
 
 							using (var horizontalScope = new GUILayout.HorizontalScope())
 							{
 								EditorGUILayout.PrefixLabel("Scene Scale");
-								EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} m.)");
+								EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} meters)", GUILayout.MaxWidth(130));
 							}
 
 							Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);
 
 							GUILayout.Space(4);
 							Options.RotScale = CustomFloatField(Options.RotScale, "Rotation Factor", 0.5f, 5f);
-
-							GUILayout.Space(4);
 							Options.ZoomScale = CustomFloatField(Options.ZoomScale, "Zoom factor", 0f, 3f);
 
 							//EditorGUI.indentLevel--;
