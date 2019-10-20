@@ -16,7 +16,7 @@ namespace Leanity
 
 		private static float _workspaceWidth = 0.5f;
 		private static float _workspaceDepth = 0.5f;
-		private static float _workspaceRatio = 1f;
+		private static float _workspaceRatio = 1.0f;
 		private static bool _handsVisible = false;
 
 		void OnEnable()
@@ -28,18 +28,29 @@ namespace Leanity
 			_workspaceRatio = _workspaceWidth / _workspaceDepth;
 
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-			EditorController.EditorMotionController.OnHandsVisible += OnHandsVisible;
-			EditorController.EditorMotionController.OnHandsInVisible += OnHandsInVisible;
-			Options.OnOptionsChange += OnOptionsChange;
+			EditorController.EditorMotionController.OnHandsVisible += RepaintScene;
+			EditorController.EditorMotionController.OnHandsInVisible += RepaintScene;
+			EditorController.EditorMotionController.OnStateChange += RepaintScene;
+			Options.OnOptionsChange += RepaintScene;
+			HandTracking.OnConnect += RepaintScene;
+			HandTracking.OnDisconnect += RepaintScene;
+			Debug.Log("Debug on enable");
 		}
 
 		void OnDisable()
 		{
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+			EditorController.EditorMotionController.OnHandsVisible -= RepaintScene;
+			EditorController.EditorMotionController.OnHandsInVisible -= RepaintScene;
+			EditorController.EditorMotionController.OnStateChange -= RepaintScene;
+			Options.OnOptionsChange -= RepaintScene;
+			HandTracking.OnConnect -= RepaintScene;
+			HandTracking.OnDisconnect -= RepaintScene;
 		}
 
-		private void OnOptionsChange()
+		private void RepaintScene()
 		{
+			Repaint();
 			SceneView.RepaintAll();
 		}
 
@@ -49,21 +60,56 @@ namespace Leanity
 			var rightHandData = HandTracking.RightHandData;
 			var leftHandData = HandTracking.LeftHandData;
 
+			var labelStyle = EditorStyles.label;
+			labelStyle.richText = true;
 
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				GUILayout.Label("Status:", EditorStyles.boldLabel);
+				GUILayout.Label("<b>Tracking Status</b>", labelStyle);
 				if (HandTracking.IsConnected())
 				{
-					GUILayout.Label("Leap is connected");
+
+					GUILayout.Label("Leap is <b><color=green>connected</color></b>", labelStyle);
 				}
 				else
 				{
-					GUILayout.Label("Leap is not connected");
+					GUI.contentColor = Color.red;
+					GUILayout.Label("Leap is <color=red><b>NOT</b></color> connected", labelStyle);
 					if (GUILayout.Button("Reset connection"))
 					{
 						HandTracking.Reset();
+					}
+				}
+			}
+
+			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				GUILayout.Label("Gesture Filtering", EditorStyles.boldLabel);
+				var motion = EditorController.EditorMotionController;
+				if (!Options.HeuristicEnabled)
+				{
+					GUILayout.Label("Disabled", labelStyle);
+				}
+				else
+				{
+					bool lg = motion.LeftGrab.Heuristic != HeuristicState.AllowAll;
+					bool rg = motion.RightGrab.Heuristic != HeuristicState.AllowAll;
+					bool lp = motion.LeftPinch.Heuristic != HeuristicState.AllowAll;
+					bool rp = motion.RightPinch.Heuristic != HeuristicState.AllowAll;
+
+					string filterNames = (lg ? "Left Grab " : "") + (rg ? "Right Grab " : "") + (lp ? "Left Pinch " : "") + (rp ? "Right Pinch" : "");
+					if (lg || rg || lp || rp)
+					{
+						GUILayout.Label($"<b><Color=red> Filtering {filterNames}</Color></b>", labelStyle);
+					}
+					else if (motion.IsDualPinching || motion.IsGrabbing)
+					{
+						GUILayout.Label("Gesture not filtered", labelStyle);
+					}
+					else
+					{
+						GUILayout.Label("Iddle", labelStyle);
 					}
 				}
 			}
@@ -93,7 +139,9 @@ namespace Leanity
 
 				EditorGUI.IndentedRect(r);
 
-				EditorGUI.DrawRect(r, Color.white);
+				var color = Color.white;
+				color.a = 0.5f;
+				EditorGUI.DrawRect(r, color);
 
 				if (Options.HeuristicEnabled)
 				{
@@ -138,14 +186,6 @@ namespace Leanity
 			return "(" + v.x.ToString("0.###") + ", " + v.y.ToString("0.###") + ", " + v.z.ToString("0.###");
 		}
 
-		private void OnHandsVisible()
-		{
-			SceneView.RepaintAll();
-		}
-
-		private void OnHandsInVisible()
-		{
-		}
 
 		private void DrawHandPosition(HandData hand, Rect r)
 		{

@@ -6,6 +6,11 @@ namespace Leanity
 	public abstract class HandTracking : IDisposable
 	{
 		#region Public Interface
+		public static event Action OnConnect;
+		public static event Action OnDisconnect;
+
+		protected bool _isConnected;
+
 		public static HandData RightHandData
 		{
 			get { return Instance.GetRightHandData(); }
@@ -21,12 +26,13 @@ namespace Leanity
 
 		public static bool Update()
 		{
+			Instance.UpdateDeviceState();
 			return Instance.UpdateTracking();
 		}
 
 		public static bool IsConnected()
 		{
-			return Instance.IsDeviceConnected();
+			return Instance.UpdateDeviceState();
 		}
 
 		public static void Reset()
@@ -66,6 +72,25 @@ namespace Leanity
 		}
 
 		public abstract void Dispose();
+
+		protected bool UpdateDeviceState()
+		{
+			bool connectedUpdate = IsDeviceConnected();
+			if (_isConnected && !connectedUpdate)
+			{
+				Debug.Log("OnDisconnect");
+				OnDisconnect?.Invoke();
+			}
+			else if (!_isConnected && connectedUpdate)
+			{
+				Debug.Log("OnConnect");
+				OnConnect?.Invoke();
+			}
+
+			_isConnected = connectedUpdate;
+			return _isConnected;
+		}
+
 		#endregion
 
 		#region Singleton

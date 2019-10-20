@@ -15,10 +15,10 @@ namespace Leanity
 		private static Texture _treeTexture;
 		private static Texture _cityTexture;
 		private static readonly Color _logoBackground = new Color(.110f, .184f, .196f);
+		private const int _inputTextWidth = 55;
 
 		AnimBool _showSensitivity = new AnimBool(true);
 		AnimBool _showGestures = new AnimBool();
-		AnimBool _showPinchGesture = new AnimBool();
 		AnimBool _showCamera = new AnimBool();
 		AnimBool _showFilters = new AnimBool();
 		AnimBool _showInertia = new AnimBool();
@@ -372,7 +372,7 @@ namespace Leanity
 			{
 				EditorGUILayout.PrefixLabel(content);
 				value = (int)GUILayout.HorizontalSlider(value, minSlider, maxSlider);
-				return EditorGUILayout.DelayedIntField(value, GUILayout.Width(50));
+				return EditorGUILayout.DelayedIntField(value, GUILayout.Width(_inputTextWidth));
 			}
 		}
 
@@ -401,7 +401,9 @@ namespace Leanity
 		{
 			string floatString = value.ToString("0.00");
 
-			string input = EditorGUILayout.DelayedTextField(floatString, GUILayout.Width(50));
+			var guistyle = EditorStyles.textField;
+			guistyle.alignment = TextAnchor.MiddleRight;
+			string input = EditorGUILayout.DelayedTextField(floatString, guistyle, GUILayout.Width(_inputTextWidth));
 
 			if (input != floatString)
 			{

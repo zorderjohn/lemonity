@@ -2,10 +2,13 @@
 
 namespace Leanity
 {
+	public enum HeuristicState { AllowAll, OnlyRotation, DenyAll };
 	public interface IGestureController
 	{
 		float StartTime { get; }
 		bool IsHolding { get; }
+
+		HeuristicState Heuristic { get; }
 
 		Vector3 HandInitialPosition { get; }
 		Quaternion HandInitialRotation { get; }
@@ -26,6 +29,8 @@ namespace Leanity
 
 	public abstract class GestureControllerBase : IGestureController
 	{
+		public HeuristicState Heuristic { get; protected set; } = HeuristicState.AllowAll;
+
 		public float StartTime { get; protected set; }
 		public bool IsHolding { get; protected set; } = false;
 
@@ -59,8 +64,6 @@ namespace Leanity
 		protected Vector3 _latestObjectPosition;
 		protected Quaternion _latestObjectRotation;
 
-		protected enum HeuristicState { AllowAll, OnlyRotation, DenyAll };
-		protected HeuristicState _heuristic = HeuristicState.AllowAll;
 
 
 		public void Reset()
@@ -84,6 +87,7 @@ namespace Leanity
 				if (!hand.Detected || releaseTest)
 				{
 					IsHolding = false;
+					StopHolding();
 				}
 				else
 				{
@@ -102,19 +106,19 @@ namespace Leanity
 
 		protected void StartHolding()
 		{
-			_heuristic = HeuristicCondition();
+			Heuristic = HeuristicCondition();
 			SetInitialRotation();
 			SetInitialPosition();
 		}
 
 		protected void Holding()
 		{
-			if (_heuristic == HeuristicState.AllowAll)
+			if (Heuristic == HeuristicState.AllowAll)
 			{
 				return;
 			}
-			_heuristic = HeuristicCondition();
-			switch (_heuristic)
+			Heuristic = HeuristicCondition();
+			switch (Heuristic)
 			{
 				case HeuristicState.AllowAll:
 					break;
@@ -126,6 +130,11 @@ namespace Leanity
 					SetInitialRotation();
 					break;
 			}
+		}
+
+		protected void StopHolding()
+		{
+			Heuristic = HeuristicState.AllowAll;
 		}
 
 
@@ -164,15 +173,16 @@ namespace Leanity
 
 			bool isNear = distanceToCenter < Options.HeuristicRadius;
 			bool isMoving = handSpeed > 0.1f;
+			bool notTooFast = handAngularSpeed < 150f;
 			bool isApproaching = dotProd > 0f;
-			bool isOk = isNear || (isMoving && isApproaching);
+			bool isOk = notTooFast && ( isNear || (isMoving && isApproaching) );
 			if (isOk)
 			{
 				Debug.Log(
 					(isOk ? "<<<OK>>>  " : "") +
 					$"Distance = {distanceToCenter}({isNear}) " +
 					$"Linear Speed = {handSpeed}({isMoving}) " +
-					$"Angular Speed = {handAngularSpeed}(?) " +
+					$"Angular Speed = {handAngularSpeed}({notTooFast}) " +
 					$"DotProd = {dotProd}({isApproaching})"
 				);
 				return HeuristicState.AllowAll;
