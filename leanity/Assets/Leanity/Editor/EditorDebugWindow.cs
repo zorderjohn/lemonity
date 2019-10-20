@@ -176,7 +176,7 @@ namespace Leanity
 
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 1000, 15, 15);
 
-			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, "Grab");
+			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, $"Grab: {hand.GrabValue.ToString("0.00")}");
 
 			GUI.enabled = true;
 		}
@@ -255,7 +255,7 @@ namespace Leanity
 			{
 				_leftTextures = new Dictionary<MotionController.State, Texture>()
 				{
-					{MotionController.State.Hiding, null },
+					{MotionController.State.Hided, null },
 					{MotionController.State.Idle, Resources.Load<Texture>("LeftHand")},
 					{MotionController.State.Grabbing, Resources.Load<Texture>("LeftHandClosed")},
 					{MotionController.State.Pinching, Resources.Load<Texture>("LeftHandPinch")}
@@ -263,7 +263,7 @@ namespace Leanity
 
 				_rightTextures = new Dictionary<MotionController.State, Texture>()
 				{
-					{MotionController.State.Hiding, null },
+					{MotionController.State.Hided, null },
 					{MotionController.State.Idle, Resources.Load<Texture>("RightHand")},
 					{MotionController.State.Grabbing, Resources.Load<Texture>("RightHandClosed")},
 					{MotionController.State.Pinching, Resources.Load<Texture>("RightHandPinch")}
