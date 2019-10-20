@@ -86,8 +86,6 @@ namespace Leanity
 
 			if (_inertialData.Update(t))
 			{
-				GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-				GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 				UpdatePose(_inertialData.Rotation, _inertialData.Position);
 				return true;
 			}
@@ -103,7 +101,7 @@ namespace Leanity
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchLimitAngle, Options.RollLimit);
 
 			// Effect of rotation around the pivot
-			var wcPivotToCam = _wcPivotToCamNormalized * (_wcPivotToCamLength + ccDeltaTranslation.z);
+			var wcPivotToCam = _wcPivotToCamNormalized * Mathf.Max(0f, (_wcPivotToCamLength + ccDeltaTranslation.z));
 			Vector3 wcPivotedTranslation = Rotation * Quaternion.Inverse(_wcCamInitialRot) * wcPivotToCam;
 
 			Position = _wcCamPivot + wcPivotedTranslation;
