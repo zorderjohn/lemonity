@@ -60,7 +60,7 @@ namespace Leanity
 			}
 
 			// Position calculation
-			float translationScaled = deltaPos.z * Options.PosScale;
+			float translationScaled = (deltaPos.z / HandTracking.Workspace.z) * Options.PosScale * _wcPivotToCamLength;
 
 			Vector3 ccDeltaTranslation = new Vector3(0f, 0f, translationScaled);
 
@@ -122,22 +122,12 @@ namespace Leanity
 			{
 				return;
 			}
-		/*	var wcInitialPos = _gestureController.ObjectInitialPosition +
-				_gestureController.ObjectInitialRotation * HandTracking.HandToCamCoordinates(_gestureController.HandInitialPosition);
-
-			var wcInitialPos = _gestureController.ObjectInitialPosition +
-				_gestureController.ObjectInitialRotation * HandTracking.HandToCamCoordinates(_gestureController.HandInitialPosition);
-				*/
 			Vector3 wcCamPivotFloor = _wcCamPivot;
-			wcCamPivotFloor.y = 0f;
+			wcCamPivotFloor.y *= -2f;
+			Vector3 wcCamPivotCeil = _wcCamPivot;
+			wcCamPivotCeil.y *= 2f;
 			UnityEditor.Handles.color = Color.red;
 			UnityEditor.Handles.DrawLine(_wcCamPivot, wcCamPivotFloor);
-
-			/*UnityEditor.Handles.color = Color.green;
-			UnityEditor.Handles.DrawLine(wcInitialPos, wcRightInitialPos);*/
-
-			UnityEditor.Handles.color = Color.blue;
-			//UnityEditor.Handles.DrawLine(_wcCamPivot, _wcCamPivot + _wcPivotToCam);
 		}
 
 
