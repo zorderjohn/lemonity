@@ -27,6 +27,9 @@ namespace Leanity
 		public static float   RotScale           { get; set; }
 		public static float   ZoomScale          { get; set; }
 		public static Vector3 AxisRotScale       { get; set; }
+		public static float   OrbitZoomScale     { get; set; }
+		public static float   OrbitPitchScale    { get; set; }
+		public static float   OrbitYawScale      { get; set; }
 		#endregion
 
 		#region Camera
@@ -115,6 +118,9 @@ namespace Leanity
 				SaveValue("AxisRotScaleY", AxisRotScale.y);
 				SaveValue("AxisRotScaleZ", AxisRotScale.z);
 				SaveValue("AutoPosScaleOnLoad", AutoPosScaleOnLoad);
+				SaveValue("OrbitZoomScale", OrbitZoomScale);
+				SaveValue("OrbitPitchScale", OrbitPitchScale);
+				SaveValue("OrbitYawScale", OrbitYawScale);
 
 				// Camera
 				SaveValue("PitchMinAngleLimit", PitchMinAngleLimit);
@@ -169,8 +175,8 @@ namespace Leanity
 			if (!_init)
 			{
 				// General
-				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.TwoHands);
 				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Absolute);
+				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.TwoHands);
 
 				// Sensitivity
 				PosScale = Load("PosScale", 1f);
@@ -184,6 +190,10 @@ namespace Leanity
 				AxisRotScale = axisRotScale;
 
 				AutoPosScaleOnLoad = Load("AutoPosScaleOnLoad", true);
+
+				OrbitZoomScale = Load("OrbitZoomScale", 1f);
+				OrbitPitchScale = Load("OrbitPitchScale", 1f);
+				OrbitYawScale = Load("OrbitYawScale", 1f);
 
 				// Camera
 				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);

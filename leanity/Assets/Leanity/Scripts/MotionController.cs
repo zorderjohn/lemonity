@@ -7,9 +7,18 @@ namespace Leanity
 	{
 		public enum State { Hided = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
 
-		private IMotionStyle _scaleStyle;
-		private IMotionStyle _motionStyle;
+		public IMotionStyle _scaleStyle;
+		public IMotionStyle ScaleStyle
+		{
+			get { return _scaleStyle; }
+			set
+			{
+				_scaleStyle = value;
+				InitScaleStyle();
+			}
+		}
 
+		private IMotionStyle _motionStyle;
 		public IMotionStyle MotionStyle
 		{
 			get { return _motionStyle; }
@@ -24,12 +33,12 @@ namespace Leanity
 		{
 			get
 			{
-				return IsDualPinching ? _scaleStyle.Position : _motionStyle.Position;
+				return IsDualPinching ? ScaleStyle.Position : _motionStyle.Position;
 			}
 			set
 			{
 				_motionStyle.Position = value;
-				_scaleStyle.Position = value;
+				ScaleStyle.Position = value;
 			}
 		}
 
@@ -37,20 +46,20 @@ namespace Leanity
 		{
 			get
 			{
-				return IsDualPinching ? _scaleStyle.Rotation : _motionStyle.Rotation;
+				return IsDualPinching ? ScaleStyle.Rotation : _motionStyle.Rotation;
 			}
 			set
 			{
 				_motionStyle.Rotation = value;
-				_scaleStyle.Rotation = value;
+				ScaleStyle.Rotation = value;
 			}
 		}
 
 		public float Scale
 		{
-			get { return _scaleStyle.Scale; }
+			get { return ScaleStyle.Scale; }
 			set {
-				_scaleStyle.Scale = value;
+				ScaleStyle.Scale = value;
 				_motionStyle.Scale = value;
 			}
 		}
@@ -92,7 +101,6 @@ namespace Leanity
 
 			// Always instantiate after Left and Right grabs
 			_currentGesture = Options.Gesture;
-			_scaleStyle = new ScaleMotion();
 			LoadMotionStyle();
 			Scale = 0f;
 		}
@@ -103,21 +111,24 @@ namespace Leanity
 			{
 				case WorkingGesture.OneHand:
 					MotionStyle = new OneHandMotion();
+					ScaleStyle = new ScaleMotion();
 					break;
 
 				case WorkingGesture.TwoHands:
 					MotionStyle = new TwoHandsMotion();
+					ScaleStyle = new ScaleMotion();
 					break;
 
 				case WorkingGesture.Hybrid:
 				default:
 					MotionStyle = new HybridMotion();
+					ScaleStyle = new ScaleMotion();
 					break;
 
 				case WorkingGesture.Orbit:
 					MotionStyle = new OrbitMotion();
+					ScaleStyle = new NullMotion();
 					break;
-
 			}
 		}
 
@@ -129,7 +140,8 @@ namespace Leanity
 				LoadMotionStyle();
 			}
 
-			_motionStyle?.OptionsChange();
+			MotionStyle?.OptionsChange();
+			ScaleStyle?.OptionsChange();
 		}
 
 		public bool Update(Vector3 position, Quaternion rotation)
@@ -228,7 +240,6 @@ namespace Leanity
 					return LeftPinch;
 				}
 			}
-
 		}
 
 		private void InitMotionStyle()
@@ -236,9 +247,12 @@ namespace Leanity
 			_motionStyle.LeftGesture = LeftGrab;
 			_motionStyle.RightGesture = RightGrab;
 			_motionStyle.OptionsChange();
+		}
 
-			_scaleStyle.LeftGesture = LeftPinch;
-			_scaleStyle.RightGesture = RightPinch;
+		private void InitScaleStyle()
+		{
+			ScaleStyle.LeftGesture = LeftPinch;
+			ScaleStyle.RightGesture = RightPinch;
 		}
 
 		private bool EventController()
@@ -343,7 +357,7 @@ namespace Leanity
 					}
 					else
 					{
-						_scaleStyle.Update();
+						ScaleStyle.Update();
 						return true;
 					}
 					break;
@@ -377,7 +391,7 @@ namespace Leanity
 		private void StartPinching()
 		{
 			StopInertia();
-			_scaleStyle.Start();
+			ScaleStyle.Start();
 			OnStartPinch?.Invoke();
 			OnStateChange?.Invoke();
 		}

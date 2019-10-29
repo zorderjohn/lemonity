@@ -47,8 +47,8 @@ namespace Leanity
 			}
 
 			var deltaPos = _gesture.HandDeltaPosition;
-			float yawDegrees = (deltaPos.x / 0.5f) * 360f * Options.RotScale;
-			float pitchDegrees = (-deltaPos.y / 0.6f) * 360f * Options.RotScale;
+			float yawDegrees = (deltaPos.x / 0.5f) * 360f * Options.OrbitYawScale;
+			float pitchDegrees = (-deltaPos.y / 0.6f) * 360f * Options.OrbitPitchScale;
 
 			Quaternion hcYawDeltaRot = Quaternion.Euler(0f, yawDegrees, 0f);
 			_hcPitchDeltaRot = Quaternion.Euler(pitchDegrees, 0f, 0f);
@@ -60,7 +60,7 @@ namespace Leanity
 			}
 
 			// Position calculation
-			float translationScaled = (deltaPos.z / HandTracking.Workspace.z) * Options.PosScale * _wcPivotToCamLength;
+			float translationScaled = (deltaPos.z / HandTracking.Workspace.z) * Options.OrbitZoomScale * _wcPivotToCamLength;
 
 			Vector3 ccDeltaTranslation = new Vector3(0f, 0f, translationScaled);
 

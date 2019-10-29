@@ -69,7 +69,7 @@ namespace Leanity
 					new GUIContent("One Hand", "Only one hand at a time can move and rotate the camera"),
 					new GUIContent("Two Hands", "Two hands are used to move and rotate the camera"),
 					new GUIContent("Any Hands", "One or two hands can be used to rotate and move the camera"),
-				};
+					};
 
 					subMode = (SubMode)GUILayout.Toolbar((int)subMode, panOptions);
 				}
@@ -101,54 +101,15 @@ namespace Leanity
 						if (_showSensitivity.value)
 						{
 							GUILayout.Space(4);
-							//EditorGUI.indentLevel++;
 
-							EditorGUI.BeginChangeCheck();
-
-							using (var horizontalScope = new GUILayout.HorizontalScope())
+							if (Options.Gesture == WorkingGesture.Orbit)
 							{
-								_lemonTexture = _lemonTexture ?? Resources.Load<Texture>("lemon_32");
-								_treeTexture = _treeTexture ?? Resources.Load<Texture>("tree_32");
-								_cityTexture = _cityTexture ?? Resources.Load<Texture>("city_32");
-								Rect rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
-								GUI.DrawTexture(rImage, _lemonTexture);
-
-								GUILayout.FlexibleSpace();
-								rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
-								GUI.DrawTexture(rImage, _treeTexture);
-
-								GUILayout.FlexibleSpace();
-								rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
-								GUI.DrawTexture(rImage, _cityTexture);
-
+								ScaleGUIOrbit();
 							}
-
-							// Use logaritmic scale starting from 0
-							float sliderLogValue = MathHelper.LinearToLogScale(Options.PosScale);
-							sliderLogValue = GUILayout.HorizontalSlider(sliderLogValue, .1f, 10f);
-							if (EditorGUI.EndChangeCheck())
+							else
 							{
-								Options.PosScale = MathHelper.LogToLinearScale(sliderLogValue);
-								EditorController.EditorWorkspaceController.GridFadeInEditor();
+								ScaleGUI();
 							}
-
-							float xRange = HandTracking.Workspace.x * Options.PosScale;
-							string strScale = Options.PosScale.ToString("0.0");
-							string strWidth = xRange.ToString("0.#");
-
-							using (var horizontalScope = new GUILayout.HorizontalScope())
-							{
-								EditorGUILayout.PrefixLabel("Scene Scale");
-								EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} meters)", GUILayout.MaxWidth(130));
-							}
-
-							Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);
-
-							GUILayout.Space(4);
-							Options.RotScale = CustomFloatField(Options.RotScale, "Rotation Factor", 0.5f, 5f);
-							Options.ZoomScale = CustomFloatField(Options.ZoomScale, "Zoom factor", 0f, 3f);
-
-							//EditorGUI.indentLevel--;
 						}
 						GUILayout.Space(foldoutSpace);
 					}
@@ -497,6 +458,67 @@ namespace Leanity
 					return WorkingGesture.Orbit;
 			}
 			return WorkingGesture.Disabled;
+		}
+
+		private void ScaleGUI()
+		{
+
+			EditorGUI.BeginChangeCheck();
+
+			using (var horizontalScope = new GUILayout.HorizontalScope())
+			{
+				_lemonTexture = _lemonTexture ?? Resources.Load<Texture>("lemon_32");
+				_treeTexture = _treeTexture ?? Resources.Load<Texture>("tree_32");
+				_cityTexture = _cityTexture ?? Resources.Load<Texture>("city_32");
+				Rect rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
+				GUI.DrawTexture(rImage, _lemonTexture);
+
+				GUILayout.FlexibleSpace();
+				rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
+				GUI.DrawTexture(rImage, _treeTexture);
+
+				GUILayout.FlexibleSpace();
+				rImage = GUILayoutUtility.GetRect(32, 32, GUILayout.Width(32));
+				GUI.DrawTexture(rImage, _cityTexture);
+
+			}
+
+			// Use logaritmic scale starting from 0
+			float sliderLogValue = MathHelper.LinearToLogScale(Options.PosScale);
+			sliderLogValue = GUILayout.HorizontalSlider(sliderLogValue, .1f, 10f);
+			if (EditorGUI.EndChangeCheck())
+			{
+				Options.PosScale = MathHelper.LogToLinearScale(sliderLogValue);
+				EditorController.EditorWorkspaceController.GridFadeInEditor();
+			}
+
+			float xRange = HandTracking.Workspace.x * Options.PosScale;
+			string strScale = Options.PosScale.ToString("0.0");
+			string strWidth = xRange.ToString("0.#");
+
+			using (var horizontalScope = new GUILayout.HorizontalScope())
+			{
+				EditorGUILayout.PrefixLabel("Scene Scale");
+				EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} meters)", GUILayout.MaxWidth(130));
+			}
+
+			Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);
+
+			GUILayout.Space(4);
+			Options.RotScale = CustomFloatField(Options.RotScale, "Rotation Factor", 0.5f, 5f);
+			Options.ZoomScale = CustomFloatField(Options.ZoomScale, "Zoom Factor", 0f, 3f);
+		}
+
+		private void ScaleGUIOrbit()
+		{
+			EditorGUI.indentLevel++;
+			// Use logaritmic scale starting from 0
+
+			Options.OrbitYawScale = CustomFloatField(Options.OrbitYawScale, "Y Rotation Factor", 0.01f, 3f);
+			Options.OrbitPitchScale = CustomFloatField(Options.OrbitPitchScale, "X Rotation Factor", 0.01f, 3f);
+			Options.OrbitZoomScale = CustomFloatField(Options.OrbitPitchScale, "Zoom Factor", 0.01f, 3f);
+
+			EditorGUI.indentLevel--;
 		}
 	}
 }
