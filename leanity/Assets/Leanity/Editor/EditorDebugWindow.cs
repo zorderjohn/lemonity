@@ -114,7 +114,6 @@ namespace Leanity
 				}
 			}
 
-			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope())
 			{
 				using (var horizontalScope = new GUILayout.HorizontalScope())
@@ -124,7 +123,6 @@ namespace Leanity
 						GUILayout.Label("Left Hand Data", EditorStyles.boldLabel);
 						DrawHandData(leftHandData);
 					}
-					GUILayout.Space(2);
 					using (var verticalScope2 = new GUILayout.VerticalScope(EditorStyles.helpBox))
 					{
 						GUILayout.Label("Right Hand Data", EditorStyles.boldLabel);
@@ -132,7 +130,6 @@ namespace Leanity
 					}
 				}
 			}
-			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				Rect r = GUILayoutUtility.GetAspectRect(_workspaceRatio);
@@ -301,7 +298,7 @@ namespace Leanity
 					PaintHandGuides(HandTracking.RightHandData);
 				}
 
-				if (leftDetected && rightDetected && Options.Gesture == WorkingGesture.TwoHands)
+				if (leftDetected && rightDetected && (Options.Gesture == WorkingGesture.TwoHands || Options.Gesture == WorkingGesture.Hybrid))
 				{
 					PaintPivot();
 				}
