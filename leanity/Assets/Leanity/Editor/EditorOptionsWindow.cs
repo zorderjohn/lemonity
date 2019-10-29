@@ -516,7 +516,7 @@ namespace Leanity
 
 			Options.OrbitYawScale = CustomFloatField(Options.OrbitYawScale, "Y Rotation Factor", 0.01f, 3f);
 			Options.OrbitPitchScale = CustomFloatField(Options.OrbitPitchScale, "X Rotation Factor", 0.01f, 3f);
-			Options.OrbitZoomScale = CustomFloatField(Options.OrbitPitchScale, "Zoom Factor", 0.01f, 3f);
+			Options.OrbitZoomScale = CustomFloatField(Options.OrbitZoomScale, "Zoom Factor", 0.01f, 3f);
 
 			EditorGUI.indentLevel--;
 		}

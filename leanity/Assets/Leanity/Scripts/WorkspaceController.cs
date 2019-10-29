@@ -50,12 +50,12 @@ namespace Leanity
 			{
 				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
-				if (Options.ShowWorkspace)
+				if (Options.ShowWorkspace && Options.Gesture != WorkingGesture.Orbit)
 				{
 					DrawMesh(GridTransparency, matrix);
 				}
 
-				if (Options.ShowGrid)
+				if (Options.ShowGrid && Options.Gesture != WorkingGesture.Orbit)
 				{
 					bool isIddle = _motionController.MotionState == MotionController.State.Idle;
 					Color color = isIddle ? Options.GridColor : Options.GrabGridColor;
