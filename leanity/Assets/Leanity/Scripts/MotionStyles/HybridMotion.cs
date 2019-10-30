@@ -134,7 +134,6 @@ namespace Lemonity
 				_currentMotion = _lastMotion;
 				_currentMotion.Update();
 				_currentMotion.Stop();
-				Debug.Log("Restoring last motion");
 			}
 		}
 

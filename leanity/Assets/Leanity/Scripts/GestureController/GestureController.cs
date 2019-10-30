@@ -179,13 +179,15 @@ namespace Lemonity
 			bool isOk = notTooFast && ( isNear || (isMoving && isApproaching) );
 			if (isOk)
 			{
-				Debug.Log(
+				/*
+				 Debug.Log(
 					(isOk ? "<<<OK>>>  " : "") +
 					$"Distance = {distanceToCenter}({isNear}) " +
 					$"Linear Speed = {handSpeed}({isMoving}) " +
 					$"Angular Speed = {handAngularSpeed}({notTooFast}) " +
 					$"DotProd = {dotProd}({isApproaching})"
 				);
+				*/
 				return HeuristicState.AllowAll;
 			}
 			return HeuristicState.DenyAll;

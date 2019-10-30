@@ -78,12 +78,10 @@ namespace Lemonity
 			bool connectedUpdate = IsDeviceConnected();
 			if (_isConnected && !connectedUpdate)
 			{
-				Debug.Log("OnDisconnect");
 				OnDisconnect?.Invoke();
 			}
 			else if (!_isConnected && connectedUpdate)
 			{
-				Debug.Log("OnConnect");
 				OnConnect?.Invoke();
 			}
 

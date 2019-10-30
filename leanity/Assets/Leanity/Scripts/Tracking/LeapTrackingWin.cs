@@ -120,7 +120,6 @@ namespace Lemonity
 			{
 				if (_controller != null && _controller.IsConnected)
 				{
-					Debug.Log("Lemonity: Stop Leap Controller");
 					_controller.StopConnection();
 					_subInstance = null;
 					GC.Collect();

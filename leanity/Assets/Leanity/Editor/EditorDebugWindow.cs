@@ -34,7 +34,6 @@ namespace Lemonity
 			Options.OnOptionsChange += RepaintScene;
 			HandTracking.OnConnect += RepaintScene;
 			HandTracking.OnDisconnect += RepaintScene;
-			Debug.Log("Debug on enable");
 		}
 
 		void OnDisable()
