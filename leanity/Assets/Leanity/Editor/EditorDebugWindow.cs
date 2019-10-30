@@ -173,7 +173,8 @@ namespace Lemonity
 
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 1000, 15, 15);
 
-			EditorGUI.ProgressBar(rProgressBar, hand.Detected ? hand.GrabValue : 0f, $"Grab: {hand.GrabValue.ToString("0.00")}");
+			float grabValue = hand.Detected ? hand.GrabValue : 0f;
+			EditorGUI.ProgressBar(rProgressBar, grabValue, $"Grab: {grabValue.ToString("0.00")}");
 
 			GUI.enabled = true;
 		}
