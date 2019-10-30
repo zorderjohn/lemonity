@@ -34,7 +34,7 @@ namespace Lemonity
 		static public void EditorUpdate()
 		{
 			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f ||
-				Options.EnableInertia && EditorMotionController.GrabStyle.HasInertia)
+				Options.EnableInertia && EditorMotionController.GrabMotion.HasInertia)
 			{
 				Update(false);
 			}
@@ -89,7 +89,7 @@ namespace Lemonity
 				{
 					if (GUIUpdate && Options.GestureDebug)
 					{
-						EditorMotionController.GrabStyle.DebugDraw();
+						EditorMotionController.GrabMotion.DebugDraw();
 					}
 
 					SceneView.RepaintAll();
