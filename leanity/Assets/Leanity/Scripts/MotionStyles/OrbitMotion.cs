@@ -60,7 +60,17 @@ namespace Leanity
 			}
 
 			// Position calculation
-			float translationScaled = (deltaPos.z / HandTracking.Workspace.z) * Options.OrbitZoomScale * _wcPivotToCamLength;
+			float translationScaled;
+			if (Options.OrbitExponential)
+			{
+				float sign = Mathf.Sign(deltaPos.z);
+				float absDeltaZ = Mathf.Abs(deltaPos.z);
+				translationScaled = sign * Mathf.Pow((absDeltaZ / HandTracking.Workspace.z) * Options.OrbitZoomScale * 10f, 2f);
+			}
+			else
+			{
+				translationScaled = (deltaPos.z / HandTracking.Workspace.z) * Options.OrbitZoomScale * _wcPivotToCamLength;
+			}
 
 			Vector3 ccDeltaTranslation = new Vector3(0f, 0f, translationScaled);
 

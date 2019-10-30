@@ -518,6 +518,9 @@ namespace Leanity
 			Options.OrbitPitchScale = CustomFloatField(Options.OrbitPitchScale, "X Rotation Factor", 0.01f, 3f);
 			Options.OrbitZoomScale = CustomFloatField(Options.OrbitZoomScale, "Zoom Factor", 0.01f, 3f);
 
+			var content = new GUIContent("Exponential Zoom", "Zoom factor increases exponentially");
+			Options.OrbitExponential = EditorGUILayout.Toggle(content, Options.OrbitExponential);
+
 			EditorGUI.indentLevel--;
 		}
 	}

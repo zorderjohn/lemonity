@@ -30,6 +30,7 @@ namespace Leanity
 		public static float   OrbitZoomScale     { get; set; }
 		public static float   OrbitPitchScale    { get; set; }
 		public static float   OrbitYawScale      { get; set; }
+		public static bool    OrbitExponential   { get; set; }
 		#endregion
 
 		#region Camera
@@ -121,6 +122,7 @@ namespace Leanity
 				SaveValue("OrbitZoomScale", OrbitZoomScale);
 				SaveValue("OrbitPitchScale", OrbitPitchScale);
 				SaveValue("OrbitYawScale", OrbitYawScale);
+				SaveValue("OrbitExponential", OrbitExponential);
 
 				// Camera
 				SaveValue("PitchMinAngleLimit", PitchMinAngleLimit);
@@ -194,6 +196,7 @@ namespace Leanity
 				OrbitZoomScale = Load("OrbitZoomScale", 1f);
 				OrbitPitchScale = Load("OrbitPitchScale", 1f);
 				OrbitYawScale = Load("OrbitYawScale", 1f);
+				OrbitExponential = Load("OrbitExponential", true);
 
 				// Camera
 				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);
