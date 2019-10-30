@@ -118,10 +118,11 @@ namespace Lemonity
 			ScaleStyle?.OptionsChange();
 		}
 
-		public bool Update(Vector3 position, Quaternion rotation)
+		public bool Update(Vector3 position, Quaternion rotation, float scale)
 		{
 			Position = position;
 			Rotation = rotation;
+			Scale = scale;
 
 			if (HandTracking.Update())
 			{
@@ -136,24 +137,9 @@ namespace Lemonity
 				HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
 				HandTracking.TransformRotation = Rotation;
 				HandTracking.TransformScale = Options.PosScale;
-
-				GrabStyle.LateFrameUpdate();
 				return retValue;
 			}
 
-			return false;
-		}
-
-		public bool ScaleUpdate(float scale)
-		{
-			if (IsDualPinching)
-			{
-				return true;
-			}
-			else
-			{
-				Scale = scale;
-			}
 			return false;
 		}
 

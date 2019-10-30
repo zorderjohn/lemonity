@@ -143,12 +143,6 @@ namespace Lemonity
 			_currentMotion = _motion;
 		}
 
-		public void LateFrameUpdate()
-		{
-			_oneMotion.LateFrameUpdate();
-			_twoMotion.LateFrameUpdate();
-		}
-
 		public void StopInertia()
 		{
 			_currentMotion.StopInertia();

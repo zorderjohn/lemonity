@@ -73,19 +73,15 @@ namespace Lemonity
 				// before changing camera
 				DrawWorkspace(camPos + camRot * HandTracking.CamToHandOffset(), camRot);
 
-				if (EditorMotionController.Update(camPos, camRot))
+				if (EditorMotionController.Update(camPos, camRot, Options.PosScale))
 				{
 					camPos = EditorMotionController.Position;
 					camRot = EditorMotionController.Rotation;
+					Options.PosScale = EditorMotionController.Scale;
 
 					sceneView.rotation = camRot;
 					sceneView.size = 1f + (Options.PosScale - 1f) * 0.1f;
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
-				}
-
-				if (EditorMotionController.ScaleUpdate(Options.PosScale))
-				{
-					Options.PosScale = EditorMotionController.Scale;
 				}
 
 				bool anyHandVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;

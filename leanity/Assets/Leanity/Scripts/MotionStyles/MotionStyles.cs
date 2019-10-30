@@ -16,7 +16,6 @@ namespace Lemonity
 		void Update();
 		void Stop();
 		bool InertialMovement();
-		void LateFrameUpdate();
 		void StopInertia();
 		bool HasInertia { get; }
 
@@ -153,16 +152,6 @@ namespace Lemonity
 		protected float GetTime()
 		{
 			return Time.realtimeSinceStartup;
-		}
-
-		protected float GetDeltaTime()
-		{
-			return Time.realtimeSinceStartup - _lastFrameTime;
-		}
-
-		public void LateFrameUpdate()
-		{
-			_lastFrameTime = GetTime();
 		}
 	}
 }

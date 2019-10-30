@@ -27,7 +27,7 @@ namespace Lemonity
 		// Update is called once per frame
 		void Update()
 		{
-			motion.Update(transform.position, transform.rotation);
+			motion.Update(transform.position, transform.rotation, 1f);
 
 			transform.position = motion.Position;
 			transform.rotation = motion.Rotation;
