@@ -70,10 +70,12 @@ namespace Lemonity
 
 		public bool InertialMovement()
 		{
-			bool retValue = _currentMotion.InertialMovement();
-			GetMotionData();
-
-			return retValue;
+			if (_currentMotion.InertialMovement())
+			{
+				GetMotionData();
+				return true;
+			}
+			return false;
 		}
 
 		private void SetMotionData()

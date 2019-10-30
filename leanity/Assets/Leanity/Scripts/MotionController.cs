@@ -136,8 +136,7 @@ namespace Lemonity
 
 				HandTracking.TransformPosition = Position + Rotation * HandTracking.CamToHandOffset();
 				HandTracking.TransformRotation = Rotation;
-				//HandTracking.TransformScale = Scale;
-				HandTracking.TransformScale = Options.PosScale;
+				HandTracking.TransformScale = Scale;
 				return retValue;
 			}
 
@@ -271,8 +270,7 @@ namespace Lemonity
 					}
 					if (!Options.StopIfNotVisible && Options.EnableInertia)
 					{
-						bool inertialMoving = GrabMotion.InertialMovement();
-						return inertialMoving;
+						return GrabMotion.InertialMovement();
 					}
 					break;
 
@@ -299,8 +297,7 @@ namespace Lemonity
 					{
 						if (Options.EnableInertia)
 						{
-							bool inertialMoving = GrabMotion.InertialMovement();
-							return inertialMoving;
+							return GrabMotion.InertialMovement();
 						}
 					}
 					break;
