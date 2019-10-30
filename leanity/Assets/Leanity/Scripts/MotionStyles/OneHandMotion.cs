@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class OneHandMotion : MotionStyleBase
 	{
@@ -10,7 +10,7 @@ namespace Leanity
 		Quaternion _wcCamInitialRot;
 		Quaternion _hcPitchDeltaRot;
 
-		Leanity.IGestureController _gestureController;
+		Lemonity.IGestureController _gestureController;
 
 		public override bool RequiresTwoHands { get { return false; } }
 

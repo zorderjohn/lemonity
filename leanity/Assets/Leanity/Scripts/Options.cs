@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 
-namespace Leanity
+namespace Lemonity
 {
 	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit}
 	public enum WorkingMode    { Absolute = 0, Relative}
@@ -12,7 +12,7 @@ namespace Leanity
 	[Serializable]
 	public static class Options
 	{
-		private static readonly string _prefix = "Leanity.";
+		private static readonly string _prefix = "Lemonity.";
 		public static event Action OnOptionsLoad;
 		public static event Action OnOptionsChange;
 
@@ -206,13 +206,13 @@ namespace Leanity
 
 				// Interaction
 				GrabEnabled = Load("GrabEnabled", true);
-				GrabMinThreshold = Load("GrabMinThreshold", 0.5f);
-				GrabMaxThreshold = Load("GrabMaxThreshold", 0.6f);
+				GrabMinThreshold = Load("GrabMinThreshold", 0.13f);
+				GrabMaxThreshold = Load("GrabMaxThreshold", 0.7f);
 				InvertAxis = Load("InvertAxis", false);
 
 				PinchEnabled = Load("PinchEnabled", true);
 				PinchMinThreshold = Load("PinchMinThreshold", 22f);
-				PinchMaxThreshold = Load("PinchMaxThreshold", 40f);
+				PinchMaxThreshold = Load("PinchMaxThreshold", 65f);
 
 				// Inertia
 				EnableInertia = Load("EnableInertia", true);

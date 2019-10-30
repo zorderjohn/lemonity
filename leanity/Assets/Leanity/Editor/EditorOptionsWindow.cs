@@ -4,7 +4,7 @@ using UnityEditor.AnimatedValues;
 using System;
 using System.Globalization;
 
-namespace Leanity
+namespace Lemonity
 {
 	[Serializable]
 	public class EditorOptionsWindow : EditorWindow, IDisposable
@@ -334,10 +334,10 @@ namespace Leanity
 
 		}
 
-		[MenuItem("Window/Leanity Options &l")]
+		[MenuItem("Window/Lemonity Options &l")]
 		public static void Init()
 		{
-			GetWindow(typeof(EditorOptionsWindow), false, "Leanity Options", true);
+			GetWindow(typeof(EditorOptionsWindow), false, "Lemonity Options", true);
 		}
 
 		public void OnInspectorUpdate()

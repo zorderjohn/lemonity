@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class ValueFade
 	{

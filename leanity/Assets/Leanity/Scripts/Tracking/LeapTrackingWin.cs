@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace Leanity
+namespace Lemonity
 {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 	public class LeapTrackingWin : HandTracking
@@ -120,7 +120,7 @@ namespace Leanity
 			{
 				if (_controller != null && _controller.IsConnected)
 				{
-					Debug.Log("Leanity: Stop Leap Controller");
+					Debug.Log("Lemonity: Stop Leap Controller");
 					_controller.StopConnection();
 					_subInstance = null;
 					GC.Collect();

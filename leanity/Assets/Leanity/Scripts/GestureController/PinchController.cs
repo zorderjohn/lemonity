@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class PinchController : GestureControllerBase
 	{

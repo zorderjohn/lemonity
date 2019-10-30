@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using CircularBuffer;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class InertialObject
 	{

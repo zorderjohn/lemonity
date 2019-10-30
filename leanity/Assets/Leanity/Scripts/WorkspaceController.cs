@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class WorkspaceController
 	{
@@ -113,7 +113,7 @@ namespace Leanity
 			Shader shader = Shader.Find(shaderStr);
 			if (!shader)
 			{
-				Debug.LogError("Leanity: Unable to load shader " + shaderStr);
+				Debug.LogError("Lemonity: Unable to load shader " + shaderStr);
 			}
 			else
 			{

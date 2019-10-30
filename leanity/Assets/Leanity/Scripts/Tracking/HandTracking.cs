@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public abstract class HandTracking : IDisposable
 	{

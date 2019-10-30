@@ -2,7 +2,7 @@
 using UnityEditor;
 
 #if UNITY_EDITOR
-namespace Leanity
+namespace Lemonity
 {
 	[InitializeOnLoad]
 	public class EditorController

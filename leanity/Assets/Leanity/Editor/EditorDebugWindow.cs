@@ -4,7 +4,7 @@ using System;
 using UnityEditor.IMGUI.Controls;
 using System.Collections.Generic;
 
-namespace Leanity
+namespace Lemonity
 {
 	[Serializable]
 	public class EditorDebugWindow : EditorWindow, IDisposable
@@ -225,10 +225,10 @@ namespace Leanity
 			return coords;
 		}
 
-		[MenuItem("Window/Leanity &l")]
+		[MenuItem("Window/Lemonity &l")]
 		public static void Init()
 		{
-			GetWindow(typeof(EditorDebugWindow), false, "Leanity Debug", true);
+			GetWindow(typeof(EditorDebugWindow), false, "Lemonity Debug", true);
 		}
 
 		public void OnInspectorUpdate()

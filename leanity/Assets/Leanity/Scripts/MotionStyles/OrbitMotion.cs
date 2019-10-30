@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Leanity
+namespace Lemonity
 {
 	public class OrbitMotion : MotionStyleBase
 	{
