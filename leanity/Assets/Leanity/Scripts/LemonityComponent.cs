@@ -5,12 +5,13 @@ using Leap;
 namespace Lemonity
 {
 
-	public class LeapTestCalc : MonoBehaviour
+	public class LemonityComponent : MonoBehaviour
 	{
 		[Header("Operation Mode")]
 
-		public bool isCamera = false;
-		public bool invertAxis = false;
+		public bool _isCamera = false;
+		public bool _invertAxis = false;
+
 		[Range(0f, 90f)]
 		public float PitchLimit = 75f;
 
@@ -20,6 +21,8 @@ namespace Lemonity
 
 		void Start()
 		{
+			_invertAxis = Options.InvertAxis;
+
 			motion = new MotionController();
 			OnValidate();
 		}
@@ -36,7 +39,7 @@ namespace Lemonity
 
 		private void OnValidate()
 		{
-
+			Options.InvertAxis = _invertAxis;
 
 		}
 	}
