@@ -40,7 +40,7 @@ namespace Leanity
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
 			#region Header
-			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+			using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				_logoTexture = _logoTexture ?? Resources.Load<Texture>("logo");
 				Rect rImage = GUILayoutUtility.GetRect(50, 1000, 50, 50);
@@ -91,12 +91,12 @@ namespace Leanity
 			if (Options.Gesture != WorkingGesture.Disabled)
 			{
 				#region Sensitivity
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showSensitivity.target = EditorGUILayout.Foldout(_showSensitivity.target, "Sensitivity / Scale", true, foldoutStyle);
 
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showSensitivity.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showSensitivity.faded))
 					{
 						if (_showSensitivity.value)
 						{
@@ -117,11 +117,11 @@ namespace Leanity
 				#endregion
 
 				#region Gestures
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showGestures.target = EditorGUILayout.Foldout(_showGestures.target, "Gestures", true, foldoutStyle);
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showGestures.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showGestures.faded))
 					{
 						if (_showGestures.value)
 						{
@@ -154,11 +154,11 @@ namespace Leanity
 				#endregion
 
 				#region Camera
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showCamera.target = EditorGUILayout.Foldout(_showCamera.target, "Camera Angle Limits", true, foldoutStyle);
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showCamera.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showCamera.faded))
 					{
 						if (_showCamera.value)
 						{
@@ -183,7 +183,7 @@ namespace Leanity
 				#endregion
 
 				#region Filters
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Advanced Motion Filtering", true, foldoutStyle);
 
@@ -192,7 +192,7 @@ namespace Leanity
 					const string betaTooltip = "Higher values reduce high speed lag";
 					const string dCOTooltip = "Frequency cutoff for derivative";
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showFilters.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showFilters.faded))
 					{
 						if (_showFilters.value)
 						{
@@ -220,11 +220,11 @@ namespace Leanity
 				#endregion
 
 				#region Inertia
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showInertia.target = EditorGUILayout.Foldout(_showInertia.target, "Inertia", true, foldoutStyle);
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showInertia.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showInertia.faded))
 					{
 						if (_showInertia.value)
 						{
@@ -244,11 +244,11 @@ namespace Leanity
 				#endregion
 
 				#region Heuristics
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showHeuristic.target = EditorGUILayout.Foldout(_showHeuristic.target, "Gesture Filtering", true, foldoutStyle);
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showHeuristic.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showHeuristic.faded))
 					{
 						if (_showHeuristic.value)
 						{
@@ -270,11 +270,11 @@ namespace Leanity
 				#endregion
 
 				#region Visuals
-				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
 					_showDebug.target = EditorGUILayout.Foldout(_showDebug.target, "Visual Effects", true, foldoutStyle);
 
-					using (var filterGroup = new EditorGUILayout.FadeGroupScope(_showDebug.faded))
+					using (new EditorGUILayout.FadeGroupScope(_showDebug.faded))
 					{
 						if (_showDebug.value)
 						{
@@ -361,7 +361,7 @@ namespace Leanity
 		private static int CustomIntField(int value, string prefixLabel, int minSlider, int maxSlider, string tooltip = "")
 		{
 			var content = new GUIContent(prefixLabel, tooltip);
-			using (var horizontalScope = new GUILayout.HorizontalScope())
+			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel(content);
 				value = (int)GUILayout.HorizontalSlider(value, minSlider, maxSlider);
@@ -372,7 +372,7 @@ namespace Leanity
 		private static float CustomFloatField(float value, string prefixLabel, string tooltip = "")
 		{
 			var content = new GUIContent(prefixLabel, tooltip);
-			using (var horizontalScope = new GUILayout.HorizontalScope())
+			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel(content);
 				return CustomFloatField(value);
@@ -382,7 +382,7 @@ namespace Leanity
 		private static float CustomFloatField(float value, string prefixLabel, float minSlider, float maxSlider, string tooltip = "")
 		{
 			var content = new GUIContent(prefixLabel, tooltip);
-			using (var horizontalScope = new GUILayout.HorizontalScope())
+			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel(content);
 				value = GUILayout.HorizontalSlider(value, minSlider, maxSlider);
@@ -465,7 +465,7 @@ namespace Leanity
 
 			EditorGUI.BeginChangeCheck();
 
-			using (var horizontalScope = new GUILayout.HorizontalScope())
+			using (new GUILayout.HorizontalScope())
 			{
 				_lemonTexture = _lemonTexture ?? Resources.Load<Texture>("lemon_32");
 				_treeTexture = _treeTexture ?? Resources.Load<Texture>("tree_32");
@@ -496,7 +496,7 @@ namespace Leanity
 			string strScale = Options.PosScale.ToString("0.0");
 			string strWidth = xRange.ToString("0.#");
 
-			using (var horizontalScope = new GUILayout.HorizontalScope())
+			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel("Scene Scale");
 				EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} meters)", GUILayout.MaxWidth(130));
