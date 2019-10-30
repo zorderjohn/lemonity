@@ -34,7 +34,7 @@ namespace Lemonity
 		static public void EditorUpdate()
 		{
 			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f ||
-				Options.EnableInertia && EditorMotionController.MotionStyle.HasInertia)
+				Options.EnableInertia && EditorMotionController.GrabStyle.HasInertia)
 			{
 				Update(false);
 			}
@@ -46,7 +46,7 @@ namespace Lemonity
 
 			if (Event.current != null && Event.current.type == EventType.MouseDown)
 			{
-				EditorController.EditorMotionController.StopInertia();
+				EditorMotionController.StopInertia();
 			}
 
 			if (Options.Gesture == WorkingGesture.Disabled)
@@ -83,7 +83,7 @@ namespace Lemonity
 					sceneView.pivot = MathHelper.CameraPivot(camPos, camRot, sceneView.cameraDistance);
 				}
 
-				if (Options.PinchEnabled && EditorMotionController.ScaleUpdate(Options.PosScale))
+				if (EditorMotionController.ScaleUpdate(Options.PosScale))
 				{
 					Options.PosScale = EditorMotionController.Scale;
 				}
@@ -93,7 +93,7 @@ namespace Lemonity
 				{
 					if (GUIUpdate && Options.GestureDebug)
 					{
-						EditorMotionController.MotionStyle.DebugDraw();
+						EditorMotionController.GrabStyle.DebugDraw();
 					}
 
 					SceneView.RepaintAll();

@@ -7,6 +7,7 @@ namespace Lemonity
 	{
 		public enum State { Hided = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
 
+		#region Properties
 		public IMotionStyle _scaleStyle;
 		public IMotionStyle ScaleStyle
 		{
@@ -18,14 +19,14 @@ namespace Lemonity
 			}
 		}
 
-		private IMotionStyle _motionStyle;
-		public IMotionStyle MotionStyle
+		private IMotionStyle _grabStyle;
+		public IMotionStyle GrabStyle
 		{
-			get { return _motionStyle; }
+			get { return _grabStyle; }
 			set
 			{
-				_motionStyle = value;
-				InitMotionStyle();
+				_grabStyle = value;
+				InitGrabStyle();
 			}
 		}
 
@@ -33,11 +34,11 @@ namespace Lemonity
 		{
 			get
 			{
-				return IsDualPinching ? ScaleStyle.Position : _motionStyle.Position;
+				return IsDualPinching ? ScaleStyle.Position : GrabStyle.Position;
 			}
 			set
 			{
-				_motionStyle.Position = value;
+				GrabStyle.Position = value;
 				ScaleStyle.Position = value;
 			}
 		}
@@ -46,11 +47,11 @@ namespace Lemonity
 		{
 			get
 			{
-				return IsDualPinching ? ScaleStyle.Rotation : _motionStyle.Rotation;
+				return IsDualPinching ? ScaleStyle.Rotation : GrabStyle.Rotation;
 			}
 			set
 			{
-				_motionStyle.Rotation = value;
+				GrabStyle.Rotation = value;
 				ScaleStyle.Rotation = value;
 			}
 		}
@@ -60,18 +61,9 @@ namespace Lemonity
 			get { return ScaleStyle.Scale; }
 			set {
 				ScaleStyle.Scale = value;
-				_motionStyle.Scale = value;
+				GrabStyle.Scale = value;
 			}
 		}
-
-		public event Action OnHandsVisible;
-		public event Action OnHandsInVisible;
-		public event Action OnStartPinch;
-		public event Action OnEndPinch;
-		public event Action OnStartGrab;
-		public event Action OnEndGrab;
-		public event Action OnStateChange;
-
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
 
@@ -79,19 +71,28 @@ namespace Lemonity
 		public PinchController RightPinch { get; private set; }
 
 		public State MotionState { get; private set; }
-
 		public bool IsGrabbing => MotionState == State.Grabbing;
 		public bool IsDualPinching => MotionState == State.Pinching;
+		#endregion
 
+		#region Actions
+		public event Action OnHandsVisible;
+		public event Action OnHandsInVisible;
+		public event Action OnStartPinch;
+		public event Action OnEndPinch;
+		public event Action OnStartGrab;
+		public event Action OnEndGrab;
+		public event Action OnStateChange;
+		#endregion
+
+		#region Private Fields
 		private WorkingGesture _currentGesture;
-
-		private float _initialScale;
-
+		#endregion
 
 		public MotionController()
 		{
 			Options.Load();
-			Options.OnOptionsChange += OnOptionsChanged;
+			Options.OnOptionsChange += OnOptionsChange;
 
 			LeftGrab = new GrabController();
 			RightGrab = new GrabController();
@@ -105,34 +106,7 @@ namespace Lemonity
 			Scale = 0f;
 		}
 
-		private void LoadMotionStyle()
-		{
-			switch(_currentGesture)
-			{
-				case WorkingGesture.OneHand:
-					MotionStyle = new OneHandMotion();
-					ScaleStyle = new ScaleMotion();
-					break;
-
-				case WorkingGesture.TwoHands:
-					MotionStyle = new TwoHandsMotion();
-					ScaleStyle = new ScaleMotion();
-					break;
-
-				case WorkingGesture.Hybrid:
-				default:
-					MotionStyle = new HybridMotion();
-					ScaleStyle = new ScaleMotion();
-					break;
-
-				case WorkingGesture.Orbit:
-					MotionStyle = new OrbitMotion();
-					ScaleStyle = new NullMotion();
-					break;
-			}
-		}
-
-		public void OnOptionsChanged()
+		public void OnOptionsChange()
 		{
 			if (_currentGesture != Options.Gesture)
 			{
@@ -140,7 +114,7 @@ namespace Lemonity
 				LoadMotionStyle();
 			}
 
-			MotionStyle?.OptionsChange();
+			GrabStyle?.OptionsChange();
 			ScaleStyle?.OptionsChange();
 		}
 
@@ -163,7 +137,7 @@ namespace Lemonity
 				HandTracking.TransformRotation = Rotation;
 				HandTracking.TransformScale = Options.PosScale;
 
-				MotionStyle.LateFrameUpdate();
+				GrabStyle.LateFrameUpdate();
 				return retValue;
 			}
 
@@ -185,7 +159,7 @@ namespace Lemonity
 
 		public void StopInertia()
 		{
-			MotionStyle?.StopInertia();
+			GrabStyle?.StopInertia();
 		}
 
 		public State GetHandState(bool isRightHand)
@@ -242,11 +216,11 @@ namespace Lemonity
 			}
 		}
 
-		private void InitMotionStyle()
+		private void InitGrabStyle()
 		{
-			_motionStyle.LeftGesture = LeftGrab;
-			_motionStyle.RightGesture = RightGrab;
-			_motionStyle.OptionsChange();
+			GrabStyle.LeftGesture = LeftGrab;
+			GrabStyle.RightGesture = RightGrab;
+			GrabStyle.OptionsChange();
 		}
 
 		private void InitScaleStyle()
@@ -255,11 +229,38 @@ namespace Lemonity
 			ScaleStyle.RightGesture = RightPinch;
 		}
 
+		private void LoadMotionStyle()
+		{
+			switch (_currentGesture)
+			{
+				case WorkingGesture.OneHand:
+					GrabStyle = new OneHandMotion();
+					ScaleStyle = new ScaleMotion();
+					break;
+
+				case WorkingGesture.TwoHands:
+					GrabStyle = new TwoHandsMotion();
+					ScaleStyle = new ScaleMotion();
+					break;
+
+				case WorkingGesture.Hybrid:
+				default:
+					GrabStyle = new HybridMotion();
+					ScaleStyle = new ScaleMotion();
+					break;
+
+				case WorkingGesture.Orbit:
+					GrabStyle = new OrbitMotion();
+					ScaleStyle = new NullMotion();
+					break;
+			}
+		}
+
 		private bool EventController()
 		{
 			bool grabbingUpdate = false;
 
-			if (_motionStyle != null && _motionStyle.RequiresTwoHands)
+			if (GrabStyle != null && GrabStyle.RequiresTwoHands)
 			{
 				grabbingUpdate = LeftGrab.IsHolding && RightGrab.IsHolding;
 			}
@@ -283,7 +284,7 @@ namespace Lemonity
 					}
 					if (!Options.StopIfNotVisible && Options.EnableInertia)
 					{
-						bool inertialMoving = MotionStyle.InertialMovement();
+						bool inertialMoving = GrabStyle.InertialMovement();
 						return inertialMoving;
 					}
 					break;
@@ -298,7 +299,7 @@ namespace Lemonity
 					if (grabbingUpdate)
 					{
 						MotionState = State.Grabbing;
-						StartMoving();
+						StartGrabbing();
 						OnStateChange?.Invoke();
 					}
 					else if (dualPinchingUpdate)
@@ -311,7 +312,7 @@ namespace Lemonity
 					{
 						if (Options.EnableInertia)
 						{
-							bool inertialMoving = MotionStyle.InertialMovement();
+							bool inertialMoving = GrabStyle.InertialMovement();
 							return inertialMoving;
 						}
 					}
@@ -320,12 +321,12 @@ namespace Lemonity
 				case State.Grabbing:
 					if (grabbingUpdate)
 					{
-						MotionStyle.Update();
+						GrabStyle.Update();
 						return true;
 					}
 					else
 					{
-						StopMoving();
+						StopGrabbing();
 
 						if (dualPinchingUpdate)
 						{
@@ -346,7 +347,7 @@ namespace Lemonity
 					{
 						StopPinching();
 						MotionState = State.Grabbing;
-						StartMoving();
+						StartGrabbing();
 						OnStateChange?.Invoke();
 					}
 					else if (!dualPinchingUpdate)
@@ -366,24 +367,24 @@ namespace Lemonity
 			return false;
 		}
 
-		private void StartMoving()
+		private void StartGrabbing()
 		{
-			if (MotionStyle != null)
+			if (GrabStyle != null)
 			{
-				if (MotionStyle.RequiresTwoHands)
+				if (GrabStyle.RequiresTwoHands)
 				{
 					LeftGrab.Reset();
 					RightGrab.Reset();
 				}
-				MotionStyle.Start();
+				GrabStyle.Start();
 			}
 			OnStartGrab?.Invoke();
 			OnStateChange?.Invoke();
 		}
 
-		private void StopMoving()
+		private void StopGrabbing()
 		{
-			MotionStyle?.Stop();
+			GrabStyle?.Stop();
 			OnEndGrab?.Invoke();
 			OnStateChange?.Invoke();
 		}

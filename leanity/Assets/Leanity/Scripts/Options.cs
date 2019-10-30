@@ -237,7 +237,7 @@ namespace Lemonity
 				NumGridLines = Load("NumGridLines", 6);
 				ShowGrid = Load("ShowGrid", true);
 				ShowWorkspace = Load("ShowWorkspace", true);
-				GestureDebug = Load("GestureDebug", true);
+				GestureDebug = Load("GestureDebug", false);
 				MaxGridTransparency = Load("MaxTransparency", .8f);
 				TrackingZOffset = Load("TrackingZOffset", 1f);
 				HandScale = Load("HandScale", 1f);
