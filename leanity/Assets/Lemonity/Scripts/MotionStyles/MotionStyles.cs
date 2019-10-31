@@ -61,9 +61,6 @@ namespace Lemonity
 		{
 			UpdateMotion();
 			UpdateInertialData();
-
-			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 		}
 
 		public void Stop()
@@ -86,10 +83,6 @@ namespace Lemonity
 				Position = _inertialData.Position;
 				Rotation = _inertialData.Rotation;
 			}
-
-			GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-			GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
-			GraphDbg.Log("moving", _inertialData.IsMoving ? 1f : 0f);
 
 			return _inertialData.IsMoving;
 		}

@@ -108,8 +108,6 @@ namespace Lemonity
 
 			if (_inertialData.Update(t))
 			{
-				GraphDbg.Log("vel", _inertialData.LinearVelocity.magnitude);
-				GraphDbg.Log("angularVel", _inertialData.AngularVelocityEuler.magnitude, 1001);
 				UpdatePose(_inertialData.Rotation, _inertialData.Position);
 				return true;
 			}

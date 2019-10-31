@@ -35,7 +35,7 @@ namespace Lemonity
 			// Vector from pivot to camera which will be rotated by the gesture
 			var wcPivotTocam = wcCamInitialPos - _wcCamPivot;
 			_wcPivotToCamLength = wcPivotTocam.magnitude;
-			_wcPivotToCamNormalized = wcPivotTocam / _wcPivotToCamLength;
+			_wcPivotToCamNormalized = _wcPivotToCamLength <= Mathf.Epsilon ? wcPivotTocam :  wcPivotTocam / _wcPivotToCamLength;
 		}
 
 		protected override void UpdateMotion()
