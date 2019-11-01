@@ -79,15 +79,5 @@ namespace Lemonity
 
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 		}
-
-		protected override void UpdateInertialData()
-		{
-			UpdateInertialDataSimple();
-		}
-
-		public override bool InertialMovement()
-		{
-			return InertialMovementSimple();
-		}
 	}
 }

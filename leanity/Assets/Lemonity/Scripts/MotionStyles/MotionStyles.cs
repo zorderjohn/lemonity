@@ -68,9 +68,7 @@ namespace Lemonity
 			_inertialData.CalculateLinearVelocity();
 		}
 
-		public abstract bool InertialMovement();
-
-		public bool InertialMovementSimple()
+		public virtual bool InertialMovement()
 		{
 			float t = GetTime();
 			_inertialData.DragAngularVelocity(Options.AngularDrag, t);
@@ -100,9 +98,7 @@ namespace Lemonity
 
 		protected abstract void UpdateMotion();
 
-		protected abstract void UpdateInertialData();
-
-		protected void UpdateInertialDataSimple()
+		protected virtual void UpdateInertialData()
 		{
 			float t = GetTime();
 			_inertialData.SetPosition(Position, t);

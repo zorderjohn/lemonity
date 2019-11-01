@@ -237,7 +237,7 @@ namespace Lemonity
 
 				case WorkingGesture.Orbit:
 					GrabMotion = new OrbitMotion();
-					PinchMotion = new NullMotion();
+					PinchMotion = new AlignMotion();
 					break;
 
 				case WorkingGesture.FlyOneHand:
@@ -255,6 +255,7 @@ namespace Lemonity
 		private bool EventController()
 		{
 			bool grabbingUpdate = false;
+			bool pinchingUpdate = false;
 
 			if (GrabMotion != null && GrabMotion.RequiresTwoHands)
 			{
@@ -265,7 +266,14 @@ namespace Lemonity
 				grabbingUpdate = LeftGrab.IsHolding || RightGrab.IsHolding;
 			}
 
-			bool dualPinchingUpdate = Options.PinchEnabled && LeftPinch.IsHolding && RightPinch.IsHolding;
+			if (PinchMotion != null && PinchMotion.RequiresTwoHands)
+			{
+				pinchingUpdate = Options.PinchEnabled && LeftPinch.IsHolding && RightPinch.IsHolding;
+			}
+			else
+			{
+				pinchingUpdate = Options.PinchEnabled && (LeftPinch.IsHolding || RightPinch.IsHolding);
+			}
 
 			bool isHiding = !HandTracking.LeftHandData.Detected && !HandTracking.RightHandData.Detected;
 
@@ -297,7 +305,7 @@ namespace Lemonity
 						StartGrabbing();
 						OnStateChange?.Invoke();
 					}
-					else if (dualPinchingUpdate)
+					else if (pinchingUpdate)
 					{
 						MotionState = State.Pinching;
 						StartPinching();
@@ -322,7 +330,7 @@ namespace Lemonity
 					{
 						StopGrabbing();
 
-						if (dualPinchingUpdate)
+						if (pinchingUpdate)
 						{
 							MotionState = State.Pinching;
 							StartPinching();
@@ -344,7 +352,7 @@ namespace Lemonity
 						StartGrabbing();
 						OnStateChange?.Invoke();
 					}
-					else if (!dualPinchingUpdate)
+					else if (!pinchingUpdate)
 					{
 						StopPinching();
 						MotionState = State.Idle;

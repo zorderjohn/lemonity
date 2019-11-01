@@ -62,15 +62,5 @@ namespace Lemonity
 			float absValue = Mathf.Abs(value);
 			return sign * Mathf.Pow(absValue, Options.FlyExponential);
 		}
-
-		protected override void UpdateInertialData()
-		{
-			UpdateInertialDataSimple();
-		}
-
-		public override bool InertialMovement()
-		{
-			return InertialMovementSimple();
-		}
 	}
 }

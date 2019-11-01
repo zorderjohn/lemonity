@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 public static class MathHelper
 {
@@ -100,5 +101,21 @@ public static class MathHelper
 		float magnitude = value.magnitude;
 		Vector3 normalized = magnitude > Mathf.Epsilon ? value.normalized : Vector3.zero;
 		return normalized * Mathf.Pow(magnitude * scale, exponential);
+	}
+
+	public static Vector3 GetSelectionCenter()
+	{
+		var transforms = Selection.GetTransforms(SelectionMode.Deep | SelectionMode.ExcludePrefab);
+		if (transforms == null || transforms.Length == 0)
+		{
+			return Vector3.zero;
+		}
+
+		Bounds b = new Bounds(transforms[0].position, Vector3.zero);
+		foreach (var t in transforms)
+		{
+			b.Encapsulate(t.position);
+		}
+		return b.center;
 	}
 }

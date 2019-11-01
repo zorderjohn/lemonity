@@ -30,7 +30,7 @@ namespace Lemonity
 			_wcCamInitialRot = _gesture.ObjectInitialRotation;
 
 			// Calculate camera rotation pivot
-			_wcCamPivot = GetSelectionCenter();
+			_wcCamPivot = MathHelper.GetSelectionCenter();
 
 			// Vector from pivot to camera which will be rotated by the gesture
 			var wcPivotTocam = wcCamInitialPos - _wcCamPivot;
@@ -139,20 +139,6 @@ namespace Lemonity
 		}
 
 
-		private static Vector3 GetSelectionCenter()
-		{
-			var transforms = Selection.GetTransforms(SelectionMode.Deep | SelectionMode.ExcludePrefab);
-			if (transforms == null || transforms.Length == 0)
-			{
-				return Vector3.zero;
-			}
-
-			Bounds b = new Bounds(transforms[0].position, Vector3.zero);
-			foreach (var t in transforms)
-			{
-				b.Encapsulate(t.position);
-			}
-			return b.center;
-		}
+		
 	}
 }
