@@ -225,7 +225,7 @@ namespace Lemonity
 			return coords;
 		}
 
-		[MenuItem("Window/Lemonity &l")]
+		[MenuItem("Window/Lemonity Debug &l")]
 		public static void Init()
 		{
 			GetWindow(typeof(EditorDebugWindow), false, "Lemonity Debug", true);

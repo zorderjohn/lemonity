@@ -86,4 +86,19 @@ public static class MathHelper
 	{
 		return Mathf.Pow(3f, value) - 1f;
 	}
+
+	public static float ExponentialScale(float value, float scale, float exponential)
+	{
+		value *= scale;
+		float sign = Mathf.Sign(value);
+		float absValue = Mathf.Abs(value);
+		return sign * Mathf.Pow(absValue, exponential);
+	}
+
+	public static Vector3 ExponentialScale(Vector3 value, float scale, float exponential)
+	{
+		float magnitude = value.magnitude;
+		Vector3 normalized = magnitude > Mathf.Epsilon ? value.normalized : Vector3.zero;
+		return normalized * Mathf.Pow(magnitude * scale, exponential);
+	}
 }

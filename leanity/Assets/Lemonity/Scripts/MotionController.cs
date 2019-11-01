@@ -239,6 +239,16 @@ namespace Lemonity
 					GrabMotion = new OrbitMotion();
 					PinchMotion = new NullMotion();
 					break;
+
+				case WorkingGesture.FlyOneHand:
+					GrabMotion = new OneHandNoPivotMotion();
+					PinchMotion = new NullMotion();
+					break;
+
+				case WorkingGesture.FlyTwoHands:
+					GrabMotion = new TwoHandsNoPivotMotion();
+					PinchMotion = new NullMotion();
+					break;
 			}
 		}
 

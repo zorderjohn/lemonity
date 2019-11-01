@@ -42,8 +42,6 @@ namespace Lemonity
 		}
 
 		protected InertialObject _inertialData;
-		protected float _lastFrameTime = 0f;
-
 
 		public MotionStyleBase()
 		{

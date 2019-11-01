@@ -6,7 +6,7 @@ using System;
 
 namespace Lemonity
 {
-	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit}
+	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit, FlyOneHand, FlyTwoHands}
 	public enum WorkingMode    { Absolute = 0, Relative}
 
 	[Serializable]
@@ -31,13 +31,17 @@ namespace Lemonity
 		public static float   OrbitPitchScale    { get; set; }
 		public static float   OrbitYawScale      { get; set; }
 		public static bool    OrbitExponential   { get; set; }
+		public static float   FlyPosScale        { get; set; }
+		public static float   FlyPitchScale      { get; set; }
+		public static float   FlyYawScale        { get; set; }
+		public static float   FlyExponential     { get; set; }
 		#endregion
 
 		#region Camera
 		public static float PitchMaxAngleLimit { get; set; }
 		public static float PitchMinAngleLimit { get; set; }
 		public static bool  PitchLimit         { get; set; }
-		public static bool  RollLimit          { get; set; }
+		public static bool  RollLimit          { get { return true; }}
 		#endregion
 
 		#region Interaction
@@ -123,6 +127,10 @@ namespace Lemonity
 				SaveValue("OrbitPitchScale", OrbitPitchScale);
 				SaveValue("OrbitYawScale", OrbitYawScale);
 				SaveValue("OrbitExponential", OrbitExponential);
+				SaveValue("FlyPosScale", FlyPosScale);
+				SaveValue("FlyPitchScale", FlyPitchScale);
+				SaveValue("FlyYawScale", FlyYawScale);
+				SaveValue("FlyExponential", FlyExponential);
 
 				// Camera
 				SaveValue("PitchMinAngleLimit", PitchMinAngleLimit);
@@ -198,11 +206,16 @@ namespace Lemonity
 				OrbitYawScale = Load("OrbitYawScale", 1f);
 				OrbitExponential = Load("OrbitExponential", true);
 
+				FlyPosScale = Load("FlyPosScale", 1f);
+				FlyPitchScale = Load("FlyPitchScale", 1f);
+				FlyYawScale = Load("FlyYawScale", 1f);
+				FlyExponential = Load("FlyExponential", 1f);
+
 				// Camera
 				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);
 				PitchMaxAngleLimit = Load("PitchMaxAngleLimit", 90f);
 				PitchLimit = Load("PitchLimit", true);
-				RollLimit = Load("RollLimit", true);
+				//RollLimit = Load("RollLimit", true);
 
 				// Interaction
 				GrabEnabled = Load("GrabEnabled", true);

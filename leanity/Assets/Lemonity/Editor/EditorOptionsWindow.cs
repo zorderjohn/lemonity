@@ -9,7 +9,7 @@ namespace Lemonity
 	[Serializable]
 	public class EditorOptionsWindow : EditorWindow, IDisposable
 	{
-		private enum Mode { Off = 0, PanRotate, Orbit};
+		private enum Mode { Off = 0, PanRotate, Orbit, Fly};
 		private enum SubMode { OneHand = 0, TwoHands, AnyHands};
 
 		private static Vector2 _scrollPosition;
@@ -52,7 +52,8 @@ namespace Lemonity
 				{
 					new GUIContent("Off", "Disable Lemonity"),
 					new GUIContent("Pan & Rotate", "Move & Rotate the camera using current hand position in workspace as the pivot"),
-					new GUIContent("Orbit", "Rotate the camera around using the selected object as the pivot")
+					new GUIContent("Orbit", "Rotate the camera around using the selected object as the pivot"),
+					new GUIContent("Fly", "Fly around the scene")
 				};
 				Mode mode;
 				SubMode subMode;
@@ -69,6 +70,18 @@ namespace Lemonity
 					new GUIContent("One Hand", "Only one hand at a time can move and rotate the camera"),
 					new GUIContent("Two Hands", "Two hands are used to move and rotate the camera"),
 					new GUIContent("Any Hands", "One or two hands can be used to rotate and move the camera"),
+					};
+
+					subMode = (SubMode)GUILayout.Toolbar((int)subMode, panOptions);
+				}
+				else if (mode == Mode.Fly)
+				{
+					GUILayout.Space(4);
+					GUILayout.Label("Sub-Mode", EditorStyles.boldLabel);
+					GUIContent[] panOptions = new[]
+					{
+					new GUIContent("One Hand", "Only one hand at a time can move and rotate the camera"),
+					new GUIContent("Two Hands", "Two hands are used to move and rotate the camera"),
 					};
 
 					subMode = (SubMode)GUILayout.Toolbar((int)subMode, panOptions);
@@ -105,6 +118,10 @@ namespace Lemonity
 							if (Options.Gesture == WorkingGesture.Orbit)
 							{
 								ScaleGUIOrbit();
+							}
+							else if (Options.Gesture == WorkingGesture.FlyOneHand || Options.Gesture == WorkingGesture.FlyTwoHands)
+							{
+								ScaleGUIFly();
 							}
 							else
 							{
@@ -173,7 +190,7 @@ namespace Lemonity
 							if (Options.PitchMaxAngleLimit < Options.PitchMinAngleLimit) { Options.PitchMinAngleLimit = Options.PitchMaxAngleLimit; }
 							GUI.enabled = true;
 
-							Options.RollLimit = EditorGUILayout.Toggle("Roll limitation", Options.RollLimit);
+							//Options.RollLimit = EditorGUILayout.Toggle("Roll limitation", Options.RollLimit);
 
 							EditorGUI.indentLevel--;
 						}
@@ -434,6 +451,14 @@ namespace Lemonity
 				case WorkingGesture.Orbit:
 					mode = Mode.Orbit;
 					break;
+				case WorkingGesture.FlyOneHand:
+					mode = Mode.Fly;
+					subMode = SubMode.OneHand;
+					break;
+				case WorkingGesture.FlyTwoHands:
+					mode = Mode.Fly;
+					subMode = SubMode.TwoHands;
+					break;
 			}
 		}
 
@@ -456,6 +481,15 @@ namespace Lemonity
 					break;
 				case Mode.Orbit:
 					return WorkingGesture.Orbit;
+				case Mode.Fly:
+					if (subMode == SubMode.OneHand)
+					{
+						return WorkingGesture.FlyOneHand;
+					}
+					else
+					{
+						return WorkingGesture.FlyTwoHands;
+					}
 			}
 			return WorkingGesture.Disabled;
 		}
@@ -499,7 +533,7 @@ namespace Lemonity
 			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel("Scene Scale");
-				EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} meters)", GUILayout.MaxWidth(130));
+				EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} m.)", GUILayout.MaxWidth(130));
 			}
 
 			Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);
@@ -520,6 +554,23 @@ namespace Lemonity
 
 			var content = new GUIContent("Exponential Zoom", "Zoom factor increases exponentially");
 			Options.OrbitExponential = EditorGUILayout.Toggle(content, Options.OrbitExponential);
+
+			EditorGUI.indentLevel--;
+		}
+
+
+		private void ScaleGUIFly()
+		{
+			EditorGUI.indentLevel++;
+			// Use logaritmic scale starting from 0
+
+			Options.FlyPosScale = CustomFloatField(Options.FlyPosScale, "Fly Speed", 0.01f, 10f);
+			Options.FlyYawScale = CustomFloatField(Options.FlyYawScale, "Y Rotation Speed", 0.01f, 10f);
+			Options.FlyPitchScale= CustomFloatField(Options.FlyPitchScale, "X Rotation Speed", 0.01f, 10f);
+			Options.FlyExponential = CustomFloatField(Options.FlyExponential, "Exponential factor", 1f, 5f);
+
+			//var content = new GUIContent("Exponential Zoom", "Zoom factor increases exponentially");
+			//Options.OrbitExponential = EditorGUILayout.Toggle(content, Options.OrbitExponential);
 
 			EditorGUI.indentLevel--;
 		}

@@ -50,21 +50,27 @@ namespace Lemonity
 			{
 				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
-				if (Options.ShowWorkspace && Options.Gesture != WorkingGesture.Orbit)
+				if (Options.Gesture != WorkingGesture.Orbit &&
+					Options.Gesture != WorkingGesture.FlyOneHand &&
+					Options.Gesture != WorkingGesture.FlyTwoHands)
 				{
-					DrawMesh(GridTransparency, matrix);
+					if (Options.ShowWorkspace)
+					{
+						DrawMesh(GridTransparency, matrix);
+					}
+
+					if (Options.ShowGrid)
+					{
+						bool isIddle = _motionController.MotionState == MotionController.State.Idle;
+						Color color = isIddle ? Options.GridColor : Options.GrabGridColor;
+						color.a = GridTransparency;
+						DrawLines(color, matrix);
+					}
+
+					DrawHand(HandTracking.LeftHandData);
+					DrawHand(HandTracking.RightHandData);
 				}
 
-				if (Options.ShowGrid && Options.Gesture != WorkingGesture.Orbit)
-				{
-					bool isIddle = _motionController.MotionState == MotionController.State.Idle;
-					Color color = isIddle ? Options.GridColor : Options.GrabGridColor;
-					color.a = GridTransparency;
-					DrawLines(color, matrix);
-				}
-
-				DrawHand(HandTracking.LeftHandData);
-				DrawHand(HandTracking.RightHandData);
 			}
 		}
 

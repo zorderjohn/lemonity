@@ -4,13 +4,26 @@ namespace Lemonity
 {
 	public class OneHandNoPivotMotion : MotionStyleBase
 	{
-		protected override void StartMotion() {}
+		public override bool RequiresTwoHands { get { return false; } }
+
+		float _lastTime = 0f;
+		bool _absoluteMovement = false;
+
+		protected override void StartMotion()
+		{
+			_lastTime = GetTime();
+		}
 
 		protected override void UpdateMotion()
 		{
-			bool absoluteMovement = true;
+			float curTime = GetTime();
+			float deltaTime = curTime - _lastTime;
+			_lastTime = curTime;
+
 			var grabInfo = GetDominantGrabController(latestHold: true);
-			Vector3 deltaMovement = grabInfo.HandDeltaPosition * Options.PosScale;
+
+			Vector3 deltaMovement = MathHelper.ExponentialScale(grabInfo.HandDeltaPosition, Options.FlyPosScale * deltaTime * 100f, Options.FlyExponential);
+
 			if (!InvertAxis)
 			{
 				deltaMovement *= -1f;
@@ -19,7 +32,7 @@ namespace Lemonity
 			// Only for cameras
 			deltaMovement = Rotation * deltaMovement;
 
-			Position = absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
+			Position = _absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
 
 
 			Quaternion deltaRot = grabInfo.HandDeltaRotation;
@@ -30,16 +43,24 @@ namespace Lemonity
 
 			// Scale rotation
 			Vector3 eulerDeltaRot = MathHelper.NormalizedEulerAngles(deltaRot);
-			eulerDeltaRot.Scale(Options.AxisRotScale);
-			eulerDeltaRot *= Options.RotScale;
+
+			eulerDeltaRot.x = ExponentialScale(eulerDeltaRot.x * Options.FlyPitchScale * deltaTime);
+			eulerDeltaRot.y = ExponentialScale(eulerDeltaRot.y * Options.FlyYawScale * deltaTime);
 			deltaRot = Quaternion.Euler(eulerDeltaRot);
 
-			Quaternion targetRotation = absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : Rotation * deltaRot;
+			Quaternion targetRotation = _absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : Rotation * deltaRot;
 
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 
 			// Not camera
 			//transform.rotation = deltaRot * initialObjectRot;
+		}
+
+		protected float ExponentialScale(float value)
+		{
+			float sign = Mathf.Sign(value);
+			float absValue = Mathf.Abs(value);
+			return sign * Mathf.Pow(absValue, Options.FlyExponential);
 		}
 
 		protected override void UpdateInertialData()
