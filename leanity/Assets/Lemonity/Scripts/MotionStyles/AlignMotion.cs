@@ -45,10 +45,7 @@ namespace Lemonity
 				float normalizedDistance = Mathf.Clamp01((deltaMagnitude - _alignMinDistance) / _alignDistance);
 				Quaternion targetRotation = Quaternion.LookRotation(deltaOrtho);
 				Rotation = Quaternion.Lerp(_gestureController.ObjectInitialRotation, targetRotation, normalizedDistance);
-
-
-				Vector3 targetPosition = _selectionCenter - targetRotation * (Vector3.forward * _distanceToCenter);
-				Position = Vector3.Lerp(_gestureController.ObjectInitialPosition, targetPosition, normalizedDistance);
+				Position = _selectionCenter + Rotation * (Vector3.back * _distanceToCenter);
 			}
 		}
 	}
