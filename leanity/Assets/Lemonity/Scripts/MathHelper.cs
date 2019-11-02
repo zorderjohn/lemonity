@@ -119,7 +119,26 @@ public static class MathHelper
 		return b.center;
 	}
 
-	public static Vector3 GetSingleAxis(Vector3 value)
+	public static Vector3 GetOrthogonalAxis(Vector3 value)
+	{
+		int axis = GetMainAxis(value);
+		return GetOrthogonalAxis(value, axis);
+	}
+
+	public static Vector3 GetOrthogonalAxis(Vector3 value, int axis)
+	{
+		switch(axis)
+		{
+			case 0:
+				return new Vector3(value.x, 0f, 0f);
+			case 1:
+				return new Vector3(0f, value.y, 0f);
+			default:
+				return new Vector3(0f, 0f, value.z);
+		}
+	}
+
+	public static int GetMainAxis(Vector3 value)
 	{
 		float absX = Mathf.Abs(value.x);
 		float absY = Mathf.Abs(value.y);
@@ -127,15 +146,31 @@ public static class MathHelper
 
 		if (absX >= absY && absX >= absZ)
 		{
-			return new Vector3(value.x, 0f, 0f);
+			return 0;
 		}
 		else if (absY >= absX && absY >= absZ)
 		{
-			return new Vector3(0f, value.y, 0f);
+			return 1;
 		}
 		else
 		{
-			return new Vector3(0f, 0f, value.z);
+			return 2;
 		}
+
+	}
+
+	public static float EaseOutQuad(float value)
+	{
+		return 1f - (1f - value) * (1f - value);
+	}
+
+	public static float EaseOutPow(float value, float exponent)
+	{
+		return 1f - Mathf.Pow(1f - value, exponent);
+	}
+
+	public static float EaseInOutSin(float value)
+	{
+		return 0.5f + 0.5f * Mathf.Cos(value * Mathf.PI + Mathf.PI);
 	}
 }

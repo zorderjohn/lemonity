@@ -9,12 +9,14 @@ namespace Lemonity
 		IGestureController _gestureController;
 		Vector3 _selectionCenter;
 		float _distanceToCenter;
+		int? _mainAxis;
 
 		const float _alignDistance = 0.1f;
-		const float _alignMinDistance = 0.01f;
+		const float _alignMinDistance = 0.02f;
 
 		protected override void StartMotion()
 		{
+			_mainAxis = null;
 			var newController = GetDominantGrabController(latestHold: true);
 			if (newController != null)
 			{
@@ -34,18 +36,31 @@ namespace Lemonity
 				Start();
 			}
 
+			// Set default value (the initial one)
+			Position = _gestureController.ObjectInitialPosition;
+			Rotation = _gestureController.ObjectInitialRotation;
+
 			var delta = _gestureController.HandDeltaPosition;
+			float deltaMagnitude = delta.magnitude;
 
-			var deltaOrtho = MathHelper.GetSingleAxis(delta);
-			float deltaMagnitude = deltaOrtho.magnitude;
-
-
-			if (deltaMagnitude > _alignMinDistance)
+			if (deltaMagnitude > _alignMinDistance && _mainAxis == null)
 			{
-				float normalizedDistance = Mathf.Clamp01((deltaMagnitude - _alignMinDistance) / _alignDistance);
-				Quaternion targetRotation = Quaternion.LookRotation(deltaOrtho);
-				Rotation = Quaternion.Lerp(_gestureController.ObjectInitialRotation, targetRotation, normalizedDistance);
-				Position = _selectionCenter + Rotation * (Vector3.back * _distanceToCenter);
+				_mainAxis = MathHelper.GetMainAxis(delta);
+			}
+
+			if (_mainAxis != null)
+			{
+				var deltaOrtho = MathHelper.GetOrthogonalAxis(delta, _mainAxis.Value);
+				float deltaOrthoMagnitude = deltaOrtho.magnitude;
+
+				if (deltaOrthoMagnitude > _alignMinDistance)
+				{
+					float normalizedDistance = Mathf.Clamp01((deltaOrthoMagnitude - _alignMinDistance) / _alignDistance);
+					normalizedDistance = MathHelper.EaseInOutSin(normalizedDistance);
+					Quaternion targetRotation = Quaternion.LookRotation(deltaOrtho);
+					Rotation = Quaternion.Lerp(_gestureController.ObjectInitialRotation, targetRotation, normalizedDistance);
+					Position = _selectionCenter + Rotation * (Vector3.back * _distanceToCenter);
+				}
 			}
 		}
 	}
