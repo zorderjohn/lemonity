@@ -102,7 +102,7 @@ namespace Lemonity
 					{
 						GUILayout.Label($"<b><Color=red> Filtering {filterNames}</Color></b>", labelStyle);
 					}
-					else if (motion.IsDualPinching || motion.IsGrabbing)
+					else if (motion.IsPinching || motion.IsGrabbing)
 					{
 						GUILayout.Label("Gesture not filtered", labelStyle);
 					}
@@ -348,7 +348,7 @@ namespace Lemonity
 			var motionController = EditorController.EditorMotionController;
 
 			bool isGrabbing = motionController.IsGrabbing;
-			bool isPinching = motionController.IsDualPinching;
+			bool isPinching = motionController.IsPinching;
 			bool isIddle = !isGrabbing && !isPinching;
 
 			var handleColor = Color.magenta;

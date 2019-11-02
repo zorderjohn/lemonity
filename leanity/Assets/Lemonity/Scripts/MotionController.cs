@@ -34,7 +34,7 @@ namespace Lemonity
 		{
 			get
 			{
-				return IsDualPinching ? PinchMotion.Position : GrabMotion.Position;
+				return IsPinching ? PinchMotion.Position : GrabMotion.Position;
 			}
 			set
 			{
@@ -47,7 +47,7 @@ namespace Lemonity
 		{
 			get
 			{
-				return IsDualPinching ? PinchMotion.Rotation : GrabMotion.Rotation;
+				return IsPinching ? PinchMotion.Rotation : GrabMotion.Rotation;
 			}
 			set
 			{
@@ -72,7 +72,7 @@ namespace Lemonity
 
 		public State MotionState { get; private set; }
 		public bool IsGrabbing => MotionState == State.Grabbing;
-		public bool IsDualPinching => MotionState == State.Pinching;
+		public bool IsPinching => MotionState == State.Pinching;
 		#endregion
 
 		#region Actions
@@ -357,6 +357,7 @@ namespace Lemonity
 						StopPinching();
 						MotionState = State.Idle;
 						OnStateChange?.Invoke();
+						return true;
 					}
 					else
 					{
@@ -401,6 +402,9 @@ namespace Lemonity
 
 		private void StopPinching()
 		{
+			PinchMotion.Stop();
+			Position = PinchMotion.Position;
+			Rotation = PinchMotion.Rotation;
 			OnEndPinch?.Invoke();
 			OnStateChange?.Invoke();
 		}

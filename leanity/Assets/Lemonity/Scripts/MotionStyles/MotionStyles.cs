@@ -63,6 +63,7 @@ namespace Lemonity
 
 		public void Stop()
 		{
+			StopMotion();
 			_inertialData.DiscardFrames(Options.DiscardFrames);
 			_inertialData.CalculateAngularVelocity();
 			_inertialData.CalculateLinearVelocity();
@@ -97,6 +98,8 @@ namespace Lemonity
 		protected abstract void StartMotion();
 
 		protected abstract void UpdateMotion();
+
+		protected virtual void StopMotion()	{}
 
 		protected virtual void UpdateInertialData()
 		{
