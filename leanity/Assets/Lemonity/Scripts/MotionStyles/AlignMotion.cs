@@ -4,9 +4,14 @@ namespace Lemonity
 {
 	public class AlignMotion : MotionStyleBase
 	{
-		IGestureController _gestureController;
-
 		public override bool RequiresTwoHands { get { return false; } }
+
+		IGestureController _gestureController;
+		Vector3 _selectionCenter;
+		float _distanceToCenter;
+
+		const float _alignDistance = 0.1f;
+		const float _alignMinDistance = 0.01f;
 
 		protected override void StartMotion()
 		{
@@ -16,6 +21,9 @@ namespace Lemonity
 				_gestureController = newController;
 				_gestureController.Reset();
 			}
+
+			_selectionCenter = MathHelper.GetSelectionCenter();
+			_distanceToCenter = Vector3.Distance(_gestureController.ObjectInitialPosition, _selectionCenter);
 		}
 
 		protected override void UpdateMotion()
@@ -27,11 +35,20 @@ namespace Lemonity
 			}
 
 			var delta = _gestureController.HandDeltaPosition;
-			float deltaMagnitude = delta.magnitude;
 
-			if (deltaMagnitude > 0.01f)
+			var deltaOrtho = MathHelper.GetSingleAxis(delta);
+			float deltaMagnitude = deltaOrtho.magnitude;
+
+
+			if (deltaMagnitude > _alignMinDistance)
 			{
-				Rotation = Quaternion.LookRotation(delta);
+				float normalizedDistance = Mathf.Clamp01((deltaMagnitude - _alignMinDistance) / _alignDistance);
+				Quaternion targetRotation = Quaternion.LookRotation(deltaOrtho);
+				Rotation = Quaternion.Lerp(_gestureController.ObjectInitialRotation, targetRotation, normalizedDistance);
+
+
+				Vector3 targetPosition = _selectionCenter - targetRotation * (Vector3.forward * _distanceToCenter);
+				Position = Vector3.Lerp(_gestureController.ObjectInitialPosition, targetPosition, normalizedDistance);
 			}
 		}
 	}

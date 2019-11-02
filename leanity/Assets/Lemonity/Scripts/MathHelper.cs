@@ -118,4 +118,24 @@ public static class MathHelper
 		}
 		return b.center;
 	}
+
+	public static Vector3 GetSingleAxis(Vector3 value)
+	{
+		float absX = Mathf.Abs(value.x);
+		float absY = Mathf.Abs(value.y);
+		float absZ = Mathf.Abs(value.z);
+
+		if (absX >= absY && absX >= absZ)
+		{
+			return new Vector3(value.x, 0f, 0f);
+		}
+		else if (absY >= absX && absY >= absZ)
+		{
+			return new Vector3(0f, value.y, 0f);
+		}
+		else
+		{
+			return new Vector3(0f, 0f, value.z);
+		}
+	}
 }
