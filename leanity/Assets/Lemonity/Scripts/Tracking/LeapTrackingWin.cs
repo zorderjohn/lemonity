@@ -16,6 +16,7 @@ namespace Lemonity
 		private float _lastConnectionTest = 0;
 		private static readonly Vector3 LEAP_WORKSPACE = new Vector3(0.6f, 0.5f, 0.4f);
 		private static readonly float LEAP_MM_TO_M = 0.001f;
+		private static bool _errorCondition = false;
 
 		private LeapTrackingWin()
 		{
@@ -26,9 +27,18 @@ namespace Lemonity
 
 			FilterParameterUpdate();
 
-			if (_controller == null)
+			if (_controller == null && !_errorCondition)
 			{
-				_controller = new Leap.Controller();
+				try
+				{
+					_controller = new Leap.Controller();
+				}
+				catch(Exception)
+				{
+					_controller = null;
+					_errorCondition = true;
+					Debug.LogError("Unable to load Leap Motion DLL. Please restart Unity and try again.");
+				}
 
 				_lastConnectionTest = Time.realtimeSinceStartup;
 			}
@@ -68,14 +78,13 @@ namespace Lemonity
 					}
 					return true;
 				}
-			} else
-			{
-				if (Time.realtimeSinceStartup - _lastConnectionTest > 5f && _controller != null && !_controller.IsConnected)
-				{
-					_lastConnectionTest = Time.realtimeSinceStartup;
-					_controller.StartConnection();
-				}
 			}
+			else if (Time.realtimeSinceStartup - _lastConnectionTest > 5f && _controller != null && !_controller.IsConnected)
+			{
+				_lastConnectionTest = Time.realtimeSinceStartup;
+				_controller.StartConnection();
+			}
+
 			return false;
 		}
 
@@ -96,13 +105,13 @@ namespace Lemonity
 
 		protected override bool IsDeviceConnected()
 		{
-			return _controller.IsConnected;
+			return _controller != null && _controller.IsConnected;
 		}
 
 		protected override void ResetDevice()
 		{
-			_controller.StopConnection();
-			_controller.StartConnection();
+			_controller?.StopConnection();
+			_controller?.StartConnection();
 		}
 
 		#region Singleton
