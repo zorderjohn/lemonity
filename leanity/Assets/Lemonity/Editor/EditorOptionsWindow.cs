@@ -158,11 +158,12 @@ namespace Lemonity
 							GUILayout.Space(4);
 							EditorGUI.indentLevel++;
 
-							Options.PinchMaxThreshold = CustomFloatField(Options.PinchMaxThreshold, "Start Threshold", 0f, 100f);
+							Options.PinchMinThreshold = CustomFloatField(Options.PinchMinThreshold, "Start Distance", 0f, 100f);
+							if (Options.PinchMinThreshold > Options.PinchMaxThreshold) { Options.PinchMaxThreshold = Options.PinchMinThreshold; }
+
+							Options.PinchMaxThreshold = CustomFloatField(Options.PinchMaxThreshold, "Stop Distance", 0f, 100f);
 							if (Options.PinchMaxThreshold < Options.PinchMinThreshold) { Options.PinchMinThreshold = Options.PinchMaxThreshold; }
 
-							Options.PinchMinThreshold = CustomFloatField(Options.PinchMinThreshold, "Stop Threshold", 0f, 100f);
-							if (Options.PinchMinThreshold > Options.PinchMaxThreshold) { Options.PinchMaxThreshold = Options.PinchMinThreshold; }
 							EditorGUI.indentLevel--;
 						}
 						GUILayout.Space(foldoutSpace);
