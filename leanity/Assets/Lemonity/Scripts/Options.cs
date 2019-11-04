@@ -186,7 +186,7 @@ namespace Lemonity
 			{
 				// General
 				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Absolute);
-				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.TwoHands);
+				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.Hybrid);
 
 				// Sensitivity
 				PosScale = Load("PosScale", 1f);
@@ -229,8 +229,8 @@ namespace Lemonity
 
 				// Inertia
 				EnableInertia = Load("EnableInertia", true);
-				AngularDrag = Load("AngularDrag", .95f);
-				LinearDrag = Load("LinearDrag", .95f);
+				AngularDrag = Load("AngularDrag", .91f);
+				LinearDrag = Load("LinearDrag", .9f);
 				VelocityFrames = Load("VelocityFrames", 5);
 				DiscardFrames = Load("DiscardFrames", 1);
 				StopIfNotVisible = Load("StopIfNotVisible", true);
