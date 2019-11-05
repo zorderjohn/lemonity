@@ -7,7 +7,9 @@
  * between Leap Motion and you, your company or other organization.           *
  ******************************************************************************/
 
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 #if UNITY_2017_2_OR_NEWER
 using UnityEngine.XR;
@@ -59,7 +61,16 @@ namespace Leap.Unity {
     }
 
     public static Vector3 GetXRNodeCenterEyeLocalPosition() {
-      #if UNITY_2017_2_OR_NEWER
+      #if UNITY_2019_2_OR_NEWER
+      var nodeStates = new List<XRNodeState>();
+      InputTracking.GetNodeStates(nodeStates);
+      var node = nodeStates.FindLast(n => n.nodeType == XRNode.CenterEye);
+      if (node.TryGetPosition(out var position))
+      {
+        return position;
+      }
+      return Vector3.zero;
+      #elif UNITY_2017_2_OR_NEWER
       return InputTracking.GetLocalPosition(XRNode.CenterEye);
       #else
       return InputTracking.GetLocalPosition(VRNode.CenterEye);
@@ -67,7 +78,16 @@ namespace Leap.Unity {
     }
 
     public static Quaternion GetXRNodeCenterEyeLocalRotation() {
-      #if UNITY_2017_2_OR_NEWER
+      #if UNITY_2019_2_OR_NEWER
+      var nodeStates = new List<XRNodeState>();
+      InputTracking.GetNodeStates(nodeStates);
+      var node = nodeStates.FindLast(n => n.nodeType == XRNode.CenterEye);
+      if (node.TryGetRotation(out var rotation))
+      {
+        return rotation;
+      }
+      return Quaternion.identity;
+      #elif UNITY_2017_2_OR_NEWER
       return InputTracking.GetLocalRotation(XRNode.CenterEye);
       #else
       return InputTracking.GetLocalRotation(VRNode.CenterEye);
@@ -75,7 +95,16 @@ namespace Leap.Unity {
     }
 
     public static Vector3 GetXRNodeHeadLocalPosition() {
-      #if UNITY_2017_2_OR_NEWER
+      #if UNITY_2019_2_OR_NEWER
+      var nodeStates = new List<XRNodeState>();
+      InputTracking.GetNodeStates(nodeStates);
+      var node = nodeStates.FindLast(n => n.nodeType == XRNode.Head);
+      if (node.TryGetPosition(out var position))
+      {
+        return position;
+      }
+      return Vector3.zero;
+      #elif UNITY_2017_2_OR_NEWER
       return InputTracking.GetLocalPosition(XRNode.Head);
       #else
       return InputTracking.GetLocalPosition(VRNode.Head);
@@ -83,7 +112,16 @@ namespace Leap.Unity {
     }
 
     public static Quaternion GetXRNodeHeadLocalRotation() {
-      #if UNITY_2017_2_OR_NEWER
+      #if UNITY_2019_2_OR_NEWER
+      var nodeStates = new List<XRNodeState>();
+      InputTracking.GetNodeStates(nodeStates);
+      var node = nodeStates.FindLast(n => n.nodeType == XRNode.Head);
+      if (node.TryGetRotation(out var rotation))
+      {
+        return rotation;
+      }
+      return Quaternion.identity;
+      #elif UNITY_2017_2_OR_NEWER
       return InputTracking.GetLocalRotation(XRNode.Head);
       #else
       return InputTracking.GetLocalRotation(VRNode.Head);
@@ -123,6 +161,7 @@ namespace Leap.Unity {
       #endif
       return gpuTime;
     }
+
 
   }
 
