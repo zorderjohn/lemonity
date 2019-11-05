@@ -47,6 +47,12 @@ namespace Lemonity
 				EditorGUI.DrawRect(rImage, _logoBackground);
 				GUI.DrawTexture(rImage, _logoTexture, ScaleMode.ScaleToFit);
 
+				if (!HandTracking.IsConnected())
+				{
+					GUILayout.Space(4);
+					EditorDebugWindow.DrawStatusLabel();
+				}
+
 				GUILayout.Label("Mode", EditorStyles.boldLabel);
 				GUIContent[] gestures = new[]
 				{

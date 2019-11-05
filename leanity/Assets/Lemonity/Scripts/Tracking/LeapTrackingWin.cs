@@ -161,6 +161,11 @@ namespace Lemonity
 		{
 			return new Quaternion(-lq.x, -lq.y, lq.z, lq.w);
 		}
+
+		protected override bool IsTrackingLibraryLoaded()
+		{
+			return !_errorCondition;
+		}
 	}
 #endif
 }

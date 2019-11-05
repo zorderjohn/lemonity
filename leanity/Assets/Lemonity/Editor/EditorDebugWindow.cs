@@ -19,7 +19,25 @@ namespace Lemonity
 		private static float _workspaceRatio = 1.0f;
 		private static bool _handsVisible = false;
 
-		void OnEnable()
+		[MenuItem("Window/Lemonity Debug &l")]
+		public static void Init()
+		{
+			GetWindow(typeof(EditorDebugWindow), false, "Lemonity Debug", true);
+		}
+
+		public void OnInspectorUpdate()
+		{
+			// This will only get called 10 times per second.
+			if (_handsVisible)
+			{
+				Repaint();
+			}
+			_handsVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
+		}
+
+		public void Dispose() {}
+
+		private void OnEnable()
 		{
 			LoadResources();
 			Options.Load();
@@ -40,7 +58,7 @@ namespace Lemonity
 			HandTracking.OnDisconnect += RepaintScene;
 		}
 
-		void OnDisable()
+		private void OnDisable()
 		{
 			#if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui -= this.OnSceneGUI;
@@ -55,10 +73,44 @@ namespace Lemonity
 			HandTracking.OnDisconnect -= RepaintScene;
 		}
 
+		public void Awake()
+		{
+			LoadResources();
+		}
+
 		private void RepaintScene()
 		{
 			Repaint();
 			SceneView.RepaintAll();
+		}
+
+		public static void DrawStatusLabel()
+		{
+			var labelStyle = EditorStyles.label;
+			labelStyle.richText = true;
+
+			GUILayout.Label("<b>Tracking Status</b>", labelStyle);
+			if (HandTracking.IsConnected())
+			{
+
+				GUILayout.Label("Leap is <b><color=green>connected</color></b>", labelStyle);
+			}
+			else if (!HandTracking.IsLibraryLoaded())
+			{
+				GUILayout.Label("<color=red><b> Leap DLL not loaded. Please restart Unity.</b></color>", labelStyle);
+				if (GUILayout.Button("Reset connection"))
+				{
+					HandTracking.Reset();
+				}
+			}
+			else
+			{
+				GUILayout.Label("Leap is <color=red><b>NOT</b></color> connected", labelStyle);
+				if (GUILayout.Button("Reset connection"))
+				{
+					HandTracking.Reset();
+				}
+			}
 		}
 
 		public void OnGUI()
@@ -73,21 +125,7 @@ namespace Lemonity
 			GUILayout.Space(4);
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
-				GUILayout.Label("<b>Tracking Status</b>", labelStyle);
-				if (HandTracking.IsConnected())
-				{
-
-					GUILayout.Label("Leap is <b><color=green>connected</color></b>", labelStyle);
-				}
-				else
-				{
-					GUI.contentColor = Color.red;
-					GUILayout.Label("Leap is <color=red><b>NOT</b></color> connected", labelStyle);
-					if (GUILayout.Button("Reset connection"))
-					{
-						HandTracking.Reset();
-					}
-				}
+				DrawStatusLabel();
 			}
 
 			using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
@@ -166,7 +204,6 @@ namespace Lemonity
 			}
 		}
 
-
 		private void DrawHandData(HandData hand)
 		{
 			GUI.enabled = hand.Detected;
@@ -190,7 +227,6 @@ namespace Lemonity
 		{
 			return "(" + v.x.ToString("0.###") + ", " + v.y.ToString("0.###") + ", " + v.z.ToString("0.###");
 		}
-
 
 		private void DrawHandPosition(HandData hand, Rect r)
 		{
@@ -228,30 +264,9 @@ namespace Lemonity
 		private Vector2 GetRectCoords(Vector3 worldCoords, Rect r)
 		{
 			Vector2 coords = new Vector2(r.x, r.y);
-			coords.x +=  Mathf.Clamp(worldCoords.x / _workspaceWidth, -.5f, .5f) * r.width + r.width * 0.5f;
+			coords.x += Mathf.Clamp(worldCoords.x / _workspaceWidth, -.5f, .5f) * r.width + r.width * 0.5f;
 			coords.y += -Mathf.Clamp(worldCoords.z / _workspaceDepth, -.5f, .5f) * r.height + r.height * 0.5f;
 			return coords;
-		}
-
-		[MenuItem("Window/Lemonity Debug &l")]
-		public static void Init()
-		{
-			GetWindow(typeof(EditorDebugWindow), false, "Lemonity Debug", true);
-		}
-
-		public void OnInspectorUpdate()
-		{
-			// This will only get called 10 times per second.
-			if (_handsVisible)
-			{
-				Repaint();
-			}
-			_handsVisible = HandTracking.LeftHandData.Detected || HandTracking.RightHandData.Detected;
-		}
-
-		public void Dispose()
-		{
-
 		}
 
 		private static void LoadResources()
@@ -275,10 +290,7 @@ namespace Lemonity
 				};
 			}
 		}
-		public void Awake()
-		{
-			LoadResources();
-		}
+
 
 		private void OnSceneGUI(SceneView sceneView)
 		{
@@ -287,7 +299,7 @@ namespace Lemonity
 				return;
 			}
 
-			if (Options.ShowHandGuides)
+			if (Options.ShowHandGuides && Options.Gesture == WorkingGesture.Hybrid || Options.Gesture == WorkingGesture.OneHand || Options.Gesture == WorkingGesture.TwoHands)
 			{
 				var leftDetected = HandTracking.LeftHandData.Detected;
 				var rightDetected = HandTracking.RightHandData.Detected;

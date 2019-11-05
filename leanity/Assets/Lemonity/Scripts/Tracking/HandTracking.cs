@@ -9,20 +9,14 @@ namespace Lemonity
 		public static event Action OnConnect;
 		public static event Action OnDisconnect;
 
-		protected bool _isConnected;
+		public static HandData RightHandData { get => Instance.GetRightHandData(); }
+		public static HandData LeftHandData { get => Instance.GetLeftHandData(); }
+		public static Vector3 Workspace { get => Instance.GetWorkspace(); }
 
-		public static HandData RightHandData
-		{
-			get { return Instance.GetRightHandData(); }
-		}
-		public static HandData LeftHandData
-		{
-			get { return Instance.GetLeftHandData(); }
-		}
-		public static Vector3 Workspace
-		{
-			get { return Instance.GetWorkspace(); }
-		}
+		public static Vector3 TransformPosition { get; set; }
+		public static Quaternion TransformRotation { get; set; }
+		public static float TransformScale { get; set; }
+
 
 		public static bool Update()
 		{
@@ -35,16 +29,15 @@ namespace Lemonity
 			return Instance.UpdateDeviceState();
 		}
 
+		public static bool IsLibraryLoaded()
+		{
+			return Instance.IsTrackingLibraryLoaded();
+		}
+
 		public static void Reset()
 		{
 			Instance.ResetDevice();
 		}
-
-		public static Vector3 TransformPosition { get; set; }
-
-		public static Quaternion TransformRotation { get; set; }
-
-		public static float TransformScale { get; set; }
 
 		public static Vector3 CamToHandOffset()
 		{
@@ -71,8 +64,7 @@ namespace Lemonity
 			return Quaternion.Normalize(TransformRotation * rotation);
 		}
 
-		public abstract void Dispose();
-
+		protected bool _isConnected;
 		protected bool UpdateDeviceState()
 		{
 			bool connectedUpdate = IsDeviceConnected();
@@ -106,12 +98,13 @@ namespace Lemonity
 		}
 		#endregion
 
+		public abstract void Dispose();
 		protected abstract bool UpdateTracking();
 		protected abstract HandData GetRightHandData();
 		protected abstract HandData GetLeftHandData();
 		protected abstract Vector3 GetWorkspace();
 		protected abstract bool IsDeviceConnected();
+		protected abstract bool IsTrackingLibraryLoaded();
 		protected abstract void ResetDevice();
-
 	}
 }
