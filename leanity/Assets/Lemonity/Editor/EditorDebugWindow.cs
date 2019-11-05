@@ -27,7 +27,11 @@ namespace Lemonity
 			_workspaceWidth = HandTracking.Workspace.x;
 			_workspaceRatio = _workspaceWidth / _workspaceDepth;
 
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui += this.OnSceneGUI;
+			#else
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
+			#endif
 			EditorController.EditorMotionController.OnHandsVisible += RepaintScene;
 			EditorController.EditorMotionController.OnHandsInVisible += RepaintScene;
 			EditorController.EditorMotionController.OnStateChange += RepaintScene;
@@ -38,7 +42,11 @@ namespace Lemonity
 
 		void OnDisable()
 		{
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui -= this.OnSceneGUI;
+			#else
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+			#endif
 			EditorController.EditorMotionController.OnHandsVisible -= RepaintScene;
 			EditorController.EditorMotionController.OnHandsInVisible -= RepaintScene;
 			EditorController.EditorMotionController.OnStateChange -= RepaintScene;

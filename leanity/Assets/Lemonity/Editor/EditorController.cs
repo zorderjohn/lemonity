@@ -20,7 +20,11 @@ namespace Lemonity
 			EditorMotionController = new MotionController();
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace, EditorMotionController);
 			EditorApplication.update += EditorUpdate;
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui += OnSceneGUI;
+			#else
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
+			#endif
 			EditorMotionController.OnHandsVisible += OnHandsVisible;
 			EditorMotionController.OnHandsInVisible += OnHandsInvisible;
 			EditorMotionController.OnStateChange += OnStateChange;
