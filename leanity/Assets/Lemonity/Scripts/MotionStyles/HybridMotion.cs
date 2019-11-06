@@ -29,15 +29,6 @@ namespace Lemonity
 
 		public bool RequiresTwoHands { get { return false; } }
 
-		public bool InvertAxis {
-			get { return _oneMotion.InvertAxis; }
-			set
-			{
-				_oneMotion.InvertAxis = value;
-				_twoMotion.InvertAxis = value;
-			}
-		}
-
 		public bool HasInertia
 		{
 			get

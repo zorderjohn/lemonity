@@ -9,7 +9,7 @@ namespace Lemonity
 	[Serializable]
 	public class EditorOptionsWindow : EditorWindow, IDisposable
 	{
-		private enum Mode { Off = 0, PanRotate, Orbit, Fly};
+		private enum Mode { Off = 0, Grab, Orbit, Fly};
 		private enum SubMode { OneHand = 0, TwoHands, AnyHands};
 
 		private static Vector2 _scrollPosition;
@@ -19,6 +19,9 @@ namespace Lemonity
 		private static Texture _cityTexture;
 		private static readonly Color _logoBackground = new Color(.110f, .184f, .196f);
 		private const int _inputTextWidth = 55;
+		private const int _foldoutSpace = 4;
+		private const int _foldoutFontSize = 14;
+		private static GUIStyle _foldoutStyle;
 
 		AnimBool _showSensitivity = new AnimBool(true);
 		AnimBool _showGestures = new AnimBool();
@@ -27,15 +30,15 @@ namespace Lemonity
 		AnimBool _showInertia = new AnimBool();
 		AnimBool _showHeuristic = new AnimBool();
 		AnimBool _showDebug = new AnimBool();
+		AnimBool _showFly = new AnimBool();
 
 		public void OnGUI()
 		{
-			// Style definition
-			var foldoutStyle = EditorStyles.foldout;
-			foldoutStyle.fontStyle = FontStyle.Bold;
-			foldoutStyle.fontSize = 14;
+			InitStyles();
 
-			int foldoutSpace = 4;
+			Mode mode;
+			SubMode subMode;
+			GestureToMode(Options.Gesture, out mode, out subMode);
 
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
@@ -57,17 +60,14 @@ namespace Lemonity
 				GUIContent[] gestures = new[]
 				{
 					new GUIContent("Off", "Disable Lemonity"),
-					new GUIContent("Pan & Rotate", "Move & Rotate the camera using current hand position in workspace as the pivot"),
+					new GUIContent("Grab", "Move & Rotate the camera using current hand position in workspace as the pivot"),
 					new GUIContent("Orbit", "Rotate the camera around using the selected object as the pivot"),
 					new GUIContent("Fly", "Fly around the scene")
 				};
-				Mode mode;
-				SubMode subMode;
-				GestureToMode(Options.Gesture, out mode, out subMode);
 
 				mode = (Mode) GUILayout.Toolbar((int)mode, gestures);
 
-				if (mode == Mode.PanRotate)
+				if (mode == Mode.Grab)
 				{
 					GUILayout.Space(4);
 					GUILayout.Label("Sub-Mode", EditorStyles.boldLabel);
@@ -102,17 +102,33 @@ namespace Lemonity
 				};
 
 				GUILayout.Space(4);
-				Options.InvertAxis = 1 == GUILayout.SelectionGrid(Options.InvertAxis ? 1 : 0, invertAxisContent, 2, EditorStyles.radioButton);
-				GUILayout.Space(foldoutSpace);
+				if (mode == Mode.Grab)
+				{
+					Options.GrabInvertAxis = 1 == GUILayout.SelectionGrid(Options.GrabInvertAxis ? 1 : 0, invertAxisContent, 2, EditorStyles.radioButton);
+				}
+				else if (mode == Mode.Orbit)
+				{
+					Options.OrbitInvertAxis = 1 == GUILayout.SelectionGrid(Options.OrbitInvertAxis ? 1 : 0, invertAxisContent, 2, EditorStyles.radioButton);
+				}
+				else if (mode == Mode.Fly)
+				{
+					Options.FlyInvertAxis = 1 == GUILayout.SelectionGrid(Options.FlyInvertAxis ? 1 : 0, invertAxisContent, 2, EditorStyles.radioButton);
+				}
+				GUILayout.Space(_foldoutSpace);
 			}
 			#endregion
+
+			if (mode == Mode.Fly)
+			{
+				FlyModeOptions();
+			}
 
 			if (Options.Gesture != WorkingGesture.Disabled)
 			{
 				#region Sensitivity
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showSensitivity.target = EditorGUILayout.Foldout(_showSensitivity.target, "Sensitivity / Scale", true, foldoutStyle);
+					_showSensitivity.target = EditorGUILayout.Foldout(_showSensitivity.target, "Sensitivity / Scale", true, _foldoutStyle);
 
 
 					using (new EditorGUILayout.FadeGroupScope(_showSensitivity.faded))
@@ -134,7 +150,7 @@ namespace Lemonity
 								ScaleGUI();
 							}
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -142,7 +158,7 @@ namespace Lemonity
 				#region Gestures
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showGestures.target = EditorGUILayout.Foldout(_showGestures.target, "Gestures", true, foldoutStyle);
+					_showGestures.target = EditorGUILayout.Foldout(_showGestures.target, "Gestures", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showGestures.faded))
 					{
@@ -172,7 +188,7 @@ namespace Lemonity
 
 							EditorGUI.indentLevel--;
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -180,7 +196,7 @@ namespace Lemonity
 				#region Camera
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showCamera.target = EditorGUILayout.Foldout(_showCamera.target, "Camera Angle Limits", true, foldoutStyle);
+					_showCamera.target = EditorGUILayout.Foldout(_showCamera.target, "Camera Angle Limits", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showCamera.faded))
 					{
@@ -201,7 +217,7 @@ namespace Lemonity
 
 							EditorGUI.indentLevel--;
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -209,7 +225,7 @@ namespace Lemonity
 				#region Filters
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Advanced Motion Filtering", true, foldoutStyle);
+					_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Advanced Motion Filtering", true, _foldoutStyle);
 
 					const string freqTooltip = "Expected data frequency";
 					const string minCOTooltip = "Minimum frequency cutoff. Lower values reduce jitter";
@@ -238,7 +254,7 @@ namespace Lemonity
 							EditorGUI.indentLevel--;
 
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -246,7 +262,7 @@ namespace Lemonity
 				#region Inertia
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showInertia.target = EditorGUILayout.Foldout(_showInertia.target, "Inertia", true, foldoutStyle);
+					_showInertia.target = EditorGUILayout.Foldout(_showInertia.target, "Inertia", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showInertia.faded))
 					{
@@ -262,7 +278,7 @@ namespace Lemonity
 							// Options.DiscardFrames = CustomIntField(Options.DiscardFrames, "Discard Frames", 1, 5);
 							EditorGUI.indentLevel--;
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -270,7 +286,7 @@ namespace Lemonity
 				#region Heuristics
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showHeuristic.target = EditorGUILayout.Foldout(_showHeuristic.target, "Gesture Filtering", true, foldoutStyle);
+					_showHeuristic.target = EditorGUILayout.Foldout(_showHeuristic.target, "Gesture Filtering", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showHeuristic.faded))
 					{
@@ -288,7 +304,7 @@ namespace Lemonity
 
 							EditorGUI.indentLevel--;
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -296,7 +312,7 @@ namespace Lemonity
 				#region Visuals
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showDebug.target = EditorGUILayout.Foldout(_showDebug.target, "Visual Effects", true, foldoutStyle);
+					_showDebug.target = EditorGUILayout.Foldout(_showDebug.target, "Visual Effects", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showDebug.faded))
 					{
@@ -330,7 +346,7 @@ namespace Lemonity
 
 							EditorGUI.indentLevel--;
 						}
-						GUILayout.Space(foldoutSpace);
+						GUILayout.Space(_foldoutSpace);
 					}
 				}
 				#endregion
@@ -343,18 +359,16 @@ namespace Lemonity
 			}
 
 			GUI.enabled = Options.Dirty;
-			if (GUILayout.Button("Save"))
+			GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+			//buttonStyle.normal.textColor = Options.Dirty ? Color.red : GUI.skin.button.normal.textColor;
+			buttonStyle.fontStyle = Options.Dirty ? FontStyle.Bold : FontStyle.Normal;
+
+			if (GUILayout.Button("Save", buttonStyle))
 			{
 				Options.Save();
 			}
 
 			GUI.enabled = true;
-
-		}
-
-		private void SetCurrentMode(int mode)
-		{
-
 
 		}
 
@@ -379,7 +393,19 @@ namespace Lemonity
 		{
 			Options.Load();
 			_showSensitivity.target = true;
+			_showFly.target = true;
 			_logoTexture = Resources.Load<Texture>("logo");
+		}
+
+		private void InitStyles()
+		{
+			if (_foldoutStyle == null)
+			{
+				// Style definition
+				_foldoutStyle = new GUIStyle(EditorStyles.foldout);
+				_foldoutStyle.fontStyle = FontStyle.Bold;
+				_foldoutStyle.fontSize = _foldoutFontSize;
+			}
 		}
 
 		private static int CustomIntField(int value, string prefixLabel, int minSlider, int maxSlider, string tooltip = "")
@@ -444,15 +470,15 @@ namespace Lemonity
 					mode = Mode.Off;
 					break;
 				case WorkingGesture.OneHand:
-					mode = Mode.PanRotate;
+					mode = Mode.Grab;
 					subMode = SubMode.OneHand;
 					break;
 				case WorkingGesture.TwoHands:
-					mode = Mode.PanRotate;
+					mode = Mode.Grab;
 					subMode = SubMode.TwoHands;
 					break;
 				case WorkingGesture.Hybrid:
-					mode = Mode.PanRotate;
+					mode = Mode.Grab;
 					subMode = SubMode.AnyHands;
 					break;
 				case WorkingGesture.Orbit:
@@ -475,7 +501,7 @@ namespace Lemonity
 			{
 				case Mode.Off:
 					return WorkingGesture.Disabled;
-				case Mode.PanRotate:
+				case Mode.Grab:
 					switch (subMode)
 					{
 						case SubMode.OneHand:
@@ -574,12 +600,39 @@ namespace Lemonity
 			Options.FlyPosScale = CustomFloatField(Options.FlyPosScale, "Fly Speed", 0.01f, 10f);
 			Options.FlyYawScale = CustomFloatField(Options.FlyYawScale, "Y Rotation Speed", 0.01f, 10f);
 			Options.FlyPitchScale= CustomFloatField(Options.FlyPitchScale, "X Rotation Speed", 0.01f, 10f);
-			Options.FlyExponential = CustomFloatField(Options.FlyExponential, "Exponential factor", 1f, 5f);
+			Options.FlyExponential = CustomFloatField(Options.FlyExponential, "Exponential Factor", 1f, 5f);
 
 			//var content = new GUIContent("Exponential Zoom", "Zoom factor increases exponentially");
 			//Options.OrbitExponential = EditorGUILayout.Toggle(content, Options.OrbitExponential);
 
 			EditorGUI.indentLevel--;
+		}
+
+		private void FlyModeOptions()
+		{
+			using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				_showFly.target = EditorGUILayout.Foldout(_showFly.target, "Fly", true, _foldoutStyle);
+
+				using (new EditorGUILayout.FadeGroupScope(_showFly.faded))
+				{
+					if (_showFly.value)
+					{
+						GUILayout.Space(4);
+						EditorGUI.indentLevel++;
+
+						Options.FlyHover= EditorGUILayout.Toggle("Hover", Options.FlyHover);
+						GUI.enabled = Options.FlyHover;
+						Options.FlyHoverDistance = CustomFloatField(Options.FlyHoverDistance, "Ground Distance", 0.5f, 50f);
+						GUI.enabled = true;
+
+						GUILayout.Space(4);
+
+						EditorGUI.indentLevel--;
+					}
+					GUILayout.Space(_foldoutSpace);
+				}
+			}
 		}
 	}
 }

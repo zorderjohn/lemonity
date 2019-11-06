@@ -32,7 +32,7 @@ namespace Lemonity
 			Vector3 deltaMovement = (centerInitialPos - centerFinalPos);
 			deltaMovement = MathHelper.ExponentialScale(deltaMovement, Options.FlyPosScale * deltaTime * 100f, Options.FlyExponential);
 
-			if (InvertAxis)
+			if (Options.FlyInvertAxis)
 			{
 				deltaMovement *= -1f;
 			}
@@ -41,6 +41,11 @@ namespace Lemonity
 			deltaMovement = Rotation * deltaMovement;
 
 			Position = _absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
+
+			if (Options.FlyHover)
+			{
+				Position = Hover();
+			}
 
 			// Initial Rotation
 			Vector3 initialRotation = leftInitialPos - rightInitialPos;
@@ -64,7 +69,7 @@ namespace Lemonity
 			deltaRot = deltaRot * hcPitchDeltaRot;
 
 
-			if (InvertAxis)
+			if (Options.FlyInvertAxis)
 			{
 				deltaRot = Quaternion.Inverse(deltaRot);
 			}
@@ -79,5 +84,8 @@ namespace Lemonity
 
 			Rotation = MathHelper.ClampRotationXZ(targetRotation, Options.PitchLimit, Options.PitchMinAngleLimit, Options.PitchMaxAngleLimit, Options.RollLimit);
 		}
+
+
+
 	}
 }

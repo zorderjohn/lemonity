@@ -64,6 +64,27 @@ namespace Lemonity
 				GrabMotion.Scale = value;
 			}
 		}
+
+		public float Size
+		{
+			get
+			{
+				switch (Options.Gesture)
+				{
+					case WorkingGesture.Hybrid:
+					case WorkingGesture.OneHand:
+					case WorkingGesture.TwoHands:
+						return 1f + (Options.PosScale - 1f) * 0.1f;
+					case WorkingGesture.Orbit:
+						return 0.1f * Vector3.Distance(MathHelper.GetSelectionCenter(), Position);
+					case WorkingGesture.FlyOneHand:
+					case WorkingGesture.FlyTwoHands:
+						return Options.FlyHover ? 1f : 2f;
+					default:
+						return 1f;
+				}
+			}
+		}
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
 

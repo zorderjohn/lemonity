@@ -27,14 +27,18 @@ namespace Lemonity
 		public static float   RotScale           { get; set; }
 		public static float   ZoomScale          { get; set; }
 		public static Vector3 AxisRotScale       { get; set; }
+
 		public static float   OrbitZoomScale     { get; set; }
 		public static float   OrbitPitchScale    { get; set; }
 		public static float   OrbitYawScale      { get; set; }
 		public static bool    OrbitExponential   { get; set; }
+
 		public static float   FlyPosScale        { get; set; }
 		public static float   FlyPitchScale      { get; set; }
 		public static float   FlyYawScale        { get; set; }
 		public static float   FlyExponential     { get; set; }
+		public static bool    FlyHover           { get; set; }
+		public static float   FlyHoverDistance   { get; set; }
 		#endregion
 
 		#region Camera
@@ -48,7 +52,9 @@ namespace Lemonity
 		public static float GrabMinThreshold  { get; set; }
 		public static float GrabMaxThreshold  { get; set; }
 		public static bool  GrabEnabled       { get; set; }
-		public static bool  InvertAxis        { get; set; }
+		public static bool  GrabInvertAxis    { get; set; }
+		public static bool  OrbitInvertAxis   { get; set; }
+		public static bool  FlyInvertAxis     { get; set; }
 		public static bool  PinchEnabled      { get; set; }
 		public static float PinchMinThreshold { get; set; }
 		public static float PinchMaxThreshold { get; set; }
@@ -114,6 +120,9 @@ namespace Lemonity
 				// General
 				SaveValue("Gesture", (int)Gesture);
 				SaveValue("Mode", (int)Mode);
+				SaveValue("GrabInvertAxis", GrabInvertAxis);
+				SaveValue("OrbitInvertAxis", OrbitInvertAxis);
+				SaveValue("FlyInvertAxis", FlyInvertAxis);
 
 				// Sensitivity
 				SaveValue("PosScale", PosScale);
@@ -123,14 +132,18 @@ namespace Lemonity
 				SaveValue("AxisRotScaleY", AxisRotScale.y);
 				SaveValue("AxisRotScaleZ", AxisRotScale.z);
 				SaveValue("AutoPosScaleOnLoad", AutoPosScaleOnLoad);
+
 				SaveValue("OrbitZoomScale", OrbitZoomScale);
 				SaveValue("OrbitPitchScale", OrbitPitchScale);
 				SaveValue("OrbitYawScale", OrbitYawScale);
 				SaveValue("OrbitExponential", OrbitExponential);
+
 				SaveValue("FlyPosScale", FlyPosScale);
 				SaveValue("FlyPitchScale", FlyPitchScale);
 				SaveValue("FlyYawScale", FlyYawScale);
 				SaveValue("FlyExponential", FlyExponential);
+				SaveValue("FlyHover", FlyHover);
+				SaveValue("FlyHoverDistance", FlyHoverDistance);
 
 				// Camera
 				SaveValue("PitchMinAngleLimit", PitchMinAngleLimit);
@@ -142,7 +155,6 @@ namespace Lemonity
 				SaveValue("GrabEnabled", GrabEnabled);
 				SaveValue("GrabMinThreshold", GrabMinThreshold);
 				SaveValue("GrabMaxThreshold", GrabMaxThreshold);
-				SaveValue("InvertAxis", InvertAxis);
 				SaveValue("PinchEnabled", PinchEnabled);
 				SaveValue("PinchMinThreshold", PinchMinThreshold);
 				SaveValue("PinchMaxThreshold", PinchMaxThreshold);
@@ -187,6 +199,9 @@ namespace Lemonity
 				// General
 				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Absolute);
 				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.Hybrid);
+				GrabInvertAxis = Load("GrabInvertAxis", false);
+				OrbitInvertAxis = Load("OrbitInvertAxis", false);
+				FlyInvertAxis = Load("FlyInvertAxis", true);
 
 				// Sensitivity
 				PosScale = Load("PosScale", 1f);
@@ -210,6 +225,8 @@ namespace Lemonity
 				FlyPitchScale = Load("FlyPitchScale", 1f);
 				FlyYawScale = Load("FlyYawScale", 1f);
 				FlyExponential = Load("FlyExponential", 1f);
+				FlyHover = Load("FlyHover", true);
+				FlyHoverDistance = Load("FlyHoverDistance", 2f);
 
 				// Camera
 				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);
@@ -221,7 +238,6 @@ namespace Lemonity
 				GrabEnabled = Load("GrabEnabled", true);
 				GrabMinThreshold = Load("GrabMinThreshold", 0.13f);
 				GrabMaxThreshold = Load("GrabMaxThreshold", 0.7f);
-				InvertAxis = Load("InvertAxis", false);
 
 				PinchEnabled = Load("PinchEnabled", true);
 				PinchMinThreshold = Load("PinchMinThreshold", 22f);

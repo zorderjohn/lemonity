@@ -54,7 +54,7 @@ namespace Lemonity
 			// Gesture rotation
 			var hcDeltaRot = _gestureController.HandDeltaRotation;
 
-			if (!InvertAxis)
+			if (!Options.GrabInvertAxis)
 			{
 				hcDeltaRot = Quaternion.Inverse(hcDeltaRot);
 			}
@@ -72,7 +72,7 @@ namespace Lemonity
 			// Calculate translation as the relative translation of the hands
 			Vector3 ccDeltaTranslation = _gestureController.HandDeltaPosition * Options.PosScale;
 
-			if (!InvertAxis)
+			if (!Options.GrabInvertAxis)
 			{
 				ccDeltaTranslation *= -1f;
 			}

@@ -53,7 +53,7 @@ namespace Lemonity
 			Quaternion hcYawDeltaRot = Quaternion.Euler(0f, yawDegrees, 0f);
 			_hcPitchDeltaRot = Quaternion.Euler(pitchDegrees, 0f, 0f);
 
-			if (InvertAxis)
+			if (Options.OrbitInvertAxis)
 			{
 				hcYawDeltaRot = Quaternion.Inverse(hcYawDeltaRot);
 				_hcPitchDeltaRot = Quaternion.Inverse(_hcPitchDeltaRot);
@@ -74,7 +74,7 @@ namespace Lemonity
 
 			Vector3 ccDeltaTranslation = new Vector3(0f, 0f, translationScaled);
 
-			if (InvertAxis)
+			if (Options.OrbitInvertAxis)
 			{
 				ccDeltaTranslation *= -1f;
 			}
@@ -139,6 +139,6 @@ namespace Lemonity
 		}
 
 
-		
+
 	}
 }

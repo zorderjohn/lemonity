@@ -10,7 +10,6 @@ namespace Lemonity
 		IGestureController LeftGesture { get; set; }
 		IGestureController RightGesture { get; set; }
 		bool RequiresTwoHands { get; }
-		bool InvertAxis { get; set; }
 
 		void Start();
 		void Update();
@@ -31,7 +30,6 @@ namespace Lemonity
 		public IGestureController LeftGesture { get; set; }
 		public IGestureController RightGesture { get; set; }
 		public virtual bool RequiresTwoHands { get { return false; } }
-		public bool InvertAxis { get; set; }
 		public virtual void DebugDraw() {; }
 		public bool HasInertia
 		{
@@ -42,6 +40,8 @@ namespace Lemonity
 		}
 
 		protected InertialObject _inertialData;
+		protected const float _hoverMaxStep = 100f;
+		protected const float _hoverSmooth = 0.95f;
 
 		public MotionStyleBase()
 		{
@@ -92,7 +92,6 @@ namespace Lemonity
 		public virtual void OptionsChange()
 		{
 			_inertialData.BufferLength = Options.VelocityFrames;
-			InvertAxis = Options.InvertAxis;
 		}
 
 		protected abstract void StartMotion();
@@ -142,6 +141,22 @@ namespace Lemonity
 		protected float GetTime()
 		{
 			return Time.realtimeSinceStartup;
+		}
+
+		protected Vector3 Hover()
+		{
+			Vector3 pos = Position;
+
+			if (Physics.Raycast(Position + Vector3.up, Vector3.down, out var hit))
+			{
+				pos = hit.point + Vector3.up * Options.FlyHoverDistance;
+			}
+			else if (Physics.Raycast(Position + _hoverMaxStep * Vector3.up, Vector3.down, out var hit2))
+			{
+				pos = hit2.point + Vector3.up * Options.FlyHoverDistance;
+			}
+
+			return Position * _hoverSmooth + pos * (1f - _hoverSmooth);
 		}
 	}
 }

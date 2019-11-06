@@ -24,7 +24,7 @@ namespace Lemonity
 
 			Vector3 deltaMovement = MathHelper.ExponentialScale(grabInfo.HandDeltaPosition, Options.FlyPosScale * deltaTime * 100f, Options.FlyExponential);
 
-			if (!InvertAxis)
+			if (!Options.FlyInvertAxis)
 			{
 				deltaMovement *= -1f;
 			}
@@ -33,10 +33,13 @@ namespace Lemonity
 			deltaMovement = Rotation * deltaMovement;
 
 			Position = _absoluteMovement ? grabInfo.ObjectInitialPosition + deltaMovement : Position + deltaMovement;
-
+			if (Options.FlyHover)
+			{
+				Position = Hover();
+			}
 
 			Quaternion deltaRot = grabInfo.HandDeltaRotation;
-			if (!InvertAxis)
+			if (!Options.FlyInvertAxis)
 			{
 				deltaRot = Quaternion.Inverse(deltaRot);
 			}

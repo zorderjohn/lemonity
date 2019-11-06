@@ -65,7 +65,7 @@ namespace Lemonity
 			// Promediate pitch rotations
 			_hcPitchDeltaRot = Quaternion.Lerp(hcLeftDeltaRot, hcRightDeltaRot, .5f);
 
-			if (InvertAxis)
+			if (Options.GrabInvertAxis)
 			{
 				hcYawDeltaRot = Quaternion.Inverse(hcYawDeltaRot);
 			}
@@ -86,7 +86,7 @@ namespace Lemonity
 			Vector3 hcCenterFinalPos = (LeftGesture.HandCurrentPosition + RightGesture.HandCurrentPosition) * 0.5f;
 			Vector3 ccDeltaTranslation = (_hcCenterInitialPos - hcCenterFinalPos) * Options.PosScale;
 
-			if (InvertAxis)
+			if (Options.GrabInvertAxis)
 			{
 				ccDeltaTranslation *= -1f;
 			}
