@@ -65,5 +65,13 @@ namespace Lemonity
 			float absValue = Mathf.Abs(value);
 			return sign * Mathf.Pow(absValue, Options.FlyExponential);
 		}
+
+		protected override void PostInertialMovement()
+		{
+			if (Options.FlyHover)
+			{
+				Position = Hover();
+			}
+		}
 	}
 }

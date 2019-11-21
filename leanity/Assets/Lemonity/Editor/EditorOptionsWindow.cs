@@ -17,7 +17,11 @@ namespace Lemonity
 		private static Texture _lemonTexture;
 		private static Texture _treeTexture;
 		private static Texture _cityTexture;
-		private static readonly Color _logoBackground = new Color(.110f, .184f, .196f);
+		private static Texture _offTexture;
+		private static Texture _grabTexture;
+		private static Texture _orbitTexture;
+		private static Texture _flyTexture;
+		private static readonly Color _logoBackground = new Color(.2196f, .3529f, .4471f);
 		private const int _inputTextWidth = 55;
 		private const int _foldoutSpace = 4;
 		private const int _foldoutFontSize = 14;
@@ -46,6 +50,11 @@ namespace Lemonity
 			using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 			{
 				_logoTexture = _logoTexture ?? Resources.Load<Texture>("logo");
+				_offTexture = _offTexture ?? Resources.Load<Texture>("power");
+				//_grabTexture = _grabTexture ?? Resources.Load<Texture>("grab");
+				//_orbitTexture = _orbitTexture ?? Resources.Load<Texture>("orbit");
+				//_flyTexture = _flyTexture ?? Resources.Load<Texture>("fly");
+
 				Rect rImage = GUILayoutUtility.GetRect(50, 1000, 50, 50);
 				EditorGUI.DrawRect(rImage, _logoBackground);
 				GUI.DrawTexture(rImage, _logoTexture, ScaleMode.ScaleToFit);
@@ -60,6 +69,7 @@ namespace Lemonity
 				GUIContent[] gestures = new[]
 				{
 					new GUIContent("Off", "Disable Lemonity"),
+					//new GUIContent("Off", _offTexture, "Disable Lemonity"),
 					new GUIContent("Grab", "Move & Rotate the camera using current hand position in workspace as the pivot"),
 					new GUIContent("Orbit", "Rotate the camera around using the selected object as the pivot"),
 					new GUIContent("Fly", "Fly around the scene")

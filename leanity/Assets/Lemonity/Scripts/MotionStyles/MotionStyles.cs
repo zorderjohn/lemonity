@@ -40,6 +40,7 @@ namespace Lemonity
 		}
 
 		protected InertialObject _inertialData;
+		protected float _lastHeight = 0f;
 		protected const float _hoverMaxStep = 100f;
 		protected const float _hoverSmooth = 0.95f;
 
@@ -50,6 +51,7 @@ namespace Lemonity
 
 		public void Start()
 		{
+			_lastHeight = Position.y;
 			_inertialData.Clear();
 			StartMotion();
 		}
@@ -80,9 +82,11 @@ namespace Lemonity
 				Position = _inertialData.Position;
 				Rotation = _inertialData.Rotation;
 			}
-
+			PostInertialMovement();
 			return _inertialData.IsMoving;
 		}
+
+		protected virtual void PostInertialMovement() { }
 
 		public void StopInertia()
 		{
@@ -145,18 +149,21 @@ namespace Lemonity
 
 		protected Vector3 Hover()
 		{
-			Vector3 pos = Position;
+			float targetHeight = Position.y;
+			RaycastHit hit;
 
-			if (Physics.Raycast(Position + Vector3.up, Vector3.down, out var hit))
+			if (Physics.Raycast(Position + Vector3.up, Vector3.down, out hit))
 			{
-				pos = hit.point + Vector3.up * Options.FlyHoverDistance;
+				targetHeight = hit.point.y + Options.FlyHoverDistance;
 			}
-			else if (Physics.Raycast(Position + _hoverMaxStep * Vector3.up, Vector3.down, out var hit2))
+			else if (Physics.Raycast(Position + _hoverMaxStep * Vector3.up, Vector3.down, out hit))
 			{
-				pos = hit2.point + Vector3.up * Options.FlyHoverDistance;
+				targetHeight = hit.point.y + Options.FlyHoverDistance;
 			}
 
-			return Position * _hoverSmooth + pos * (1f - _hoverSmooth);
+			float newHeight = _lastHeight * _hoverSmooth + targetHeight * (1f - _hoverSmooth);
+			_lastHeight = newHeight;
+			return new Vector3(Position.x, newHeight, Position.z);
 		}
 	}
 }
