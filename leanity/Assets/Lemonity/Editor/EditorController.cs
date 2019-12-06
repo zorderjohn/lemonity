@@ -37,6 +37,10 @@ namespace Lemonity
 
 		static public void EditorUpdate()
 		{
+			Options.OnOptionsChange += OnOptionsChange;
+			Options.Load();
+			OnOptionsChange();
+
 			if (Time.realtimeSinceStartup - _lastUpdate > 0.5f ||
 				Options.EnableInertia && EditorMotionController.GrabMotion.HasInertia)
 			{
@@ -53,7 +57,7 @@ namespace Lemonity
 				EditorMotionController.StopInertia();
 			}
 
-			if (Options.Gesture == WorkingGesture.Disabled)
+			if (Options.Mode == WorkingMode.Disabled)
 			{
 				return;
 			}
@@ -116,6 +120,11 @@ namespace Lemonity
 			{
 				AutoScale();
 			}
+		}
+
+		private static void OnOptionsChange()
+		{
+			EditorMotionController.CurrentMode = Options.Mode;
 		}
 
 		private static void AutoScale()

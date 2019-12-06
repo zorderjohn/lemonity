@@ -6,8 +6,7 @@ using System;
 
 namespace Lemonity
 {
-	public enum WorkingGesture { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit, FlyOneHand, FlyTwoHands}
-	public enum WorkingMode    { Absolute = 0, Relative}
+	public enum WorkingMode { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit, FlyOneHand, FlyTwoHands}
 
 	[Serializable]
 	public static class Options
@@ -17,8 +16,7 @@ namespace Lemonity
 		public static event Action OnOptionsChange;
 
 		#region General
-		public static WorkingMode    Mode    { get; set; }
-		public static WorkingGesture Gesture { get; set; }
+		public static WorkingMode Mode { get; set; }
 		#endregion
 
 		#region Sensitivity
@@ -118,7 +116,6 @@ namespace Lemonity
 				Dirty = false;
 
 				// General
-				SaveValue("Gesture", (int)Gesture);
 				SaveValue("Mode", (int)Mode);
 				SaveValue("GrabInvertAxis", GrabInvertAxis);
 				SaveValue("OrbitInvertAxis", OrbitInvertAxis);
@@ -197,8 +194,7 @@ namespace Lemonity
 			if (!_init)
 			{
 				// General
-				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Absolute);
-				Gesture = (WorkingGesture)Load("Gesture", (int)WorkingGesture.Hybrid);
+				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Hybrid);
 				GrabInvertAxis = Load("GrabInvertAxis", false);
 				OrbitInvertAxis = Load("OrbitInvertAxis", false);
 				FlyInvertAxis = Load("FlyInvertAxis", true);

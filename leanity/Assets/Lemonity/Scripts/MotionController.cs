@@ -69,22 +69,37 @@ namespace Lemonity
 		{
 			get
 			{
-				switch (Options.Gesture)
+				switch (CurrentMode)
 				{
-					case WorkingGesture.Hybrid:
-					case WorkingGesture.OneHand:
-					case WorkingGesture.TwoHands:
+					case WorkingMode.Hybrid:
+					case WorkingMode.OneHand:
+					case WorkingMode.TwoHands:
 						return 1f + (Options.PosScale - 1f) * 0.1f;
-					case WorkingGesture.Orbit:
+					case WorkingMode.Orbit:
 						return 0.1f * Vector3.Distance(MathHelper.GetSelectionCenter(), Position);
-					case WorkingGesture.FlyOneHand:
-					case WorkingGesture.FlyTwoHands:
+					case WorkingMode.FlyOneHand:
+					case WorkingMode.FlyTwoHands:
 						return Options.FlyHover ? 1f : 2f;
 					default:
 						return 1f;
 				}
 			}
 		}
+
+		private WorkingMode _currentMode;
+		public WorkingMode CurrentMode
+		{
+			get { return _currentMode; }
+			set
+			{
+				if (_currentMode != value)
+				{
+					_currentMode = value;
+					LoadMotionStyle();
+				}
+			}
+		}
+
 		public GrabController LeftGrab { get; private set; }
 		public GrabController RightGrab { get; private set; }
 
@@ -106,11 +121,7 @@ namespace Lemonity
 		public event Action OnStateChange;
 		#endregion
 
-		#region Private Fields
-		private WorkingGesture _currentGesture;
-		#endregion
-
-		public MotionController()
+		public MotionController(WorkingMode mode)
 		{
 			Options.Load();
 			Options.OnOptionsChange += OnOptionsChange;
@@ -122,19 +133,13 @@ namespace Lemonity
 			RightPinch = new PinchController();
 
 			// Always instantiate after Left and Right grabs
-			_currentGesture = Options.Gesture;
+			CurrentMode = mode;
 			LoadMotionStyle();
 			Scale = 0f;
 		}
 
 		public void OnOptionsChange()
 		{
-			if (_currentGesture != Options.Gesture)
-			{
-				_currentGesture = Options.Gesture;
-				LoadMotionStyle();
-			}
-
 			GrabMotion?.OptionsChange();
 			PinchMotion?.OptionsChange();
 		}
@@ -238,35 +243,35 @@ namespace Lemonity
 
 		private void LoadMotionStyle()
 		{
-			switch (_currentGesture)
+			switch (_currentMode)
 			{
-				case WorkingGesture.OneHand:
+				case WorkingMode.OneHand:
 					GrabMotion = new OneHandMotion();
 					PinchMotion = new ScaleMotion();
 					break;
 
-				case WorkingGesture.TwoHands:
+				case WorkingMode.TwoHands:
 					GrabMotion = new TwoHandsMotion();
 					PinchMotion = new ScaleMotion();
 					break;
 
-				case WorkingGesture.Hybrid:
+				case WorkingMode.Hybrid:
 				default:
 					GrabMotion = new HybridMotion();
 					PinchMotion = new ScaleMotion();
 					break;
 
-				case WorkingGesture.Orbit:
+				case WorkingMode.Orbit:
 					GrabMotion = new OrbitMotion();
 					PinchMotion = new AlignMotion();
 					break;
 
-				case WorkingGesture.FlyOneHand:
+				case WorkingMode.FlyOneHand:
 					GrabMotion = new OneHandNoPivotMotion();
 					PinchMotion = new NullMotion();
 					break;
 
-				case WorkingGesture.FlyTwoHands:
+				case WorkingMode.FlyTwoHands:
 					GrabMotion = new TwoHandsNoPivotMotion();
 					PinchMotion = new NullMotion();
 					break;

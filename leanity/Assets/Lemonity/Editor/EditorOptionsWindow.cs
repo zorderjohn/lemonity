@@ -42,7 +42,7 @@ namespace Lemonity
 
 			Mode mode;
 			SubMode subMode;
-			GestureToMode(Options.Gesture, out mode, out subMode);
+			GestureToMode(Options.Mode, out mode, out subMode);
 
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
@@ -103,7 +103,7 @@ namespace Lemonity
 					subMode = (SubMode)GUILayout.Toolbar((int)subMode, panOptions);
 				}
 
-				Options.Gesture = ModeToGesture(mode, subMode);
+				Options.Mode = ModeToGesture(mode, subMode);
 
 				GUIContent[] invertAxisContent = new[]
 				{
@@ -133,7 +133,7 @@ namespace Lemonity
 				FlyModeOptions();
 			}
 
-			if (Options.Gesture != WorkingGesture.Disabled)
+			if (Options.Mode != WorkingMode.Disabled)
 			{
 				#region Sensitivity
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
@@ -147,11 +147,11 @@ namespace Lemonity
 						{
 							GUILayout.Space(4);
 
-							if (Options.Gesture == WorkingGesture.Orbit)
+							if (Options.Mode == WorkingMode.Orbit)
 							{
 								ScaleGUIOrbit();
 							}
-							else if (Options.Gesture == WorkingGesture.FlyOneHand || Options.Gesture == WorkingGesture.FlyTwoHands)
+							else if (Options.Mode == WorkingMode.FlyOneHand || Options.Mode == WorkingMode.FlyTwoHands)
 							{
 								ScaleGUIFly();
 							}
@@ -470,71 +470,71 @@ namespace Lemonity
 			return value;
 		}
 
-		private static void GestureToMode(WorkingGesture gesture, out Mode mode, out SubMode subMode)
+		private static void GestureToMode(WorkingMode gesture, out Mode mode, out SubMode subMode)
 		{
 			mode = Mode.Off;
 			subMode = SubMode.AnyHands;
 			switch (gesture)
 			{
-				case WorkingGesture.Disabled:
+				case WorkingMode.Disabled:
 					mode = Mode.Off;
 					break;
-				case WorkingGesture.OneHand:
+				case WorkingMode.OneHand:
 					mode = Mode.Grab;
 					subMode = SubMode.OneHand;
 					break;
-				case WorkingGesture.TwoHands:
+				case WorkingMode.TwoHands:
 					mode = Mode.Grab;
 					subMode = SubMode.TwoHands;
 					break;
-				case WorkingGesture.Hybrid:
+				case WorkingMode.Hybrid:
 					mode = Mode.Grab;
 					subMode = SubMode.AnyHands;
 					break;
-				case WorkingGesture.Orbit:
+				case WorkingMode.Orbit:
 					mode = Mode.Orbit;
 					break;
-				case WorkingGesture.FlyOneHand:
+				case WorkingMode.FlyOneHand:
 					mode = Mode.Fly;
 					subMode = SubMode.OneHand;
 					break;
-				case WorkingGesture.FlyTwoHands:
+				case WorkingMode.FlyTwoHands:
 					mode = Mode.Fly;
 					subMode = SubMode.TwoHands;
 					break;
 			}
 		}
 
-		private static WorkingGesture ModeToGesture(Mode mode, SubMode subMode)
+		private static WorkingMode ModeToGesture(Mode mode, SubMode subMode)
 		{
 			switch (mode)
 			{
 				case Mode.Off:
-					return WorkingGesture.Disabled;
+					return WorkingMode.Disabled;
 				case Mode.Grab:
 					switch (subMode)
 					{
 						case SubMode.OneHand:
-							return WorkingGesture.OneHand;
+							return WorkingMode.OneHand;
 						case SubMode.TwoHands:
-							return WorkingGesture.TwoHands;
+							return WorkingMode.TwoHands;
 						case SubMode.AnyHands:
-							return WorkingGesture.Hybrid;
+							return WorkingMode.Hybrid;
 					}
 					break;
 				case Mode.Orbit:
-					return WorkingGesture.Orbit;
+					return WorkingMode.Orbit;
 				case Mode.Fly:
 					if (subMode == SubMode.OneHand)
 					{
-						return WorkingGesture.FlyOneHand;
+						return WorkingMode.FlyOneHand;
 					}
 					else
 					{
-						return WorkingGesture.FlyTwoHands;
+						return WorkingMode.FlyTwoHands;
 					}
 			}
-			return WorkingGesture.Disabled;
+			return WorkingMode.Disabled;
 		}
 
 		private void ScaleGUI()

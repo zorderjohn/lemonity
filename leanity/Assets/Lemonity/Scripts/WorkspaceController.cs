@@ -50,9 +50,9 @@ namespace Lemonity
 			{
 				Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
-				if (Options.Gesture != WorkingGesture.Orbit &&
-					Options.Gesture != WorkingGesture.FlyOneHand &&
-					Options.Gesture != WorkingGesture.FlyTwoHands)
+				if (Options.Mode != WorkingMode.Orbit &&
+					Options.Mode != WorkingMode.FlyOneHand &&
+					Options.Mode != WorkingMode.FlyTwoHands)
 				{
 					if (Options.ShowWorkspace)
 					{

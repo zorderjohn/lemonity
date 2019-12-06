@@ -32,3 +32,4 @@ Thumbs.db
 *.csproj
 *.sln
 leanity/.vs/*
+video project/*
