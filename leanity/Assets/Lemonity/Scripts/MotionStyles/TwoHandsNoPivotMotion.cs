@@ -21,7 +21,6 @@ namespace Lemonity
 			float curTime = GetTime();
 			float deltaTime = curTime - _lastTime;
 			_lastTime = curTime;
-			deltaTime = 0.02f;
 
 			var grabInfo = GetDominantGrabController();
 
