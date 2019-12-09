@@ -215,7 +215,7 @@ namespace Lemonity
 				OrbitZoomScale = Load("OrbitZoomScale", 1f);
 				OrbitPitchScale = Load("OrbitPitchScale", 1f);
 				OrbitYawScale = Load("OrbitYawScale", 1f);
-				OrbitExponential = Load("OrbitExponential", true);
+				OrbitExponential = Load("OrbitExponential", false);
 
 				FlyPosScale = Load("FlyPosScale", 1f);
 				FlyPitchScale = Load("FlyPitchScale", 1f);
@@ -227,7 +227,7 @@ namespace Lemonity
 				// Camera
 				PitchMinAngleLimit = Load("PitchMinAngleLimit", 0f);
 				PitchMaxAngleLimit = Load("PitchMaxAngleLimit", 90f);
-				PitchLimit = Load("PitchLimit", true);
+				PitchLimit = Load("PitchLimit", false);
 				//RollLimit = Load("RollLimit", true);
 
 				// Interaction

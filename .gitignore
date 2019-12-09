@@ -33,3 +33,4 @@ Thumbs.db
 *.sln
 leanity/.vs/*
 video project/*
+bin/*

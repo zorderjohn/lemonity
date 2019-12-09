@@ -16,6 +16,7 @@ namespace Lemonity
 
 		[Header("Orbit Options")]
 		public Transform _orbitObject;
+		public bool _orbitExponentialZoom = false;
 
 		[Header("Common Options")]
 		public bool _inertia = true;
@@ -48,6 +49,9 @@ namespace Lemonity
 				Options.FlyPosScale = _flySpeed;
 				Options.FlyYawScale = _flyYRotationSpeed;
 				Options.FlyPitchScale = _flyXRotationSpeed;
+
+				Options.OrbitExponential = _orbitExponentialZoom;
+
 				Options.EnableInertia = _inertia;
 			}
 		}

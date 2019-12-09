@@ -6,4 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/SpaceNavigator/Runtime samples/- Fly around/Fly around.unity
+    path: Assets/Lemonity/Examples/Orbit.unity
+    guid: 5b1e3ab5d9b7afb4fbdd5378c18ba73b
+  m_configObjects: {}
