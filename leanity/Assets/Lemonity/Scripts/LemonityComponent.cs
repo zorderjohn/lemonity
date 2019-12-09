@@ -7,9 +7,18 @@ namespace Lemonity
 	{
 		[Header("Operation Mode")]
 		public WorkingMode _mode = WorkingMode.FlyOneHand;
-		public bool _hover = false;
 
+		[Header("Fly Options")]
+		public float _flySpeed = 1.2f;
+		public float _flyYRotationSpeed = 1f;
+		public float _flyXRotationSpeed = 1f;
+		public bool _flyHover = false;
+
+		[Header("Orbit Options")]
 		public Transform _orbitObject;
+
+		[Header("Common Options")]
+		public bool _inertia = true;
 
 		private MotionController _motion;
 
@@ -35,7 +44,11 @@ namespace Lemonity
 			if (_motion != null)
 			{
 				_motion.CurrentMode = _mode;
-				Options.FlyHover = _hover;
+				Options.FlyHover = _flyHover;
+				Options.FlyPosScale = _flySpeed;
+				Options.FlyYawScale = _flyYRotationSpeed;
+				Options.FlyPitchScale = _flyXRotationSpeed;
+				Options.EnableInertia = _inertia;
 			}
 		}
 
