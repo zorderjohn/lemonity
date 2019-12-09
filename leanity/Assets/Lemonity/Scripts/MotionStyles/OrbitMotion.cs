@@ -17,6 +17,7 @@ namespace Lemonity
 		// hc = Hand Coordinates
 		// cc = Camera Coordinates
 		// wc = World Coordinates
+		public OrbitMotion(Runtime runtime) : base(runtime) { }
 
 		protected override void StartMotion()
 		{
@@ -30,7 +31,7 @@ namespace Lemonity
 			_wcCamInitialRot = _gesture.ObjectInitialRotation;
 
 			// Calculate camera rotation pivot
-			_wcCamPivot = MathHelper.GetSelectionCenter();
+			_wcCamPivot = _motionRuntime.SelectionCenter();
 
 			// Vector from pivot to camera which will be rotated by the gesture
 			var wcPivotTocam = wcCamInitialPos - _wcCamPivot;

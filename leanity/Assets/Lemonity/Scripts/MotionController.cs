@@ -8,6 +8,7 @@ namespace Lemonity
 		public enum State { Hided = 0, Idle = 1, Grabbing = 2, Pinching = 3 }
 
 		#region Properties
+		public Runtime MotionRuntime { get; private set; }
 		public IMotionStyle _pinchMotion;
 		public IMotionStyle PinchMotion
 		{
@@ -76,7 +77,7 @@ namespace Lemonity
 					case WorkingMode.TwoHands:
 						return 1f + (Options.PosScale - 1f) * 0.1f;
 					case WorkingMode.Orbit:
-						return 0.1f * Vector3.Distance(MathHelper.GetSelectionCenter(), Position);
+						return 0.1f * Vector3.Distance(MotionRuntime.SelectionCenter(), Position);
 					case WorkingMode.FlyOneHand:
 					case WorkingMode.FlyTwoHands:
 						return Options.FlyHover ? 1f : 2f;
@@ -109,7 +110,10 @@ namespace Lemonity
 		public State MotionState { get; private set; }
 		public bool IsGrabbing => MotionState == State.Grabbing;
 		public bool IsPinching => MotionState == State.Pinching;
+		public static bool MultipleInstances => _instances > 1;
 		#endregion
+
+		private static int _instances = 0;
 
 		#region Actions
 		public event Action OnHandsVisible;
@@ -123,6 +127,8 @@ namespace Lemonity
 
 		public MotionController(WorkingMode mode)
 		{
+			MotionRuntime = new Runtime();
+
 			Options.Load();
 			Options.OnOptionsChange += OnOptionsChange;
 
@@ -136,6 +142,12 @@ namespace Lemonity
 			CurrentMode = mode;
 			LoadMotionStyle();
 			Scale = 0f;
+			_instances++;
+		}
+
+		 ~MotionController()
+		{
+			_instances--;
 		}
 
 		public void OnOptionsChange()
@@ -246,34 +258,34 @@ namespace Lemonity
 			switch (_currentMode)
 			{
 				case WorkingMode.OneHand:
-					GrabMotion = new OneHandMotion();
-					PinchMotion = new ScaleMotion();
+					GrabMotion = new OneHandMotion(MotionRuntime);
+					PinchMotion = new ScaleMotion(MotionRuntime);
 					break;
 
 				case WorkingMode.TwoHands:
-					GrabMotion = new TwoHandsMotion();
-					PinchMotion = new ScaleMotion();
+					GrabMotion = new TwoHandsMotion(MotionRuntime);
+					PinchMotion = new ScaleMotion(MotionRuntime);
 					break;
 
 				case WorkingMode.Hybrid:
 				default:
-					GrabMotion = new HybridMotion();
-					PinchMotion = new ScaleMotion();
+					GrabMotion = new HybridMotion(MotionRuntime);
+					PinchMotion = new ScaleMotion(MotionRuntime);
 					break;
 
 				case WorkingMode.Orbit:
-					GrabMotion = new OrbitMotion();
-					PinchMotion = new AlignMotion();
+					GrabMotion = new OrbitMotion(MotionRuntime);
+					PinchMotion = new AlignMotion(MotionRuntime);
 					break;
 
 				case WorkingMode.FlyOneHand:
-					GrabMotion = new OneHandNoPivotMotion();
-					PinchMotion = new NullMotion();
+					GrabMotion = new OneHandNoPivotMotion(MotionRuntime);
+					PinchMotion = new NullMotion(MotionRuntime);
 					break;
 
 				case WorkingMode.FlyTwoHands:
-					GrabMotion = new TwoHandsNoPivotMotion();
-					PinchMotion = new NullMotion();
+					GrabMotion = new TwoHandsNoPivotMotion(MotionRuntime);
+					PinchMotion = new NullMotion(MotionRuntime);
 					break;
 			}
 		}

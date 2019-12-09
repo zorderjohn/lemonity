@@ -16,6 +16,8 @@ namespace Lemonity
 		const float _alignDistance = 0.08f;
 		const float _alignMinDistance = 0.02f;
 
+		public AlignMotion(Runtime runtime) : base(runtime) { }
+
 		protected override void StartMotion()
 		{
 			_mainAxis = null;
@@ -26,7 +28,7 @@ namespace Lemonity
 				_gestureController.Reset();
 			}
 
-			_selectionCenter = MathHelper.GetSelectionCenter();
+			_selectionCenter = _motionRuntime.SelectionCenter();
 			_distanceToCenter = Vector3.Distance(_gestureController.ObjectInitialPosition, _selectionCenter);
 
 			// Set default value (the initial one)

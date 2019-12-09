@@ -4,6 +4,7 @@ namespace Lemonity
 {
 	public class HybridMotion : IMotionStyle
 	{
+		public Runtime MotionRuntime { get; set; }
 		public Vector3 Position { get; set; }
 		public Quaternion Rotation { get; set; }
 		public float Scale { get; set; }
@@ -42,15 +43,16 @@ namespace Lemonity
 		private IMotionStyle _lastMotion;
 		private IMotionStyle _currentMotion;
 		private float _motionChangeTimestamp = 0f;
+		protected Runtime _motionRuntime;
 
-		public HybridMotion()
+		public HybridMotion(Runtime runtime)
 		{
-			_oneMotion = new OneHandMotion();
+			_oneMotion = new OneHandMotion(runtime);
 			_oneMotion.LeftGesture = LeftGesture;
 			_oneMotion.RightGesture = RightGesture;
 			_oneMotion.OptionsChange();
 
-			_twoMotion = new TwoHandsMotion();
+			_twoMotion = new TwoHandsMotion(runtime);
 			_twoMotion.LeftGesture = LeftGesture;
 			_twoMotion.RightGesture = RightGesture;
 			_twoMotion.OptionsChange();

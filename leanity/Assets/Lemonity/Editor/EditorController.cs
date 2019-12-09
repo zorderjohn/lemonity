@@ -17,7 +17,10 @@ namespace Lemonity
 
 		static EditorController()
 		{
-			EditorMotionController = new MotionController();
+			EditorMotionController = new MotionController(Options.Mode);
+			var runtime = EditorMotionController.MotionRuntime;
+			runtime.SelectionCenter = GetSelectionCenter;
+
 			EditorWorkspaceController = new WorkspaceController(HandTracking.Workspace, EditorMotionController);
 			EditorApplication.update += EditorUpdate;
 			#if UNITY_2019_1_OR_NEWER
@@ -62,6 +65,7 @@ namespace Lemonity
 				return;
 			}
 
+
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)
 			{
@@ -72,7 +76,11 @@ namespace Lemonity
 			// Calculate cam position and rotation
 			var sceneView = SceneView.lastActiveSceneView;
 
-			if (sceneView != null && UnityEditorInternal.InternalEditorUtility.isApplicationActive)
+			bool editorActive = UnityEditorInternal.InternalEditorUtility.isApplicationActive &&
+				(!MotionController.MultipleInstances || !EditorApplication.isPlaying || SceneView.focusedWindow == sceneView);
+
+
+			if (sceneView != null && editorActive)
 			{
 				var camRot = sceneView.rotation.normalized;
 				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
@@ -157,6 +165,22 @@ namespace Lemonity
 
 		private static void OnStateChange()
 		{
+		}
+
+		public static Vector3 GetSelectionCenter()
+		{
+			var transforms = Selection.GetTransforms(SelectionMode.Deep | SelectionMode.ExcludePrefab);
+			if (transforms == null || transforms.Length == 0)
+			{
+				return Vector3.zero;
+			}
+
+			Bounds b = new Bounds(transforms[0].position, Vector3.zero);
+			foreach (var t in transforms)
+			{
+				b.Encapsulate(t.position);
+			}
+			return b.center;
 		}
 	}
 }

@@ -9,6 +9,8 @@ namespace Lemonity
 		float _lastTime = 0f;
 		bool _absoluteMovement = false;
 
+		public OneHandNoPivotMotion(Runtime runtime) : base(runtime) { }
+
 		protected override void StartMotion()
 		{
 			_lastTime = GetTime();

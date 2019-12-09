@@ -14,6 +14,8 @@ namespace Lemonity
 
 		public override bool RequiresTwoHands { get { return false; } }
 
+
+		public OneHandMotion(Runtime runtime) : base (runtime) {}
 		// hc = Hand Coordinates
 		// cc = Camera Coordinates
 		// wc = World Coordinates

@@ -39,13 +39,15 @@ namespace Lemonity
 			}
 		}
 
+		protected Runtime _motionRuntime;
 		protected InertialObject _inertialData;
 		protected float _lastHeight = 0f;
 		protected const float _hoverMaxStep = 100f;
 		protected const float _hoverSmooth = 0.95f;
 
-		public MotionStyleBase()
+		public MotionStyleBase(Runtime runtime)
 		{
+			_motionRuntime = runtime;
 			_inertialData = new InertialObject(Options.VelocityFrames);
 		}
 

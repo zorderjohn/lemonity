@@ -16,6 +16,7 @@ namespace Lemonity
 		// hc = Hand Coordinates
 		// cc = Camera Coordinates
 		// wc = World Coordinates
+		public TwoHandsMotion(Runtime runtime) : base(runtime) { }
 
 		protected override void StartMotion()
 		{

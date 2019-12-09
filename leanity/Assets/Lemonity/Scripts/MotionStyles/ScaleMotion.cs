@@ -12,6 +12,8 @@ namespace Lemonity
 		private Vector3 _hcCenterInitialPos;
 		private Vector3 _ccInitialCamToCenter;
 
+		public ScaleMotion(Runtime runtime) : base(runtime) { }
+
 		protected override void StartMotion()
 		{
 			LeftGesture.Reset();

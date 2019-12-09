@@ -6,6 +6,8 @@ namespace Lemonity
 	{
 		public override bool RequiresTwoHands { get { return true; } }
 
+		public NullMotion(Runtime runtime) : base(runtime) { }
+
 		protected override void StartMotion()
 		{
 		}

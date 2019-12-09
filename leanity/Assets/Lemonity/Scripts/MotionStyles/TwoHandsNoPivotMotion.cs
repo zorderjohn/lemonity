@@ -9,6 +9,8 @@ namespace Lemonity
 
 		public override bool RequiresTwoHands { get { return true; } }
 
+		public TwoHandsNoPivotMotion(Runtime runtime) : base(runtime) { }
+
 		protected override void StartMotion()
 		{
 			_lastTime = GetTime();
