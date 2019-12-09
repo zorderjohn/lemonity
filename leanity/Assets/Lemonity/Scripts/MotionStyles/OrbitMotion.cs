@@ -127,6 +127,7 @@ namespace Lemonity
 
 		public override void DebugDraw()
 		{
+#if UNITY_EDITOR
 			if (_gesture == null)
 			{
 				return;
@@ -137,6 +138,7 @@ namespace Lemonity
 			wcCamPivotCeil.y *= 2f;
 			UnityEditor.Handles.color = Color.red;
 			UnityEditor.Handles.DrawLine(_wcCamPivot, wcCamPivotFloor);
+#endif
 		}
 
 

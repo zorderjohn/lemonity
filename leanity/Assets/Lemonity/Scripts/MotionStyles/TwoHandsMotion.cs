@@ -141,6 +141,7 @@ namespace Lemonity
 
 		public override void DebugDraw()
 		{
+#if UNITY_EDITOR
 			var wcLeftInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(LeftGesture.HandInitialPosition);
 			var wcRightInitialPos = LeftGesture.ObjectInitialPosition + LeftGesture.ObjectInitialRotation * HandTracking.HandToCamCoordinates(RightGesture.HandInitialPosition);
 
@@ -154,6 +155,7 @@ namespace Lemonity
 
 			UnityEditor.Handles.color = Color.blue;
 			UnityEditor.Handles.DrawLine(_wcCamPivot, _wcCamPivot + _wcPivotToCam);
+#endif
 		}
 	}
 }
