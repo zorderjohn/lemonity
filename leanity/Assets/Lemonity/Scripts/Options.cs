@@ -6,7 +6,7 @@ using System;
 
 namespace Lemonity
 {
-	public enum WorkingMode { Disabled = 0, OneHand, TwoHands, Hybrid, Orbit, FlyOneHand, FlyTwoHands}
+	public enum WorkingMode { Disabled = 0, GrabOneHand, GrabTwoHands, GrabHybrid, Orbit, FlyOneHand, FlyTwoHands}
 
 	[Serializable]
 	public static class Options
@@ -194,7 +194,7 @@ namespace Lemonity
 			if (!_init)
 			{
 				// General
-				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.Hybrid);
+				Mode = (WorkingMode)Load("Mode", (int)WorkingMode.GrabHybrid);
 				GrabInvertAxis = Load("GrabInvertAxis", false);
 				OrbitInvertAxis = Load("OrbitInvertAxis", false);
 				FlyInvertAxis = Load("FlyInvertAxis", true);

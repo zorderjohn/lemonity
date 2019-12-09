@@ -479,15 +479,15 @@ namespace Lemonity
 				case WorkingMode.Disabled:
 					mode = Mode.Off;
 					break;
-				case WorkingMode.OneHand:
+				case WorkingMode.GrabOneHand:
 					mode = Mode.Grab;
 					subMode = SubMode.OneHand;
 					break;
-				case WorkingMode.TwoHands:
+				case WorkingMode.GrabTwoHands:
 					mode = Mode.Grab;
 					subMode = SubMode.TwoHands;
 					break;
-				case WorkingMode.Hybrid:
+				case WorkingMode.GrabHybrid:
 					mode = Mode.Grab;
 					subMode = SubMode.AnyHands;
 					break;
@@ -515,11 +515,11 @@ namespace Lemonity
 					switch (subMode)
 					{
 						case SubMode.OneHand:
-							return WorkingMode.OneHand;
+							return WorkingMode.GrabOneHand;
 						case SubMode.TwoHands:
-							return WorkingMode.TwoHands;
+							return WorkingMode.GrabTwoHands;
 						case SubMode.AnyHands:
-							return WorkingMode.Hybrid;
+							return WorkingMode.GrabHybrid;
 					}
 					break;
 				case Mode.Orbit:

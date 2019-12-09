@@ -299,7 +299,7 @@ namespace Lemonity
 				return;
 			}
 
-			if (Options.ShowHandGuides && Options.Mode == WorkingMode.Hybrid || Options.Mode == WorkingMode.OneHand || Options.Mode == WorkingMode.TwoHands)
+			if (Options.ShowHandGuides && Options.Mode == WorkingMode.GrabHybrid || Options.Mode == WorkingMode.GrabOneHand || Options.Mode == WorkingMode.GrabTwoHands)
 			{
 				var leftDetected = HandTracking.LeftHandData.Detected;
 				var rightDetected = HandTracking.RightHandData.Detected;
@@ -318,7 +318,7 @@ namespace Lemonity
 					PaintHandGuides(HandTracking.RightHandData);
 				}
 
-				if (leftDetected && rightDetected && (Options.Mode == WorkingMode.TwoHands || Options.Mode == WorkingMode.Hybrid))
+				if (leftDetected && rightDetected && (Options.Mode == WorkingMode.GrabTwoHands || Options.Mode == WorkingMode.GrabHybrid))
 				{
 					PaintPivot();
 				}

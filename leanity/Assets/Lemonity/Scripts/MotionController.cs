@@ -72,9 +72,9 @@ namespace Lemonity
 			{
 				switch (CurrentMode)
 				{
-					case WorkingMode.Hybrid:
-					case WorkingMode.OneHand:
-					case WorkingMode.TwoHands:
+					case WorkingMode.GrabHybrid:
+					case WorkingMode.GrabOneHand:
+					case WorkingMode.GrabTwoHands:
 						return 1f + (Options.PosScale - 1f) * 0.1f;
 					case WorkingMode.Orbit:
 						return 0.1f * Vector3.Distance(MotionRuntime.SelectionCenter(), Position);
@@ -257,17 +257,17 @@ namespace Lemonity
 		{
 			switch (_currentMode)
 			{
-				case WorkingMode.OneHand:
+				case WorkingMode.GrabOneHand:
 					GrabMotion = new OneHandMotion(MotionRuntime);
 					PinchMotion = new ScaleMotion(MotionRuntime);
 					break;
 
-				case WorkingMode.TwoHands:
+				case WorkingMode.GrabTwoHands:
 					GrabMotion = new TwoHandsMotion(MotionRuntime);
 					PinchMotion = new ScaleMotion(MotionRuntime);
 					break;
 
-				case WorkingMode.Hybrid:
+				case WorkingMode.GrabHybrid:
 				default:
 					GrabMotion = new HybridMotion(MotionRuntime);
 					PinchMotion = new ScaleMotion(MotionRuntime);
