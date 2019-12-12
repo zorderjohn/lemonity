@@ -168,7 +168,7 @@ namespace Lemonity
 				#region Gestures
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showGestures.target = EditorGUILayout.Foldout(_showGestures.target, "Gestures", true, _foldoutStyle);
+					_showGestures.target = EditorGUILayout.Foldout(_showGestures.target, "Gesture Thresholds", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showGestures.faded))
 					{
@@ -235,7 +235,7 @@ namespace Lemonity
 				#region Filters
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Advanced Motion Filtering", true, _foldoutStyle);
+					_showFilters.target = EditorGUILayout.Foldout(_showFilters.target, "Tracking Filtering", true, _foldoutStyle);
 
 					const string freqTooltip = "Expected data frequency";
 					const string minCOTooltip = "Minimum frequency cutoff. Lower values reduce jitter";
@@ -296,7 +296,7 @@ namespace Lemonity
 				#region Heuristics
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showHeuristic.target = EditorGUILayout.Foldout(_showHeuristic.target, "Gesture Filtering", true, _foldoutStyle);
+					_showHeuristic.target = EditorGUILayout.Foldout(_showHeuristic.target, "Involuntary Gestures", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showHeuristic.faded))
 					{
@@ -305,11 +305,11 @@ namespace Lemonity
 							GUILayout.Space(4);
 							EditorGUI.indentLevel++;
 
-							Options.HeuristicEnabled = EditorGUILayout.Toggle("Enable filter", Options.HeuristicEnabled);
+							Options.HeuristicEnabled = EditorGUILayout.Toggle("Enable heuristic", Options.HeuristicEnabled);
 							Options.HeuristicRadius = CustomFloatField(Options.HeuristicRadius, "Safe zone radius", 0.1f, 1f);
 
 							GUILayout.Space(4);
-							EditorGUILayout.LabelField("Gestures that start out of the safe zone in outward direction are considered involuntary and filtered.\n" +
+							EditorGUILayout.LabelField("Gestures that start out of the safe zone in outward direction are considered involuntary and ignored.\n" +
 								"Check the safe zone circle in the Debug window.", EditorStyles.wordWrappedLabel);
 
 							EditorGUI.indentLevel--;
@@ -322,7 +322,7 @@ namespace Lemonity
 				#region Visuals
 				using (new GUILayout.VerticalScope(EditorStyles.helpBox))
 				{
-					_showDebug.target = EditorGUILayout.Foldout(_showDebug.target, "Visual Effects", true, _foldoutStyle);
+					_showDebug.target = EditorGUILayout.Foldout(_showDebug.target, "Appearance", true, _foldoutStyle);
 
 					using (new EditorGUILayout.FadeGroupScope(_showDebug.faded))
 					{
