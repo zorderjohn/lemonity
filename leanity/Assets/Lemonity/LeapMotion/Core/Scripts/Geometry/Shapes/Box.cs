@@ -19,7 +19,7 @@ namespace Leap.Unity.Geometry {
       this.overrideMatrix = null;
     }
 
-    public Box(LocalBox localBox, Transform withTransform) 
+    public Box(LocalBox localBox, Transform withTransform)
            : this(localBox) {
       this.transform = withTransform;
     }
@@ -39,7 +39,7 @@ namespace Leap.Unity.Geometry {
 
     public Box(float radius) : this(Vector3.one * radius) { }
 
-    public Box(float radius, Component transformSource) : 
+    public Box(float radius, Component transformSource) :
       this(Vector3.one * radius, transformSource) { }
 
     public static Box unit { get { return new Box(1f); }}
@@ -110,20 +110,20 @@ namespace Leap.Unity.Geometry {
       divisions = Mathf.Max(1, divisions);
       var frac = 1f / divisions;
 
-      drawDividedLines(draw: drawLineFunc, step: frac, corner000, corner100);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner000, corner010);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner110, corner100);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner110, corner010);
+      drawDividedLines(drawLineFunc, frac, corner000, corner100);
+      drawDividedLines(drawLineFunc, frac, corner000, corner010);
+      drawDividedLines(drawLineFunc, frac, corner110, corner100);
+      drawDividedLines(drawLineFunc, frac, corner110, corner010);
 
-      drawDividedLines(draw: drawLineFunc, step: frac, corner000, corner001);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner100, corner101);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner010, corner011);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner110, corner111);
+      drawDividedLines(drawLineFunc, frac, corner000, corner001);
+      drawDividedLines(drawLineFunc, frac, corner100, corner101);
+      drawDividedLines(drawLineFunc, frac, corner010, corner011);
+      drawDividedLines(drawLineFunc, frac, corner110, corner111);
 
-      drawDividedLines(draw: drawLineFunc, step: frac, corner001, corner101);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner001, corner011);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner111, corner101);
-      drawDividedLines(draw: drawLineFunc, step: frac, corner111, corner011);
+      drawDividedLines(drawLineFunc, frac, corner001, corner101);
+      drawDividedLines(drawLineFunc, frac, corner001, corner011);
+      drawDividedLines(drawLineFunc, frac, corner111, corner101);
+      drawDividedLines(drawLineFunc, frac, corner111, corner011);
     }
 
     private void drawDividedLines(System.Action<Vector3, Vector3> draw,

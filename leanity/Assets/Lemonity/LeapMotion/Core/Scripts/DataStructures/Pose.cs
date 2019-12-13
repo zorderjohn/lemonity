@@ -38,7 +38,11 @@ namespace Leap.Unity {
     public Pose inverse {
       get {
         var invQ = Quaternion.Inverse(this.rotation);
+#if UNITY_2018_2_OR_NEWER
         return new Pose(invQ * -this.position, invQ.normalized);
+#else
+        return new Pose(invQ * -this.position, invQ.ToNormalized());
+#endif
       }
     }
 
@@ -48,7 +52,11 @@ namespace Leap.Unity {
     /// </summary>
     public Matrix4x4 matrix {
       get {
+#if UNITY_2018_2_OR_NEWER
         this.rotation = this.rotation.normalized;
+#else
+        this.rotation = this.rotation.ToNormalized();
+#endif
         return Matrix4x4.TRS(this.position, this.rotation, Vector3.one);
       }
     }
@@ -146,7 +154,7 @@ namespace Leap.Unity {
       else return this.Equals((Pose)obj);
     }
     public bool Equals(Pose other) {
-      return other.position == this.position && 
+      return other.position == this.position &&
              other.rotation == this.rotation;
     }
 

@@ -9,9 +9,9 @@ namespace Lemonity
 		public static event Action OnConnect;
 		public static event Action OnDisconnect;
 
-		public static HandData RightHandData { get => Instance.GetRightHandData(); }
-		public static HandData LeftHandData { get => Instance.GetLeftHandData(); }
-		public static Vector3 Workspace { get => Instance.GetWorkspace(); }
+		public static HandData RightHandData {	get { return Instance.GetRightHandData(); }}
+		public static HandData LeftHandData { get { return Instance.GetLeftHandData(); }}
+		public static Vector3 Workspace { get { return Instance.GetWorkspace(); }}
 
 		public static Vector3 TransformPosition { get; set; }
 		public static Quaternion TransformRotation { get; set; }
@@ -61,7 +61,11 @@ namespace Lemonity
 
 		public static Quaternion ToWorldCoordinates(Quaternion rotation)
 		{
+#if UNITY_2018_2_OR_NEWER
 			return Quaternion.Normalize(TransformRotation * rotation);
+#else
+			return TransformRotation * rotation;
+#endif
 		}
 
 		protected bool _isConnected;
@@ -81,9 +85,9 @@ namespace Lemonity
 			return _isConnected;
 		}
 
-		#endregion
+#endregion
 
-		#region Singleton
+#region Singleton
 		public static HandTracking _instance;
 		public static HandTracking Instance
 		{
@@ -96,7 +100,7 @@ namespace Lemonity
 				return _instance;
 			}
 		}
-		#endregion
+#endregion
 
 		public abstract void Dispose();
 		protected abstract bool UpdateTracking();

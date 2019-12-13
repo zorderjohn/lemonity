@@ -157,4 +157,12 @@ public static class MathHelper
 	{
 		return 0.5f + 0.5f * Mathf.Cos(value * Mathf.PI + Mathf.PI);
 	}
+
+#if !UNITY_2018_2_OR_NEWER
+	public static Quaternion GetNormalized(this Quaternion q)
+	{
+		float len = Mathf.Sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+		return new Quaternion(q.x / len, q.y / len, q.z / len, q.w / len);
+	}
+#endif
 }

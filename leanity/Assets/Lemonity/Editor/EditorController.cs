@@ -82,7 +82,11 @@ namespace Lemonity
 
 			if (sceneView != null && editorActive)
 			{
+#if UNITY_2018_2_OR_NEWER
 				var camRot = sceneView.rotation.normalized;
+#else
+				var camRot = sceneView.rotation.GetNormalized();
+#endif
 				var camPos = MathHelper.CameraPosition(sceneView.pivot, sceneView.rotation, sceneView.cameraDistance);
 
 				// As we are not drawing on PostRender we need to draw workspace using data from previous update

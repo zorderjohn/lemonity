@@ -345,6 +345,7 @@ namespace Leap.Unity {
       return arr;
     }
 
+	/*
     /// <summary> Enforces the requirement that the argument-by-ref List is
     /// non-null and that it is exactly as long as `length`.
     /// </summary>
@@ -354,6 +355,7 @@ namespace Leap.Unity {
       while (list.Count < length) { list.Add(default); }
       return list;
     }
+	 */
 
     /// <summary> Enforces the requirement that the argument-by-ref List is
     /// non-null and that it (exactly) contains the arguments that follow it.
@@ -1036,7 +1038,7 @@ namespace Leap.Unity {
         UnityEditor.PrefabUtility.GetPrefabInstanceStatus(obj) == UnityEditor.PrefabInstanceStatus.NotAPrefab;
       #else
       // Before 2018.3, use GetPrefabType.
-      return PrefabUtility.GetPrefabType(obj) == PrefabType.Prefab;
+      return UnityEditor.PrefabUtility.GetPrefabType(obj) == UnityEditor.PrefabType.Prefab;
       #endif
       #else
       return false;

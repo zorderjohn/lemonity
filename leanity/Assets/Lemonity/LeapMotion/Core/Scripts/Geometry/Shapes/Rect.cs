@@ -10,7 +10,7 @@ namespace Leap.Unity.Geometry {
   using UnityRect = UnityEngine.Rect;
 
   public struct Rect {
-    
+
     public static readonly Vector3 PLANE_NORMAL = new Vector3(0, 0, -1);
     public static readonly Color DEFAULT_GIZMO_COLOR = LeapColor.cerulean;
 
@@ -56,7 +56,7 @@ namespace Leap.Unity.Geometry {
 
     /// <summary>
     /// Local-to-world pose for the center of this Rect. (Read only.)
-    /// 
+    ///
     /// This extracts a Pose from the attached matrix, eliminating scale information.
     /// </summary>
     public Pose pose {
@@ -77,7 +77,7 @@ namespace Leap.Unity.Geometry {
     public Vector3 localCorner10 {
       get { return new Vector3(radii.x, -radii.y); }
     }
-    
+
     /// <summary>
     /// Returns whether the given world-space point projects inside this Rect. Optionally
     /// also outputs the calculated rect-space point to point_rect.
@@ -263,10 +263,10 @@ namespace Leap.Unity.Geometry {
       divisions = Mathf.Max(1, divisions);
       if (divisions > 1) {
         var frac = 1 / divisions;
-        drawDividedLines(drawLineFunc, step: frac, a, b);
-        drawDividedLines(drawLineFunc, step: frac, b, c);
-        drawDividedLines(drawLineFunc, step: frac, c, d);
-        drawDividedLines(drawLineFunc, step: frac, d, a);
+        drawDividedLines(drawLineFunc, frac, a, b);
+        drawDividedLines(drawLineFunc, frac, b, c);
+        drawDividedLines(drawLineFunc, frac, c, d);
+        drawDividedLines(drawLineFunc, frac, d, a);
       }
       else {
         drawLineFunc(a, b);
@@ -288,7 +288,7 @@ namespace Leap.Unity.Geometry {
         a_t = b_t;
       }
     }
-    
+
     public void DrawRuntimeGizmos(RuntimeGizmoDrawer drawer) {
       drawer.PushMatrix();
       drawer.matrix = this.matrix;
@@ -306,11 +306,12 @@ namespace Leap.Unity.Geometry {
       }
       int numRectLines = 8;
       for (int i = 0; i < numRectLines; i++) {
-        var shrinkMul = (Vector2.one - shrink.CompMul(invRadii) * i);
-        drawer.DrawLine(a * shrinkMul, b * shrinkMul);
-        drawer.DrawLine(b * shrinkMul, c * shrinkMul);
-        drawer.DrawLine(c * shrinkMul, d * shrinkMul);
-        drawer.DrawLine(d * shrinkMul, a * shrinkMul);
+        Vector3 shrinkMul = (Vector2.one - shrink.CompMul(invRadii) * i);
+
+        drawer.DrawLine(Vector3.Scale(a, shrinkMul), Vector3.Scale(b, shrinkMul));
+        drawer.DrawLine(Vector3.Scale(b, shrinkMul), Vector3.Scale(c, shrinkMul));
+        drawer.DrawLine(Vector3.Scale(c, shrinkMul), Vector3.Scale(d, shrinkMul));
+        drawer.DrawLine(Vector3.Scale(d, shrinkMul), Vector3.Scale(a, shrinkMul));
       }
 
       drawer.DrawLine(a, c);

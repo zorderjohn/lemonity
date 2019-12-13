@@ -264,6 +264,11 @@ namespace Lemonity
 					Vector3 offset = new Vector3(0f, 0f, 0.025f) * Options.HandScale * Options.PosScale;
 					offset = handRot * offset;
 
+#if UNITY_2018_2_OR_NEWER
+					handRot = handRot.normalized;
+#else
+					handRot = handRot.GetNormalized();
+#endif
 					Matrix4x4 matrix = Matrix4x4.TRS(handPos + offset, handRot, Vector3.one * Options.PosScale * Options.HandScale);
 					Graphics.DrawMeshNow(mesh, matrix);
 				}
