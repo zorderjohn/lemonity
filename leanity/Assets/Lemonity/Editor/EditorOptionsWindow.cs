@@ -256,7 +256,7 @@ namespace Lemonity
 							Options.RotFilterDcutoff = CustomFloatField(Options.RotFilterDcutoff, "Deriv Cutoff", 1f, 2f, dCOTooltip);
 							EditorGUI.indentLevel--;
 
-							GUILayout.Label("Translation", EditorStyles.boldLabel);
+							GUILayout.Label("Position", EditorStyles.boldLabel);
 							EditorGUI.indentLevel++;
 							Options.PosFilterMinCutoff = CustomFloatField(Options.PosFilterMinCutoff, "Min CutOff", 0f, 5f, minCOTooltip);
 							Options.PosFilterBeta = CustomFloatField(Options.PosFilterBeta, "Beta", 1f, 20f, betaTooltip);

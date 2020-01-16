@@ -19,7 +19,7 @@ namespace Lemonity
 		private static float _workspaceRatio = 1.0f;
 		private static bool _handsVisible = false;
 
-		[MenuItem("Window/Lemonity Debug &l")]
+		[MenuItem("Window/Lemonity Debug")]
 		public static void Init()
 		{
 			GetWindow(typeof(EditorDebugWindow), false, "Lemonity Debug", true);
