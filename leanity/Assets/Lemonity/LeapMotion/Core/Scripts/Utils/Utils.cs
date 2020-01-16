@@ -493,7 +493,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Takes a variable-like name and turns it into a nice human readable
     /// name.  Examples:
-    /// 
+    ///
     /// _privateVar     =>  Private Var
     /// multBy32        =>  Mult By 32
     /// the_key_code    =>  The Key Code
@@ -652,7 +652,7 @@ namespace Leap.Unity {
       if (csharp) { arrPrefix = "new Vector3[] { \n"; }
       else if (python) { arrPrefix = "np.array([ \n"; }
       sb.Append(arrPrefix);
-      
+
       var elPrefix = "";
       if (csharp) { elPrefix = "  new Vector3("; }
       else if (python) { elPrefix = "  ["; }
@@ -684,7 +684,7 @@ namespace Leap.Unity {
         sb.Length -= 2;
         sb.Append("\n])");
       }
-      
+
       return sb.ToString();
     }
 
@@ -700,7 +700,7 @@ namespace Leap.Unity {
       }
       sb.Length -= 2;
       sb.Append("\n};");
-      
+
       return sb.ToString();
     }
 
@@ -812,10 +812,10 @@ namespace Leap.Unity {
     }
 
     /// <summary>
-    /// Given one tuple of a collection of possible tuples, mutate it into the next tuple in the 
+    /// Given one tuple of a collection of possible tuples, mutate it into the next tuple in the
     /// in the lexicographic sequence, or into the first tuple if the last tuple has been reached.
-    /// 
-    /// The items of the tuple must be comparable to each other.  The getNext function takes an 
+    ///
+    /// The items of the tuple must be comparable to each other.  The getNext function takes an
     /// item and returns the next item in the lexicographic sequence, or the first item if there
     /// is no next item.
     /// </summary>
@@ -865,7 +865,7 @@ namespace Leap.Unity {
 
     /// <summary> Executes the delegate for each object in the array that is
     /// non-null. </summary>
-    public static void ForEach<T>(this T[] arr, Action<T> doFunc) 
+    public static void ForEach<T>(this T[] arr, Action<T> doFunc)
       where T : class
     {
       foreach (var t in arr) {
@@ -876,7 +876,7 @@ namespace Leap.Unity {
     /// <summary> Executes the delegate for each object in the array that can
     /// be cast to the generic argument type. The delegate is not called if the
     /// cast results in null. </summary>
-    public static void ForEach<T>(this object[] arr, Action<T> doFunc) 
+    public static void ForEach<T>(this object[] arr, Action<T> doFunc)
       where T : class
     {
       foreach (var obj in arr) {
@@ -892,7 +892,7 @@ namespace Leap.Unity {
         arr[i] = mapFunc(arr[i]);
       }
     }
-    
+
     /// <summary> Search support for arrays of types that implement IEquatable,
     /// e.g. many standard value types like `int` and `float`. </summary>
     public static bool ContainsValue<T>(this T[] arr, T value) where T: IEquatable<T> {
@@ -906,7 +906,7 @@ namespace Leap.Unity {
     public static bool Contains<T>(this T[] arr, T value) {
       return System.Array.IndexOf(arr, value) != -1;
     }
-   
+
     #endregion
 
     #region List Utils
@@ -989,7 +989,7 @@ namespace Leap.Unity {
     /// <summary> Copies each element from src by calling the copyElementFunc.
     /// If the source list is null or empty, the destination list will be
     /// emptied (unless `dontClear` is passed).
-    /// 
+    ///
     /// Returns the destination List for convenience. </summary>
     public static List<T> CopyFrom<T>(this List<T> dst, List<T> src,
       System.Action<T, T> copyElementFunc, bool dontClear = false)
@@ -1048,7 +1048,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Usage is the same as FindObjectOfType, but this method will also return objects
     /// that are inactive.
-    /// 
+    ///
     /// Use this method to search for singleton-pattern objects even if they are disabled,
     /// but be warned that it's not cheap to call!
     /// </summary>
@@ -1111,7 +1111,7 @@ namespace Leap.Unity {
       GetAllChildren(t, transforms, breadthFirst);
       return transforms;
     }
-    
+
     /// <summary>
     /// Scans all the children in order of the argument Transform, appending
     /// each transform it finds to toFill. Children are added depth-first by default.
@@ -1215,7 +1215,7 @@ namespace Leap.Unity {
     {
       var pose = targetMatrix.GetPose();
       var scale = targetMatrix.lossyScale;
-      
+
       if (!Application.isPlaying && !allowAtEditTime) {
         throw new System.Exception("Transform.SetMatrix extension was called " +
           "at edit-time without `allowAtEditTime` set. Because attempting " +
@@ -1262,27 +1262,27 @@ namespace Leap.Unity {
     /// Recursively searches the hierarchy of the argument Transform to find all of the
     /// Components of type ComponentType (the first type argument) that should be "owned"
     /// by the OwnerType component type (the second type argument).
-    /// 
+    ///
     /// If a child GameObject itself has an OwnerType component, that
     /// child is ignored, and its children are ignored -- the assumption being that such
     /// a child owns itself and any ComponentType components beneath it.
-    /// 
+    ///
     /// For example, a call to FindOwnedChildComponents with ComponentType Collider and
     /// OwnerType Rigidbody would return all of the Colliders that are attached to the
     /// rootObj Rigidbody, but none of the colliders that are attached to a rootObj's
     /// child's own Rigidbody.
-    /// 
+    ///
     /// Optionally, ComponentType components of inactive GameObjects can be included
     /// in the returned list; by default, these components are skipped.
-    /// 
+    ///
     /// This is not a cheap method to call, but it does not allocate garbage, so it is safe
     /// for use at runtime.
     /// </summary>
-    /// 
+    ///
     /// <typeparam name="ComponentType">
     /// The component type to search for.
     /// </typeparam>
-    /// 
+    ///
     /// <typeparam name="OwnerType">
     /// The component type that assumes ownership of any ComponentType in its own Transform
     /// or its Transform's children/grandchildren.
@@ -1337,10 +1337,10 @@ namespace Leap.Unity {
     /// <summary>
     /// Similar to Unity's Transform.LookAt(), but resolves the forward vector of this
     /// Transform to point away from the argument Transform.
-    /// 
+    ///
     /// Useful for billboarding Quads and UI elements whose forward vectors should match
     /// rather than oppose the Main Camera's forward vector.
-    /// 
+    ///
     /// Optionally, you may also pass an upwards vector, which will be provided to the underlying
     /// Quaternion.LookRotation. Vector3.up will be used by default.
     /// </summary>
@@ -1351,7 +1351,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Similar to Unity's Transform.LookAt(), but resolves the forward vector of this
     /// Transform to point away from the argument Transform.
-    /// 
+    ///
     /// Allows specifying an upwards parameter; this is passed as the upwards vector to the Quaternion.LookRotation.
     /// </summary>
     /// <param name="thisTransform"></param>
@@ -1449,7 +1449,7 @@ namespace Leap.Unity {
     /// <summary> Constructs an AngleAxis rotation that aligns this vector to
     /// the argument `toDir` on a single axis, by projecting it onto the plane
     /// defined by the axis and rotating v (also on that plane) to align with it.
-    /// 
+    ///
     /// Can optionally receive the computed signed angle out to the `angle`
     /// parameter.
     /// </summary>
@@ -1570,7 +1570,7 @@ namespace Leap.Unity {
     /// Returns the rotation that makes a transform at fromPosition point its forward
     /// vector at targetPosition and keep its rightward vector parallel with the horizon
     /// defined by a normal of Vector3.up.
-    /// 
+    ///
     /// For example, this will point an interface panel at a user camera while
     /// maintaining the alignment of text and other elements with the horizon line.
     /// </summary>
@@ -1585,7 +1585,7 @@ namespace Leap.Unity {
     /// Returns the rotation that makes a transform at fromPosition point its forward
     /// vector at targetPosition and keep its rightward vector parallel with the horizon
     /// defined by the upwardDirection normal.
-    /// 
+    ///
     /// For example, this will point an interface panel at a user camera while
     /// maintaining the alignment of text and other elements with the horizon line.
     /// </summary>
@@ -1623,12 +1623,12 @@ namespace Leap.Unity {
     /// <summary>
     /// Fills the provided bytes buffer starting at the offset with a compressed form
     /// of the argument quaternion. The offset is also shifted by 4 bytes.
-    /// 
+    ///
     /// Use Utils.DecompressBytesToQuat to decode this representation. This encoding ONLY
     /// works with normalized Quaternions, taking advantage of the fact that their
     /// components sum to 1 to only encode three of Quaternion components. As a result,
     /// this method encodes a Quaternion as a single unsigned integer (4 bytes).
-    /// 
+    ///
     /// Sources:
     /// https://bitbucket.org/Unity-Technologies/networking/pull-requests/9/quaternion-compression-for-sending/diff
     /// and
@@ -1700,10 +1700,10 @@ namespace Leap.Unity {
     /// Reads 4 bytes from the argument bytes array (starting at the provided offset) and
     /// returns a Quaternion as encoded by the Utils.CompressedQuatToBytes function. Also
     /// increments the provided offset by 4.
-    /// 
+    ///
     /// See the Utils.CompressedQuatToBytes documentation for more details on the
     /// byte representation this method expects.
-    /// 
+    ///
     /// Sources:
     /// https://bitbucket.org/Unity-Technologies/networking/pull-requests/9/quaternion-compression-for-sending/diff
     /// and
@@ -1766,7 +1766,7 @@ namespace Leap.Unity {
 #endif
 
     }
-    
+
     public static Vector3 GetTranslation(this Matrix4x4 m) {
       return m.GetColumn(3);
     }
@@ -1909,7 +1909,7 @@ namespace Leap.Unity {
       }
       return Quaternion.LookRotation(forward, up);
     }
-    
+
     public static void FillMatrixFromQuaternion(this Quaternion q,
                                                 ref Vector3[] matrix) {
       matrix[0] = q * Vector3.right;
@@ -2013,7 +2013,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Calls Physics.IgnoreCollision for each Collider in the first GameObject against
     /// each Collider in the second GameObject.
-    /// 
+    ///
     /// If you have many colliders that need to ignore collisions, consider utilizing
     /// Layer collision settings as an optimization.
     /// </summary>
@@ -2252,7 +2252,7 @@ namespace Leap.Unity {
       DrawArc(360, center, planeA, normal, radius, color, quality);
     }
 
-    /* Adapted from: Zarrax (http://math.stackexchange.com/users/3035/zarrax), Parametric Equation of a Circle in 3D Space?, 
+    /* Adapted from: Zarrax (http://math.stackexchange.com/users/3035/zarrax), Parametric Equation of a Circle in 3D Space?,
      * URL (version: 2014-09-09): http://math.stackexchange.com/q/73242 */
     public static void DrawArc(float arc,
                                Vector3 center,
@@ -2303,7 +2303,7 @@ namespace Leap.Unity {
       TextureFormat.EAC_R_SIGNED,
       TextureFormat.EAC_RG,
       TextureFormat.EAC_RG_SIGNED
-      #if !UNITY_2019_1_OR_NEWER
+      #if !UNITY_2018_1_OR_NEWER
       ,
       TextureFormat.ETC_RGB4_3DS,
       TextureFormat.ETC_RGBA8_3DS
@@ -2572,7 +2572,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Slices numLines horizontal line Rects from this Rect and returns an enumerator that
     /// will return each line Rect.
-    /// 
+    ///
     /// The height of each line is the height of the Rect divided by the number of lines
     /// requested.
     /// </summary>
@@ -3018,7 +3018,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Additive From syntax for floats. Evaluated as this float plus the additive
     /// inverse of the other float, usually expressed as thisFloat - otherFloat.
-    /// 
+    ///
     /// For less trivial uses of From/Then syntax, refer to their implementations for
     /// Quaternions and Matrix4x4s.
     /// </summary>
@@ -3029,7 +3029,7 @@ namespace Leap.Unity {
     /// <summary>
     /// Additive To syntax for floats. Evaluated as this float plus the additive
     /// inverse of the other float, usually expressed as otherFloat - thisFloat.
-    /// 
+    ///
     /// For less trivial uses of From/Then syntax, refer to their implementations for
     /// Quaternions and Matrix4x4s.
     /// </summary>
@@ -3116,7 +3116,7 @@ namespace Leap.Unity {
     /// <summary>
     /// From syntax for Pose structs; A.From(B) returns the Pose that transforms to
     /// Pose A from Pose B. Also see To() and Then().
-    /// 
+    ///
     /// For example, A.Then(B.From(A)) == B.
     /// </summary>
     public static Pose From(this Pose thisPose, Pose otherPose) {
@@ -3126,7 +3126,7 @@ namespace Leap.Unity {
     /// <summary>
     /// To syntax for Pose structs; A.To(B) returns the Pose that transforms from Pose A
     /// to Pose B. Also see From() and Then().
-    /// 
+    ///
     /// For example, A.Then(A.To(B)) == B.
     /// </summary>
     public static Pose To(this Pose thisPose, Pose otherPose) {
@@ -3137,7 +3137,7 @@ namespace Leap.Unity {
     /// Returns the other pose transformed by this pose. This pose could be understood as
     /// the parent pose, and the other pose transformed from local this-pose space to
     /// world space.
-    /// 
+    ///
     /// This is similar to matrix multiplication: A * B == A.Then(B). However, order of
     /// operations is more explicit with this syntax.
     /// </summary>
@@ -3153,7 +3153,7 @@ namespace Leap.Unity {
     /// A.From(B) produces the matrix that transforms from B to A.
     /// Combines with Then() to produce readable, predictable results:
     /// B.Then(A.From(B)) == A.
-    /// 
+    ///
     /// Warning: Scale factors of zero will invalidate this behavior.
     /// </summary>
     public static Matrix4x4 From(this Matrix4x4 thisMatrix, Matrix4x4 otherMatrix) {
@@ -3164,7 +3164,7 @@ namespace Leap.Unity {
     /// A.To(B) produces the matrix that transforms from A to B.
     /// Combines with Then() to produce readable, predictable results:
     /// B.Then(B.To(A)) == A.
-    /// 
+    ///
     /// Warning: Scale factors of zero will invalidate this behavior.
     /// </summary>
     public static Matrix4x4 To(this Matrix4x4 thisMatrix, Matrix4x4 otherMatrix) {
