@@ -85,7 +85,7 @@ namespace Lemonity
 					{
 					new GUIContent("One Hand", "Only one hand at a time can move and rotate the camera"),
 					new GUIContent("Two Hands", "Two hands are used to move and rotate the camera"),
-					new GUIContent("Any Hands", "One or two hands can be used to rotate and move the camera"),
+					new GUIContent("One/Two Hands", "One or two hands can be used to rotate and move the camera"),
 					};
 
 					subMode = (SubMode)GUILayout.Toolbar((int)subMode, panOptions);

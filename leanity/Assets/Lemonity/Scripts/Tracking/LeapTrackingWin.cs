@@ -37,7 +37,7 @@ namespace Lemonity
 				{
 					_controller = null;
 					_errorCondition = true;
-					Debug.LogError("Unable to load Leap Motion DLL. Please restart Unity and try again.");
+					Debug.LogError("[Lemonity] LeapMotion DLL is not loaded. Please restart Unity.");
 				}
 
 				_lastConnectionTest = Time.realtimeSinceStartup;

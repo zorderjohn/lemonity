@@ -220,8 +220,8 @@ namespace Lemonity
 				FlyPosScale = Load("FlyPosScale", 1f);
 				FlyPitchScale = Load("FlyPitchScale", 1f);
 				FlyYawScale = Load("FlyYawScale", 1f);
-				FlyExponential = Load("FlyExponential", 1f);
-				FlyHover = Load("FlyHover", true);
+				FlyExponential = Load("FlyExponential", 1.4f);
+				FlyHover = Load("FlyHover", false);
 				FlyHoverDistance = Load("FlyHoverDistance", 2f);
 
 				// Camera
@@ -232,12 +232,12 @@ namespace Lemonity
 
 				// Interaction
 				GrabEnabled = Load("GrabEnabled", true);
-				GrabMinThreshold = Load("GrabMinThreshold", 0.13f);
+				GrabMinThreshold = Load("GrabMinThreshold", 0.5f);
 				GrabMaxThreshold = Load("GrabMaxThreshold", 0.7f);
 
 				PinchEnabled = Load("PinchEnabled", true);
 				PinchMinThreshold = Load("PinchMinThreshold", 22f);
-				PinchMaxThreshold = Load("PinchMaxThreshold", 65f);
+				PinchMaxThreshold = Load("PinchMaxThreshold", 36f);
 
 				// Inertia
 				EnableInertia = Load("EnableInertia", true);
@@ -245,7 +245,7 @@ namespace Lemonity
 				LinearDrag = Load("LinearDrag", .9f);
 				VelocityFrames = Load("VelocityFrames", 5);
 				DiscardFrames = Load("DiscardFrames", 1);
-				StopIfNotVisible = Load("StopIfNotVisible", true);
+				StopIfNotVisible = Load("StopIfNotVisible", false);
 
 				// Filter
 				FilterFrequency = Load("FilterFrequency", 120f);
