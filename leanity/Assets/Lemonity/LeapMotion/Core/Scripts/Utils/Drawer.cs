@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Leap.Unity {
 
   /// <summary> Simple drawing interface abstraction (intended for debug drawing,
-  /// not production!) with statically-accessible backend implementations via 
+  /// not production!) with statically-accessible backend implementations via
   /// HyperMegaLines, Unity Debug drawing, and Unity Gizmo drawing. </summary>
   public class Drawer {
 
@@ -17,7 +17,6 @@ namespace Leap.Unity {
     /// <summary> Calls the `setColor` delegate. </summary>
     public Color color { set { implSetColor(value); }}
 
-    private Matrix4x4 _matrix = Matrix4x4.identity;
     public Stack<Matrix4x4> _matrices;
     public Matrix4x4 _currMatrix = Matrix4x4.identity;
     public bool MaybePushMatrix(Matrix4x4? m) {
@@ -190,7 +189,7 @@ namespace Leap.Unity {
     public static void Lines(this Drawer drawer, Vector3 a, Vector3 b,
       Vector3 c)
     {
-      drawer.Line(a, b); drawer.Line(b, c); 
+      drawer.Line(a, b); drawer.Line(b, c);
     }
 
     public static void Lines(this Drawer drawer, Vector3 a, Vector3 b,
