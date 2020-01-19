@@ -241,8 +241,8 @@ namespace Lemonity
 
 				// Inertia
 				EnableInertia = Load("EnableInertia", true);
-				AngularDrag = Load("AngularDrag", .91f);
-				LinearDrag = Load("LinearDrag", .9f);
+				AngularDrag = Load("AngularDrag", 2.5f);
+				LinearDrag = Load("LinearDrag", 2.5f);
 				VelocityFrames = Load("VelocityFrames", 5);
 				DiscardFrames = Load("DiscardFrames", 1);
 				StopIfNotVisible = Load("StopIfNotVisible", false);
