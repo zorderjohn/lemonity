@@ -576,7 +576,7 @@ namespace Lemonity
 			using (new GUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PrefixLabel("Scene Scale");
-				EditorGUILayout.LabelField($"1 : {strScale}  ({strWidth} m.)", GUILayout.MaxWidth(130));
+				EditorGUILayout.LabelField("1 : " + strScale + "  (" + strWidth + " m.)", GUILayout.MaxWidth(130));
 			}
 
 			Options.AutoPosScaleOnLoad = EditorGUILayout.Toggle("Auto scale on load", Options.AutoPosScaleOnLoad);

@@ -146,7 +146,7 @@ namespace Lemonity
 					string filterNames = (lg ? "Left Grab " : "") + (rg ? "Right Grab " : "") + (lp ? "Left Pinch " : "") + (rp ? "Right Pinch" : "");
 					if (lg || rg || lp || rp)
 					{
-						GUILayout.Label($"<b><Color=red> Filtering {filterNames}</Color></b>", labelStyle);
+						GUILayout.Label("<b><Color=red> Filtering " + filterNames + "</Color></b>", labelStyle);
 					}
 					else if (motion.IsPinching || motion.IsGrabbing)
 					{
@@ -218,7 +218,7 @@ namespace Lemonity
 			Rect rProgressBar = GUILayoutUtility.GetRect(50, 1000, 15, 15);
 
 			float grabValue = hand.Detected ? hand.GrabValue : 0f;
-			EditorGUI.ProgressBar(rProgressBar, grabValue, $"Grab: {grabValue.ToString("0.00")}");
+			EditorGUI.ProgressBar(rProgressBar, grabValue, "Grab: " + grabValue.ToString("0.00"));
 
 			GUI.enabled = true;
 		}
