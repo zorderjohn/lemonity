@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-    
+
 namespace Lemonity
 {
 #if LEAP_LEGACY
@@ -44,7 +44,7 @@ namespace Lemonity
 			Vector2 v = new Vector2(l, p.y);
 			Vector2 w = new Vector2(radius, height * .5f);
 			Vector2 d = Abs(v) - w;
-			
+
 			return Mathf.Min(Mathf.Max(d.x,d.y),0.0f) + Max(d,0.0f).magnitude;
 		}
 
@@ -152,7 +152,7 @@ float sdCappedCone(Vector3 p, float h, float r)
 			else if (Time.realtimeSinceStartup - _lastConnectionTest > 5f && _controller != null && !_controller.IsConnected)
 			{
 				_lastConnectionTest = Time.realtimeSinceStartup;
-				//_controller. StartConnection();                
+				//_controller. StartConnection();
 			}
 
 			return false;
@@ -236,7 +236,7 @@ float sdCappedCone(Vector3 p, float h, float r)
 
 		private Quaternion leapToUnityRotation(Leap.Vector dir, Leap.Vector norm)
 		{
-			return Quaternion.LookRotation(leapToUnityVector(dir), -leapToUnityVector(norm));		
+			return Quaternion.LookRotation(leapToUnityVector(dir), -leapToUnityVector(norm));
 		}
 
 		protected override bool IsTrackingLibraryLoaded()
