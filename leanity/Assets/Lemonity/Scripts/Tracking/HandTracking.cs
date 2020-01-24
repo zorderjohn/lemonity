@@ -74,11 +74,11 @@ namespace Lemonity
 			bool connectedUpdate = IsDeviceConnected();
 			if (_isConnected && !connectedUpdate)
 			{
-				OnDisconnect?.Invoke();
+				OnDisconnect.SafeInvoke();
 			}
 			else if (!_isConnected && connectedUpdate)
 			{
-				OnConnect?.Invoke();
+				OnConnect.SafeInvoke();
 			}
 
 			_isConnected = connectedUpdate;
@@ -95,7 +95,7 @@ namespace Lemonity
 			{
 				if (_instance == null)
 				{
-					_instance = LeapTrackingWin.SubInstance;
+					_instance = LeapTracking.SubInstance;
 				}
 				return _instance;
 			}

@@ -29,10 +29,10 @@ namespace Lemonity
 
 	public abstract class GestureControllerBase : IGestureController
 	{
-		public HeuristicState Heuristic { get; protected set; } = HeuristicState.AllowAll;
+		public HeuristicState Heuristic { get; protected set; }
 
 		public float StartTime { get; protected set; }
-		public bool IsHolding { get; protected set; } = false;
+		public bool IsHolding { get; protected set; }
 
 		public Vector3 HandInitialPosition { get; protected set; }
 		public Quaternion HandInitialRotation { get; protected set; }
@@ -66,6 +66,12 @@ namespace Lemonity
 		private const float _maxAngularSpeed = 100f;
 		private const float _maxHandSpeed = 0.1f;
 		private const float _minDotProd = 0f;
+
+        public GestureControllerBase()
+        {
+			Heuristic = HeuristicState.AllowAll;
+			IsHolding = false;
+        }
 
 		public void Reset()
 		{

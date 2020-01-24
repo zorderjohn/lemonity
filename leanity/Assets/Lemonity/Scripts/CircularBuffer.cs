@@ -57,16 +57,16 @@ namespace CircularBuffer
 			if (capacity < 1)
 			{
 				throw new ArgumentException(
-					"Circular buffer cannot have negative or zero capacity.", nameof(capacity));
+					"Circular buffer cannot have negative or zero capacity.");
 			}
 			if (items == null)
 			{
-				throw new ArgumentNullException(nameof(items));
+				throw new ArgumentNullException();
 			}
 			if (items.Length > capacity)
 			{
 				throw new ArgumentException(
-					"Too many items to fit circular buffer", nameof(items));
+					"Too many items to fit circular buffer");
 			}
 
 			_buffer = new T[capacity];

@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Lemonity
 {
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-	public class LeapTrackingWin : HandTracking
+#if !LEAP_LEGACY
+	public class LeapTracking : HandTracking
 	{
 		// Private members
 		private Leap.Controller _controller;
@@ -18,7 +18,7 @@ namespace Lemonity
 		private static readonly float LEAP_MM_TO_M = 0.001f;
 		private static bool _errorCondition = false;
 
-		private LeapTrackingWin()
+		private LeapTracking()
 		{
 			Options.Load();
 			_rightHandData = new HandData(Options.FilterFrequency, Options.VelocityFrames);
@@ -110,16 +110,19 @@ namespace Lemonity
 
 		protected override void ResetDevice()
 		{
-			_controller?.StopConnection();
-			_controller?.StartConnection();
+			if (_controller != null)
+			{
+				_controller.StopConnection();
+				_controller.StartConnection();
+			}
 		}
 
 		#region Singleton
-		public static LeapTrackingWin SubInstance
+		public static LeapTracking SubInstance
 		{
-			get { return _subInstance ?? (_subInstance = new LeapTrackingWin()); }
+			get { return _subInstance ?? (_subInstance = new LeapTracking()); }
 		}
-		private static LeapTrackingWin _subInstance;
+		private static LeapTracking _subInstance;
 		#endregion Singleton
 
 		#region IDisposable
