@@ -108,9 +108,9 @@ namespace Lemonity
 		public PinchController RightPinch { get; private set; }
 
 		public State MotionState { get; private set; }
-		public bool IsGrabbing => MotionState == State.Grabbing;
-		public bool IsPinching => MotionState == State.Pinching;
-		public static bool MultipleInstances => _instances > 1;
+		public bool IsGrabbing { get { return MotionState == State.Grabbing; } }
+		public bool IsPinching { get { return MotionState == State.Pinching; } }
+		public static bool MultipleInstances { get { return _instances > 1; } }
 		#endregion
 
 		private static int _instances = 0;
@@ -152,8 +152,8 @@ namespace Lemonity
 
 		public void OnOptionsChange()
 		{
-			GrabMotion?.OptionsChange();
-			PinchMotion?.OptionsChange();
+            if (GrabMotion != null) GrabMotion.OptionsChange();
+			if (PinchMotion != null) PinchMotion.OptionsChange();
 		}
 
 		public bool Update(Vector3 position, Quaternion rotation, float scale)
@@ -183,7 +183,7 @@ namespace Lemonity
 
 		public void StopInertia()
 		{
-			GrabMotion?.StopInertia();
+			if (GrabMotion != null) GrabMotion.StopInertia();
 		}
 
 		public State GetHandState(bool isRightHand)
@@ -321,8 +321,8 @@ namespace Lemonity
 					if (!isHiding)
 					{
 						MotionState = State.Idle;
-						OnHandsVisible?.Invoke();
-						OnStateChange?.Invoke();
+						OnHandsVisible.SafeInvoke();
+						OnStateChange.SafeInvoke();
 					}
 					if (!Options.StopIfNotVisible && Options.EnableInertia)
 					{
@@ -334,20 +334,20 @@ namespace Lemonity
 					if (isHiding)
 					{
 						MotionState = State.Hided;
-						OnHandsInVisible?.Invoke();
-						OnStateChange?.Invoke();
+						OnHandsInVisible.SafeInvoke();
+						OnStateChange.SafeInvoke();
 					}
 					if (grabbingUpdate)
 					{
 						MotionState = State.Grabbing;
 						StartGrabbing();
-						OnStateChange?.Invoke();
+						OnStateChange.SafeInvoke();
 					}
 					else if (pinchingUpdate)
 					{
 						MotionState = State.Pinching;
 						StartPinching();
-						OnStateChange?.Invoke();
+						OnStateChange.SafeInvoke();
 					}
 					else
 					{
@@ -372,12 +372,12 @@ namespace Lemonity
 						{
 							MotionState = State.Pinching;
 							StartPinching();
-							OnStateChange?.Invoke();
+							OnStateChange.SafeInvoke();
 						}
 						else
 						{
 							MotionState = State.Idle;
-							OnStateChange?.Invoke();
+							OnStateChange.SafeInvoke();
 						}
 					}
 					break;
@@ -388,13 +388,13 @@ namespace Lemonity
 						StopPinching();
 						MotionState = State.Grabbing;
 						StartGrabbing();
-						OnStateChange?.Invoke();
+						OnStateChange.SafeInvoke();
 					}
 					else if (!pinchingUpdate)
 					{
 						StopPinching();
 						MotionState = State.Idle;
-						OnStateChange?.Invoke();
+						OnStateChange.SafeInvoke();
 						return true;
 					}
 					else
@@ -419,23 +419,23 @@ namespace Lemonity
 				}
 				GrabMotion.Start();
 			}
-			OnStartGrab?.Invoke();
-			OnStateChange?.Invoke();
+			OnStartGrab.SafeInvoke();
+			OnStateChange.SafeInvoke();
 		}
 
 		private void StopGrabbing()
 		{
-			GrabMotion?.Stop();
-			OnEndGrab?.Invoke();
-			OnStateChange?.Invoke();
+			GrabMotion.Stop();
+			OnEndGrab.SafeInvoke();
+			OnStateChange.SafeInvoke();
 		}
 
 		private void StartPinching()
 		{
 			StopInertia();
 			PinchMotion.Start();
-			OnStartPinch?.Invoke();
-			OnStateChange?.Invoke();
+			OnStartPinch.SafeInvoke();
+			OnStateChange.SafeInvoke();
 		}
 
 		private void StopPinching()
@@ -443,8 +443,8 @@ namespace Lemonity
 			PinchMotion.Stop();
 			Position = PinchMotion.Position;
 			Rotation = PinchMotion.Rotation;
-			OnEndPinch?.Invoke();
-			OnStateChange?.Invoke();
+			OnEndPinch.SafeInvoke();
+			OnStateChange.SafeInvoke();
 		}
 
 	}

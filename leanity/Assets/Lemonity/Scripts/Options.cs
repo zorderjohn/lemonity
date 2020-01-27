@@ -103,7 +103,7 @@ namespace Lemonity
 			get { return _dirty; }
 			set {
 				_dirty = value;
-				if (_dirty) { OnOptionsChange?.Invoke(); }
+				if (_dirty) { OnOptionsChange.SafeInvoke(); }
 			}
 		}
 
