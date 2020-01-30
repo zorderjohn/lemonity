@@ -51,6 +51,7 @@ namespace Lemonity
 
 			eulerDeltaRot.x = ExponentialScale(eulerDeltaRot.x * Options.FlyPitchScale * deltaTime);
 			eulerDeltaRot.y = ExponentialScale(eulerDeltaRot.y * Options.FlyYawScale * deltaTime);
+			eulerDeltaRot.z = 0f;
 			deltaRot = Quaternion.Euler(eulerDeltaRot);
 
 			Quaternion targetRotation = _absoluteMovement ? grabInfo.ObjectInitialRotation * deltaRot : Rotation * deltaRot;
