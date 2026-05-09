@@ -1,0 +1,142 @@
+using UnityEngine;
+
+namespace Lemonity.Core
+{
+	public class OneHandMotion : MotionStyleBase
+	{
+		private readonly TrackingSpaceOptions _trackingSpaceOptions;
+		private readonly CameraOptions _cameraOptions;
+		private readonly GrabModeOptions _grabModeOptions;
+
+		Vector3 _wcCamPivot;
+		Vector3 _wcPivotToCam;
+		Vector3 _hcCenterInitialPos;
+		Quaternion _wcCamInitialRot;
+		Quaternion _hcPitchDeltaRot;
+
+		IGestureController _gestureController;
+
+		public override bool RequiresTwoHands { get { return false; } }
+
+
+		public OneHandMotion(Runtime runtime, TrackingSpaceOptions trackingSpaceOptions, CameraOptions cameraOptions, GrabModeOptions grabModeOptions, InertiaOptions inertiaOptions)
+			: base(runtime, inertiaOptions, cameraOptions)
+		{
+			_trackingSpaceOptions = trackingSpaceOptions;
+			_cameraOptions = cameraOptions;
+			_grabModeOptions = grabModeOptions;
+		}
+		// hc = Hand Coordinates
+		// cc = Camera Coordinates
+		// wc = World Coordinates
+
+		protected override void StartMotion()
+		{
+			var newController = GetDominantGrabController(latestHold: true);
+			if (newController != null)
+			{
+				_gestureController = newController;
+				_gestureController.Reset();
+
+				Vector3 wcCamInitialPos = _gestureController.ObjectInitialPosition;
+
+				// Middle point between hands
+				_hcCenterInitialPos = _gestureController.HandInitialPosition;
+
+				// Store camera initial rotation
+				_wcCamInitialRot = _gestureController.ObjectInitialRotation;
+
+				// Calculate camera rotation pivot
+				_wcCamPivot = wcCamInitialPos + _wcCamInitialRot * HandTracking.HandToCamCoordinates(_hcCenterInitialPos, _trackingSpaceOptions);
+
+				// Vector from pivot to camera which will be rotated by the gesture
+				_wcPivotToCam = wcCamInitialPos - _wcCamPivot;
+			}
+		}
+
+		protected override void UpdateMotion()
+		{
+			// Detect hand change
+			if (GetDominantGrabController(latestHold: true) != _gestureController)
+			{
+				Start();
+			}
+			// ROTATION CALCULATION
+
+			// Gesture rotation
+			var hcDeltaRot = _gestureController.HandDeltaRotation;
+
+			if (!_grabModeOptions.InvertAxis)
+			{
+				hcDeltaRot = Quaternion.Inverse(hcDeltaRot);
+			}
+
+			// Scale rotation
+			Vector3 eulerDeltaRot = MathHelper.NormalizedEulerAngles(hcDeltaRot);
+			eulerDeltaRot.Scale(_trackingSpaceOptions.AxisRotScale);
+			eulerDeltaRot *= _grabModeOptions.RotScale;
+
+			var hcYawDeltaRot = Quaternion.Euler(new Vector3(0f, eulerDeltaRot.y, 0f));
+			_hcPitchDeltaRot = Quaternion.Euler(new Vector3(eulerDeltaRot.x, 0f, 0f));
+
+			// POSITION CALCULATION
+
+			// Calculate translation as the relative translation of the hands
+			Vector3 ccDeltaTranslation = _gestureController.HandDeltaPosition * _trackingSpaceOptions.PosScale;
+
+			if (!_grabModeOptions.InvertAxis)
+			{
+				ccDeltaTranslation *= -1f;
+			}
+
+			UpdatePose(hcYawDeltaRot, ccDeltaTranslation);
+
+			// Update Inertial data with relative position and rotation
+			float t = GetTime();
+			_inertialData.SetPosition(ccDeltaTranslation, t);
+			_inertialData.SetRotation(hcYawDeltaRot, t);
+		}
+
+		public override bool InertialMovement()
+		{
+			float t = GetTime();
+			_inertialData.DragAngularVelocity(_inertiaOptions.AngularDrag, t);
+			_inertialData.DragLinearVelocity(_inertiaOptions.LinearDrag, t);
+
+			if (_inertialData.Update(t))
+			{
+				UpdatePose(_inertialData.Rotation, _inertialData.Position);
+				return true;
+			}
+			return false;
+		}
+
+		private void UpdatePose(Quaternion hcYawDeltaRot, Vector3 ccDeltaTranslation)
+		{
+			// Combine pitch and yaw rotations
+			Quaternion targetRotation = hcYawDeltaRot * _wcCamInitialRot * _hcPitchDeltaRot;
+
+			// Remove any roll rotation
+			Rotation = MathHelper.ClampRotationXZ(targetRotation, _cameraOptions.PitchLimit, _cameraOptions.PitchMinAngleLimit, _cameraOptions.PitchMaxAngleLimit, _cameraOptions.RollLimit);
+
+			// Gesture translation in world coordinates
+			Vector3 wcDeltaTranslation = Rotation * ccDeltaTranslation;
+
+			// Effect of rotation around the pivot
+			Vector3 wcPivotedTranslation = Rotation * Quaternion.Inverse(_wcCamInitialRot) * _wcPivotToCam;
+
+			Position = _wcCamPivot + wcDeltaTranslation + wcPivotedTranslation;
+		}
+
+		public override void DebugDraw()
+		{
+		}
+
+		protected override void UpdateInertialData()
+		{
+			// Debugging
+			_inertialData.CalculateAngularVelocity();
+			_inertialData.CalculateLinearVelocity();
+		}
+	}
+}

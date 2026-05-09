@@ -1,0 +1,16 @@
+{
+  "name": "Lemonity.Provider.Ultraleap",
+  "references": [
+    "Lemonity.Core",
+    "GUID:cec9848704c49724192ff47f9b3e9156"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

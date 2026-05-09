@@ -1,0 +1,62 @@
+using UnityEngine;
+
+namespace Lemonity.Core
+{
+	public class ScaleMotion : MotionStyleBase
+	{
+		private readonly TrackingSpaceOptions _trackingSpaceOptions;
+		private readonly GrabModeOptions _grabModeOptions;
+
+		public override bool RequiresTwoHands { get { return true; } }
+
+		private float _initialLogScale;
+
+		private Vector3 _wcInitialPosition;
+		private Vector3 _hcCenterInitialPos;
+		private Vector3 _ccInitialCamToCenter;
+
+		public ScaleMotion(Runtime runtime, TrackingSpaceOptions trackingSpaceOptions, GrabModeOptions grabModeOptions, InertiaOptions inertiaOptions) : base(runtime, inertiaOptions)
+		{
+			_trackingSpaceOptions = trackingSpaceOptions;
+			_grabModeOptions = grabModeOptions;
+		}
+
+		protected override void StartMotion()
+		{
+			LeftGesture.Reset();
+			RightGesture.Reset();
+
+			_initialLogScale = MathHelper.LinearToLogScale(Scale);
+
+			_wcInitialPosition = Position;
+			_hcCenterInitialPos = (LeftGesture.HandCurrentPosition + RightGesture.HandCurrentPosition) * 0.5f;
+			_ccInitialCamToCenter = HandTracking.CamToHandOffset(Scale, _trackingSpaceOptions) + Scale * _hcCenterInitialPos;
+		}
+
+		protected override void UpdateMotion()
+		{
+			var initialSep = Vector3.Distance(LeftGesture.HandInitialPosition, RightGesture.HandInitialPosition);
+			var finalSep = Vector3.Distance(LeftGesture.HandCurrentPosition, RightGesture.HandCurrentPosition);
+
+			float sep = initialSep - finalSep;
+			float sepDelta = 5f * sep * _grabModeOptions.ZoomScale;
+			float currentLogScale = Mathf.Clamp(_initialLogScale + sepDelta, 0f, 10f);
+			Scale = MathHelper.LogToLinearScale(currentLogScale);
+
+			var hcCenterFinalPos = (LeftGesture.HandCurrentPosition + RightGesture.HandCurrentPosition) * 0.5f;
+			var ccFinalCamToCenter = HandTracking.CamToHandOffset(Scale, _trackingSpaceOptions) + Scale * hcCenterFinalPos;
+			var deltaVector = _ccInitialCamToCenter - ccFinalCamToCenter;
+
+			Position = _wcInitialPosition + Rotation * deltaVector;
+		}
+
+		public override bool InertialMovement()
+		{
+			return false;
+		}
+
+		protected override void UpdateInertialData()
+		{
+		}
+	}
+}
