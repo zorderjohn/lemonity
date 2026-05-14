@@ -155,6 +155,10 @@ namespace Lemonity.Editor
 		{
 			var sceneBounds = GetSceneBounds();
 			var bbox = sceneBounds.size;
+			if (bbox == Vector3.zero)
+			{
+				return;
+			}
 			var workspace = HandTracking.Workspace;
 			Options.TrackingSpace.PosScale = Mathf.Max(bbox.x / workspace.x, bbox.y / workspace.y, bbox.z / workspace.z);
 		}
