@@ -18,27 +18,22 @@ Navigate your Unity scene using bare hands. Lemonity is a Unity Editor extension
 
 1. Install the **Ultraleap Hyperion runtime** from [developer.ultraleap.com](https://developer.ultraleap.com).
 2. Add the **OpenUPM** scoped registry in **Edit > Project Settings > Package Manager**:
+    - **Name:** `OpenUPM`
+    - **URL:** `https://package.openupm.com`
+    - **Scopes:** `com.lemonity`, `com.ultraleap`
 
-```json
-{
-  "scopedRegistries": [
-    {
-      "name": "OpenUPM",
-      "url": "https://package.openupm.com",
-      "scopes": [
-        "com.lemonity",
-        "com.ultraleap"
-      ]
-    }
-  ]
-}
-```
+    ![Scoped registries configuration](docs/images/scoped_registries.png)
+
 
 3. Add the following packages to your Unity project via the Package Manager:
    - `com.lemonity.editor`
    - `com.lemonity.provider.ultraleap`
+   - `com.lemonity.core`
+   - `com.ultraleap.tracking`
+    
+    ![Unity Package Manager](docs/images/package_manager.png)
 
-`com.lemonity.core` is installed automatically as a dependency.
+
 
 4. Open the Lemonity Options window: **Window › Lemonity Options**
 5. Select a working mode (Grab / Orbit / Fly).
