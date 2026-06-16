@@ -1,10 +1,10 @@
 {
   "name": "com.lemonity.editor",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "displayName": "Lemonity Editor",
   "description": "Unity Editor integration for Lemonity hand tracking navigation.",
   "unity": "2022.3",
   "dependencies": {
-    "com.lemonity.core": "1.0.0"
+    "com.lemonity.core": "2.0.0"
   }
 }

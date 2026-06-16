@@ -1,8 +1,7 @@
 {
   "name": "com.lemonity.core",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "displayName": "Lemonity Core",
   "description": "Motion algorithms, gesture recognition, and tracking abstractions for Lemonity.",
-  "unity": "2022.3",
-  "dependencies": {}
+  "unity": "2022.3"
 }

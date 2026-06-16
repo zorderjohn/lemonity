@@ -1,11 +1,11 @@
 {
   "name": "com.lemonity.provider.ultraleap",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "displayName": "Lemonity Provider - Ultraleap",
   "description": "Ultraleap hand tracking provider for Lemonity.",
   "unity": "2022.3",
   "dependencies": {
-    "com.lemonity.core": "1.0.0",
+    "com.lemonity.core": "2.0.0",
     "com.ultraleap.tracking": "7.3.0"
   }
 }

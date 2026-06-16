@@ -20,7 +20,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.lemonity.core": "0.3.0"
+        "com.lemonity.core": "2.0.0"
       }
     },
     "com.lemonity.provider.ultraleap": {
@@ -28,7 +28,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.lemonity.core": "0.3.0",
+        "com.lemonity.core": "2.0.0",
         "com.ultraleap.tracking": "7.3.0"
       }
     },
@@ -81,6 +81,14 @@
         "com.unity.services.analytics": "1.0.4"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.asset-store-tools": {
+      "version": "file:com.unity.asset-store-tools",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
     },
     "com.unity.collab-proxy": {
       "version": "2.7.1",
