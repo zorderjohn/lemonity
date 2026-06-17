@@ -1,8 +1,13 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEditor.PackageManager;
+using UnityEditor.PackageManager.Requests;
 using System;
 using System.Globalization;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using Lemonity.Core;
 
 namespace Lemonity.Editor
@@ -26,7 +31,12 @@ namespace Lemonity.Editor
 		private const int _inputTextWidth = 55;
 		private const int _foldoutSpace = 4;
 		private const int _foldoutFontSize = 14;
+		private const string _openUpmUrl = "https://package.openupm.com";
+		private const string _ultraleapTrackingPackage = "com.ultraleap.tracking@7.3.0";
+		private const string _ultraleapProviderPackage = "com.lemonity.provider.ultraleap@2.0.0";
 		private static GUIStyle _foldoutStyle;
+		private static Queue<string> _installQueue;
+		private static AddRequest _installRequest;
 
 		AnimBool _showSensitivity = new AnimBool(true);
 		AnimBool _showGestures = new AnimBool();
@@ -40,6 +50,11 @@ namespace Lemonity.Editor
 		public void OnGUI()
 		{
 			InitStyles();
+			if (!HandTracking.HasProvider)
+			{
+				DrawMissingProviderMessage();
+				return;
+			}
 
 			Mode mode;
 			SubMode subMode;
@@ -408,6 +423,200 @@ namespace Lemonity.Editor
 			_showSensitivity.target = true;
 			_showFly.target = true;
 			_logoTexture = Resources.Load<Texture>("logo");
+		}
+
+		private static void DrawMissingProviderMessage()
+		{
+			using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+			{
+				_logoTexture = _logoTexture ?? Resources.Load<Texture>("logo");
+				Rect rImage = GUILayoutUtility.GetRect(50, 1000, 50, 50);
+				EditorGUI.DrawRect(rImage, _logoBackground);
+				GUI.DrawTexture(rImage, _logoTexture, ScaleMode.ScaleToFit);
+
+				GUILayout.Space(8);
+				GUILayout.Label("Lemonity detected that Ultraleap Tracking is not installed.", EditorStyles.wordWrappedLabel);
+				GUILayout.Space(4);
+
+				GUI.enabled = _installQueue == null && (_installRequest == null || _installRequest.IsCompleted);
+				if (GUILayout.Button("Install Ultraleap support"))
+				{
+					InstallUltraleapSupport();
+				}
+				GUI.enabled = true;
+
+				if (_installRequest != null && !_installRequest.IsCompleted)
+				{
+					GUILayout.Space(4);
+					GUILayout.Label("Installing Ultraleap support...", EditorStyles.miniLabel);
+				}
+			}
+		}
+
+		private static void InstallUltraleapSupport()
+		{
+			try
+			{
+				EnsureOpenUpmScopedRegistry();
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("[Lemonity] Could not add the OpenUPM scoped registry. " + ex.Message);
+				return;
+			}
+
+			_installQueue = new Queue<string>();
+			_installQueue.Enqueue(_ultraleapTrackingPackage);
+			_installQueue.Enqueue(_ultraleapProviderPackage);
+			EditorApplication.update -= ProcessInstallQueue;
+			EditorApplication.update += ProcessInstallQueue;
+			ProcessInstallQueue();
+		}
+
+		private static void ProcessInstallQueue()
+		{
+			if (_installRequest != null && !_installRequest.IsCompleted)
+			{
+				return;
+			}
+
+			if (_installRequest != null && _installRequest.Status == StatusCode.Failure)
+			{
+				Debug.LogError("[Lemonity] Package installation failed: " + _installRequest.Error.message);
+				_installRequest = null;
+				_installQueue = null;
+				EditorApplication.update -= ProcessInstallQueue;
+				return;
+			}
+
+			if (_installQueue == null || _installQueue.Count == 0)
+			{
+				_installRequest = null;
+				_installQueue = null;
+				EditorApplication.update -= ProcessInstallQueue;
+				Debug.Log("[Lemonity] Ultraleap support installed.");
+				return;
+			}
+
+			_installRequest = Client.Add(_installQueue.Dequeue());
+		}
+
+		private static void EnsureOpenUpmScopedRegistry()
+		{
+			string manifestPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../Packages/manifest.json"));
+			string manifest = File.ReadAllText(manifestPath);
+			string updatedManifest = AddOrUpdateOpenUpmRegistry(manifest);
+
+			if (updatedManifest != manifest)
+			{
+				File.WriteAllText(manifestPath, updatedManifest);
+				AssetDatabase.Refresh();
+			}
+		}
+
+		private static string AddOrUpdateOpenUpmRegistry(string manifest)
+		{
+			int urlIndex = manifest.IndexOf("\"" + _openUpmUrl + "\"", StringComparison.Ordinal);
+			if (urlIndex >= 0)
+			{
+				int registryStart = manifest.LastIndexOf('{', urlIndex);
+				if (registryStart >= 0)
+				{
+					int registryEnd = FindMatchingChar(manifest, registryStart, '{', '}');
+					if (registryEnd > registryStart)
+					{
+						string registry = manifest.Substring(registryStart, registryEnd - registryStart + 1);
+						registry = Regex.Replace(registry, "\\\"name\\\"\\s*:\\s*\\\"[^\\\"]*\\\"", "\"name\": \"OpenUPM\"", RegexOptions.Multiline);
+						registry = EnsureRegistryScope(registry, "com.ultraleap");
+						registry = EnsureRegistryScope(registry, "com.lemonity");
+						return manifest.Substring(0, registryStart) + registry + manifest.Substring(registryEnd + 1);
+					}
+				}
+			}
+
+			string registryBlock =
+				"    {\n" +
+				"      \"name\": \"OpenUPM\",\n" +
+				"      \"url\": \"" + _openUpmUrl + "\",\n" +
+				"      \"scopes\": [\n" +
+				"        \"com.ultraleap\",\n" +
+				"        \"com.lemonity\"\n" +
+				"      ]\n" +
+				"    }";
+
+			Match scopedRegistries = Regex.Match(manifest, "\\\"scopedRegistries\\\"\\s*:\\s*\\[");
+			if (scopedRegistries.Success)
+			{
+				int arrayStart = manifest.IndexOf('[', scopedRegistries.Index);
+				int arrayEnd = FindMatchingChar(manifest, arrayStart, '[', ']');
+				if (arrayEnd <= arrayStart)
+				{
+					throw new InvalidDataException("Could not parse scopedRegistries in Packages/manifest.json.");
+				}
+
+				string arrayContent = manifest.Substring(arrayStart + 1, arrayEnd - arrayStart - 1);
+				string separator = string.IsNullOrWhiteSpace(arrayContent) ? "\n" : "\n" + registryBlock + ",";
+				string replacement = string.IsNullOrWhiteSpace(arrayContent) ? registryBlock + "\n  " : separator;
+				return manifest.Substring(0, arrayStart + 1) + replacement + manifest.Substring(arrayStart + 1);
+			}
+
+			int rootEnd = manifest.LastIndexOf('}');
+			string suffix = manifest.Substring(rootEnd);
+			string prefix = manifest.Substring(0, rootEnd).TrimEnd();
+			return prefix + ",\n  \"scopedRegistries\": [\n" + registryBlock + "\n  ]\n" + suffix;
+		}
+
+		private static string EnsureRegistryScope(string registry, string scope)
+		{
+			if (registry.Contains("\"" + scope + "\""))
+			{
+				return registry;
+			}
+
+			Match scopes = Regex.Match(registry, "\\\"scopes\\\"\\s*:\\s*\\[");
+			if (!scopes.Success)
+			{
+				int objectEnd = registry.LastIndexOf('}');
+				return registry.Substring(0, objectEnd).TrimEnd() + ",\n      \"scopes\": [\n        \"" + scope + "\"\n      ]\n" + registry.Substring(objectEnd);
+			}
+
+			int arrayStart = registry.IndexOf('[', scopes.Index);
+			int arrayEnd = FindMatchingChar(registry, arrayStart, '[', ']');
+			if (arrayEnd <= arrayStart)
+			{
+				throw new InvalidDataException("Could not parse the OpenUPM scoped registry scopes.");
+			}
+
+			string arrayContent = registry.Substring(arrayStart + 1, arrayEnd - arrayStart - 1);
+			string insertion = string.IsNullOrWhiteSpace(arrayContent) ? "\n        \"" + scope + "\"\n      " : ",\n        \"" + scope + "\"\n      ";
+			return registry.Substring(0, arrayEnd) + insertion + registry.Substring(arrayEnd);
+		}
+
+		private static int FindMatchingChar(string text, int start, char open, char close)
+		{
+			if (start < 0)
+			{
+				return -1;
+			}
+
+			int depth = 0;
+			for (int i = start; i < text.Length; i++)
+			{
+				if (text[i] == open)
+				{
+					depth++;
+				}
+				else if (text[i] == close)
+				{
+					depth--;
+					if (depth == 0)
+					{
+						return i;
+					}
+				}
+			}
+
+			return -1;
 		}
 
 		private void InitStyles()

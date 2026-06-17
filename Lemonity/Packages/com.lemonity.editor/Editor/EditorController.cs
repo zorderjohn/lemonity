@@ -76,6 +76,11 @@ namespace Lemonity.Editor
 				return;
 			}
 
+			if (!HandTracking.HasProvider)
+			{
+				return;
+			}
+
 
 			var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 			if (activeScene != _scene)

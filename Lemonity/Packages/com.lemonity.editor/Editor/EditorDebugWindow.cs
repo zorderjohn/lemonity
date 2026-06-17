@@ -29,6 +29,13 @@ namespace Lemonity.Editor
 		public void OnInspectorUpdate()
 		{
 			// This will only get called 10 times per second.
+			if (!HandTracking.HasProvider)
+			{
+				_handsVisible = false;
+				Repaint();
+				return;
+			}
+
 			if (_handsVisible)
 			{
 				Repaint();
@@ -43,9 +50,12 @@ namespace Lemonity.Editor
 			LoadResources();
 			Options.Load();
 			EditorOptions.Load();
-			_workspaceDepth = HandTracking.Workspace.z;
-			_workspaceWidth = HandTracking.Workspace.x;
-			_workspaceRatio = _workspaceWidth / _workspaceDepth;
+			if (HandTracking.HasProvider)
+			{
+				_workspaceDepth = HandTracking.Workspace.z;
+				_workspaceWidth = HandTracking.Workspace.x;
+				_workspaceRatio = _workspaceWidth / _workspaceDepth;
+			}
 
 			#if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui += this.OnSceneGUI;
@@ -94,6 +104,12 @@ namespace Lemonity.Editor
 			labelStyle.richText = true;
 
 			GUILayout.Label("<b>Tracking Status</b>", labelStyle);
+			if (!HandTracking.HasProvider)
+			{
+				GUILayout.Label("<color=red><b>No tracking provider installed.</b></color>", labelStyle);
+				return;
+			}
+
 			if (HandTracking.IsConnected())
 			{
 
@@ -130,6 +146,17 @@ namespace Lemonity.Editor
 		public void OnGUI()
 		{
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+			if (!HandTracking.HasProvider)
+			{
+				using (var verticalScope = new GUILayout.VerticalScope(EditorStyles.helpBox))
+				{
+					DrawStatusLabel();
+				}
+
+				GUILayout.EndScrollView();
+				return;
+			}
+
 			var rightHandData = HandTracking.RightHandData;
 			var leftHandData = HandTracking.LeftHandData;
 
@@ -308,7 +335,7 @@ namespace Lemonity.Editor
 
 		private void OnSceneGUI(SceneView sceneView)
 		{
-			if (sceneView == null)
+			if (sceneView == null || !HandTracking.HasProvider)
 			{
 				return;
 			}
