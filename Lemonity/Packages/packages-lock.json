@@ -9,26 +9,26 @@
       },
       "hash": "b3184a0b3039a20e13d69d7b4e0333e0ef3b4e08"
     },
-    "com.lemonity.core": {
-      "version": "file:com.lemonity.core",
+    "com.jonatanmartinez.lemonity.core": {
+      "version": "file:com.jonatanmartinez.lemonity.core",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
-    "com.lemonity.editor": {
-      "version": "file:com.lemonity.editor",
+    "com.jonatanmartinez.lemonity.editor": {
+      "version": "file:com.jonatanmartinez.lemonity.editor",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.lemonity.core": "2.0.0"
+        "com.jonatanmartinez.lemonity.core": "2.1.0"
       }
     },
-    "com.lemonity.provider.ultraleap": {
-      "version": "file:com.lemonity.provider.ultraleap",
+    "com.jonatanmartinez.lemonity.provider.ultraleap": {
+      "version": "file:com.jonatanmartinez.lemonity.provider.ultraleap",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.lemonity.core": "2.0.0",
+        "com.jonatanmartinez.lemonity.core": "2.1.0",
         "com.ultraleap.tracking": "7.3.0"
       }
     },

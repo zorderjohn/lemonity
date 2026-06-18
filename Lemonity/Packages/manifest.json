@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "com.lemonity.core": "file:com.lemonity.core",
-    "com.lemonity.provider.ultraleap": "file:com.lemonity.provider.ultraleap",
-    "com.lemonity.editor": "file:com.lemonity.editor",
+    "com.jonatanmartinez.lemonity.core": "file:com.jonatanmartinez.lemonity.core",
+    "com.jonatanmartinez.lemonity.provider.ultraleap": "file:com.jonatanmartinez.lemonity.provider.ultraleap",
+    "com.jonatanmartinez.lemonity.editor": "file:com.jonatanmartinez.lemonity.editor",
     "com.codemaestroai.advancedunitymcp": "https://github.com/codemaestroai/advanced-unity-mcp.git?path=Unity2020_2022",
     "com.ultraleap.tracking": "7.3.0",
     "com.unity.2d.sprite": "1.0.0",

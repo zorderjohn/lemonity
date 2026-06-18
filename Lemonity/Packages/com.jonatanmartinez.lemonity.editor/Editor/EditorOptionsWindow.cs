@@ -33,7 +33,7 @@ namespace Lemonity.Editor
 		private const int _foldoutFontSize = 14;
 		private const string _openUpmUrl = "https://package.openupm.com";
 		private const string _ultraleapTrackingPackage = "com.ultraleap.tracking@7.3.0";
-		private const string _ultraleapProviderPackage = "com.lemonity.provider.ultraleap@2.0.0";
+		private const string _ultraleapProviderPackage = "com.jonatanmartinez.lemonity.provider.ultraleap@2.1.0";
 		private static GUIStyle _foldoutStyle;
 		private static Queue<string> _installQueue;
 		private static AddRequest _installRequest;
@@ -528,7 +528,7 @@ namespace Lemonity.Editor
 						string registry = manifest.Substring(registryStart, registryEnd - registryStart + 1);
 						registry = Regex.Replace(registry, "\\\"name\\\"\\s*:\\s*\\\"[^\\\"]*\\\"", "\"name\": \"OpenUPM\"", RegexOptions.Multiline);
 						registry = EnsureRegistryScope(registry, "com.ultraleap");
-						registry = EnsureRegistryScope(registry, "com.lemonity");
+						registry = EnsureRegistryScope(registry, "com.jonatanmartinez");
 						return manifest.Substring(0, registryStart) + registry + manifest.Substring(registryEnd + 1);
 					}
 				}
@@ -540,7 +540,7 @@ namespace Lemonity.Editor
 				"      \"url\": \"" + _openUpmUrl + "\",\n" +
 				"      \"scopes\": [\n" +
 				"        \"com.ultraleap\",\n" +
-				"        \"com.lemonity\"\n" +
+				"        \"com.jonatanmartinez\"\n" +
 				"      ]\n" +
 				"    }";
 
