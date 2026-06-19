@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Lemonity.Core;
+using UnityEditor;
 using UnityEngine;
 
 namespace Lemonity.Editor
@@ -167,9 +168,20 @@ namespace Lemonity.Editor
 		{
 			if (_workspaceMesh != null)
 			{
+				Camera cam = Camera.current ?? SceneView.lastActiveSceneView?.camera;
+				if (cam == null) return;
+
 				_workspaceMat.color = new Color(0, 0, 0, alpha);
 				_workspaceMat.SetPass(0);
+
+				GL.PushMatrix();
+				GL.Viewport(cam.pixelRect);
+				GL.LoadProjectionMatrix(cam.projectionMatrix);
+				GL.modelview = cam.worldToCameraMatrix;
+
 				Graphics.DrawMeshNow(_workspaceMesh, matrix);
+
+				GL.PopMatrix();
 			}
 			else
 			{
@@ -223,11 +235,16 @@ namespace Lemonity.Editor
 
 		private void DrawLines(Color color, Matrix4x4 matrix)
 		{
+			Camera cam = Camera.current ?? SceneView.lastActiveSceneView?.camera;
+			if (cam == null) return;
+
 			_workspaceMat.color = color;
 			_workspaceMat.SetPass(0);
 
 			GL.PushMatrix();
-			GL.MultMatrix(matrix);
+			GL.Viewport(cam.pixelRect);
+			GL.LoadProjectionMatrix(cam.projectionMatrix);
+			GL.modelview = cam.worldToCameraMatrix * matrix;
 
 			GL.Begin(GL.LINES);
 			foreach (var vertex in _gridLines)
