@@ -1,10 +1,13 @@
 # Changelog
 All notable changes to the Lemonity packages will be documented in this file.
 
-## [2.1.1] - 2026-06-19
+## [2.1.1] - 2026-06-22
+
+### Added
+- Support for URP
 
 ### Fixed
-- Small artifacts due to rendering grid and workspace out of bounds
+- Rendering artifacts out of bounds in scene view
 
 
 ## [2.1.0] - 2026-06-18
