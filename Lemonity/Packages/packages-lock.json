@@ -20,7 +20,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.jonatanmartinez.lemonity.core": "2.1.0"
+        "com.jonatanmartinez.lemonity.core": "2.1.1"
       }
     },
     "com.jonatanmartinez.lemonity.provider.ultraleap": {
@@ -28,7 +28,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.jonatanmartinez.lemonity.core": "2.1.0",
+        "com.jonatanmartinez.lemonity.core": "2.1.1",
         "com.ultraleap.tracking": "7.3.0"
       }
     },

@@ -1,7 +1,13 @@
 {
   "name": "com.jonatanmartinez.lemonity.core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "displayName": "Lemonity Core",
   "description": "Motion algorithms, gesture recognition, and tracking abstractions for Lemonity.",
-  "unity": "2022.3"
+  "changelogUrl": "https://github.com/zorderjohn/lemonity/blob/master/CHANGELOG.md",
+  "unity": "2022.3",
+  "author": {
+    "name": "Jonatan Martínez",
+    "email": "email@jonatanmartinez.com",
+    "url": "https://github.com/zorderjohn"
+  }
 }

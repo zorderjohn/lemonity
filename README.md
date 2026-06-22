@@ -20,15 +20,15 @@ Navigate your Unity scene using bare hands. Lemonity is a Unity Editor extension
 2. Add the **OpenUPM** scoped registry in **Edit > Project Settings > Package Manager**:
     - **Name:** `OpenUPM`
     - **URL:** `https://package.openupm.com`
-    - **Scopes:** `com.lemonity`, `com.ultraleap`
+    - **Scopes:** `com.jonatanmartinez`, `com.ultraleap`
 
     ![Scoped registries configuration](docs/images/scoped_registries.png)
 
 
 3. Add the following packages to your Unity project via the Package Manager:
-   - `com.lemonity.editor`
-   - `com.lemonity.provider.ultraleap`
-   - `com.lemonity.core`
+   - `com.jonatanmartinez.lemonity.editor`
+   - `com.jonatanmartinez.lemonity.provider.ultraleap`
+   - `com.jonatanmartinez.lemonity.core`
    - `com.ultraleap.tracking`
     
     ![Unity Package Manager](docs/images/package_manager.png)
@@ -47,9 +47,9 @@ Lemonity is organized as three Unity packages:
 
 | Package | Description |
 |---|---|
-| `com.lemonity.core` | Provider-agnostic runtime: motion styles, gesture controllers, tracking abstraction, options |
-| `com.lemonity.editor` | Unity Editor integration: scene view hooks, options window, debug window |
-| `com.lemonity.provider.ultraleap` | Ultraleap/Hyperion adapter that implements `HandTracking` and self-registers on editor load |
+| `com.jonatanmartinez.lemonity.core` | Provider-agnostic runtime: motion styles, gesture controllers, tracking abstraction, options |
+| `com.jonatanmartinez.lemonity.editor` | Unity Editor integration: scene view hooks, options window, debug window |
+| `com.jonatanmartinez.lemonity.provider.ultraleap` | Ultraleap/Hyperion adapter that implements `HandTracking` and self-registers on editor load |
 
 ### Provider pattern
 
